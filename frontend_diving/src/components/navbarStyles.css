@@ -1,0 +1,18 @@
+/* Domyślna wysokość dla większych ekranów */
+.navbar-sebakrys {
+    height: auto;
+}
+
+.navbar-text-fixed {
+    position: fixed;
+    top: 0;
+    right: 0px;
+}
+
+/* Zwiększ wysokość navbaru na ekranach o szerokości mniejszej niż 768px */
+@media screen and (max-width: 1000px) {
+    .navbar-sebakrys {
+        min-height: 60px;
+    }
+
+}

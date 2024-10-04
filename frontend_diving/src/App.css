@@ -1,5 +1,30 @@
+html, body, #root, .App, #AppContainer {
+  height: 100%; /* Ustawienie pełnej wysokości dla całej aplikacji */
+  margin: 0;
+  padding: 0;
+}
+
+#AppContainer {
+  flex-grow: 1; /* Sprawi, że AppContainer wypełni dostępne miejsce */
+  display: flex;
+  flex-direction: column;
+}
+
+
+.App {
+  display: flex;
+  flex-direction: column;
+}
+
+iframe {
+  flex-grow: 1; /* Zapewnia, że iframe zajmie całą dostępną przestrzeń */
+}
+
+
 .App {
   text-align: center;
+  margin: 0;
+  padding: 0;
 }
 
 .App-logo {
@@ -14,7 +39,6 @@
 }
 
 .App-header {
-  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -35,4 +59,13 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+#tsparticles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Ustaw niski z-index, aby inne elementy były nad cząsteczkami */
 }

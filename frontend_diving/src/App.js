@@ -3,6 +3,23 @@ import logo from './logo.svg';
 import './App.css';
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
+import Content from "./components/Content";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import {Button} from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',  // Główny kolor motywu
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+});
+
 
 function App() {
   const particlesInit = useCallback(async (engine) => {
@@ -16,6 +33,7 @@ function App() {
   }, []);
 
   return (
+      <ThemeProvider theme={theme}>
       <div className="App">
         <Particles
             id="tsparticles"
@@ -99,21 +117,12 @@ function App() {
               detectRetina: true,
             }}
         />
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-              className="App-link"
-              href="https://reactjs.org"
-              target="_blank"
-              rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <div id="AppContainer">
+
+          <Content/>
+        </div>
       </div>
+      </ThemeProvider>
   );
 }
 
