@@ -41,6 +41,15 @@ public class EventController {
         return ResponseEntity.ok(events);
     }
 
+    @GetMapping("/{eventId}")
+    public ResponseEntity<Event> getEvent(@PathVariable Long eventId) {
+        Optional<Event> event = eventService.getEvent(eventId);
+        return event
+                .map(ResponseEntity::ok)
+                .orElseGet(()->ResponseEntity.notFound().build());
+
+    }
+
     @GetMapping("/{month}/{year}")
     public ResponseEntity<List<Event>> get3MonthsEvents(@PathVariable int month, @PathVariable int year) {
         List<Event> events = eventService.getEventsFor3Months(month, year);

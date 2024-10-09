@@ -10,43 +10,67 @@ import pl.sebakrys.diving.users.entity.User;
 import pl.sebakrys.diving.users.repo.UserRepo;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EventRegistrationService {
 
-    @Autowired
-    private EventRepo eventRepo;
-    @Autowired
-    private EventRegistrationRepo eventRegistrationRepo;
-    @Autowired
-    private UserRepo userRepo;
+    private final EventRepo eventRepo;
+    private final EventRegistrationRepo eventRegistrationRepo;
+    private final UserRepo userRepo;
 
-    //__________________________________________________________________________________
+    @Autowired
+    public EventRegistrationService(EventRepo eventRepo, EventRegistrationRepo eventRegistrationRepo, UserRepo userRepo) {
+        this.eventRepo = eventRepo;
+        this.eventRegistrationRepo = eventRegistrationRepo;
+        this.userRepo = userRepo;
+    }
 
-    public EventRegistration addEventRegistration(Long userId, Long eventId, String message){
-        Event event = eventRepo.getReferenceById(eventId);
-        User user = userRepo.getReferenceById(userId);
-        if(event==null || user ==null) return null;
+    public Optional<EventRegistration> addEventRegistration(Long userId, Long eventId, String message) {
+        Optional<Event> event = eventRepo.findById(eventId);
+        Optional<User> user = userRepo.findById(userId);
+
+        if (event.isEmpty() || user.isEmpty()) {
+            return Optional.empty();
+        }
+
+        // Ensure uniqueness of user-event combination
+        if (eventRegistrationRepo.getEventRegistrationsByUser_IdAndEvent_Id(userId, eventId).isPresent()) {
+            return Optional.empty();
+        }
+
         EventRegistration eventRegistration = new EventRegistration();
-        eventRegistration.setEvent(event);
+        eventRegistration.setEvent(event.get());
+        eventRegistration.setUser(user.get());
         eventRegistration.setMessage(message);
         eventRegistration.setAccepted(false);
-        eventRegistration.setUser(user);
-        return eventRegistrationRepo.save(eventRegistration);
+
+        return Optional.of(eventRegistrationRepo.save(eventRegistration));
     }
 
-    public EventRegistration acceptEventRegistration(Long userId, Long eventId, boolean accepted){
-        EventRegistration er = eventRegistrationRepo.getEventRegistrationsByUser_IdAndEvent_Id(userId, eventId);
-        if(er==null) return null;
-        er.setAccepted(accepted);
-
-        return eventRegistrationRepo.save(er);
+    public Optional<EventRegistration> acceptEventRegistration(Long userId, Long eventId, boolean accepted) {
+        return eventRegistrationRepo.getEventRegistrationsByUser_IdAndEvent_Id(userId, eventId)
+                .map(eventRegistration -> {
+                    eventRegistration.setAccepted(accepted);
+                    return eventRegistrationRepo.save(eventRegistration);
+                });
     }
 
-    public List<EventRegistration> removeUserFromEvent(Long userId, Long eventId){
-        EventRegistration er = eventRegistrationRepo.getEventRegistrationsByUser_IdAndEvent_Id(userId, eventId);
-        if(er==null)return null;
-        eventRegistrationRepo.delete(er);
+    public List<EventRegistration> removeEventRegistrationFromEvent(Long userId, Long eventId) {
+        eventRegistrationRepo.getEventRegistrationsByUser_IdAndEvent_Id(userId, eventId)
+                .ifPresent(eventRegistrationRepo::delete);
         return eventRegistrationRepo.getEventRegistrationsByEvent_Id(eventId);
+    }
+
+    public List<EventRegistration> getAllEventRegistrations() {
+        return eventRegistrationRepo.findAll();
+    }
+
+    public List<EventRegistration> getEventRegistrationsByEvent(Long eventId) {
+        return eventRegistrationRepo.getEventRegistrationsByEvent_Id(eventId);
+    }
+
+    public Optional<EventRegistration> getEventRegistrationById(Long registrationId) {
+        return eventRegistrationRepo.findById(registrationId);
     }
 }
