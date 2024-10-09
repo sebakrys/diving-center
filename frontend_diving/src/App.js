@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
+import { loadBubblesPreset } from "tsparticles-preset-bubbles";
 import Content from "./components/Content";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import {Button} from "react-bootstrap";

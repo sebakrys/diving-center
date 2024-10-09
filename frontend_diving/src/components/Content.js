@@ -1,7 +1,9 @@
 import React from "react";
 import { Routes, Route, HashRouter } from "react-router-dom";
-import NavBar from "./NavBar";
+import NavBar from "./navbar/NavBar";
 import {Button} from "react-bootstrap";
+import Home from "./pages/Home";
+import Events from "./pages/events/Events";
 
 class Content extends React.Component {
     constructor(props) {
@@ -13,15 +15,21 @@ class Content extends React.Component {
 
     render() {
         return (
-            <div id="AppContainer">
+            <div style={{
+                marginTop: "58px",
+                overflowY: "auto",
+                overflowX: "auto",
+                height: '100%'
+            }}>
                 <NavBar />
-                <iframe
-                    title="Static HTML"
-                    src="/aboutUs.html"
-                    width="100%"
-                    height="100%"
-                    style={{ border: "none" }}
-                />
+                <HashRouter>
+
+                    <Routes>
+                        <Route path={"/"} element={<Home />}/>
+                        <Route path={"/home"} element={<Home />}/>
+                        <Route path={"/events"} element={<Events />}/>
+                    </Routes>
+                </HashRouter>
             </div>
         );
     }

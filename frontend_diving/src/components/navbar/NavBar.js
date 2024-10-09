@@ -9,16 +9,18 @@ import './navbarStyles.css'
 
 function BasicExample() {
     return (
-        <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark">
-            <Container>
+        <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark" style={{opacity: "90%"}} fixed={"top"}>
+            <Container style={{opacity: "100%"}}>
                 <div>
                     <Navbar.Toggle className={"mx-1"} aria-controls="basic-navbar-nav" />
                     <Navbar.Brand href="#home"><img src="/assets/img/logo.png"/>True Divers</Navbar.Brand>
                 </div>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="#home">Home</Nav.Link>
-                        <Nav.Link href="#link">Link</Nav.Link>
+                        <Nav.Link href="#/home">Home</Nav.Link>
+                        <Nav.Link href="#/events">Events</Nav.Link>
+                        <Nav.Link href="#/register">Register</Nav.Link>
+                        <Nav.Link href="#/login">Login</Nav.Link>
                         <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                             <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                             <NavDropdown.Item href="#action/3.2">
