@@ -14,7 +14,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()) // Wyłączenie CSRF
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/event/**").permitAll() // Pozwól na dostęp do wszystkich endpointów /event/
+                        .requestMatchers("/event/**").permitAll()
+                        .requestMatchers("/roles/**").permitAll()
+                        .requestMatchers("/users/**").permitAll()
+                        .requestMatchers("/event-registration/**").permitAll()
                         .anyRequest().authenticated() // Wymaga autoryzacji dla innych zapytań
                 );
 

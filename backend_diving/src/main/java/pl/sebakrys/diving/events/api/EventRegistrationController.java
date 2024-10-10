@@ -3,6 +3,7 @@ package pl.sebakrys.diving.events.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.sebakrys.diving.events.dto.EventRegistrationRequest;
 import pl.sebakrys.diving.events.entity.EventRegistration;
 import pl.sebakrys.diving.events.service.EventRegistrationService;
 
@@ -23,13 +24,13 @@ public class EventRegistrationController {
 
     @PostMapping("/")
     public ResponseEntity<EventRegistration> addEventRegistration(
-            @RequestParam Long userId,
-            @RequestParam Long eventId,
-            @RequestBody String message) {
-        return eventRegistrationService.addEventRegistration(userId, eventId, message)
+            @RequestBody EventRegistrationRequest request) {
+        return eventRegistrationService
+                .addEventRegistration(request.getUserId(), request.getEventId(), request.getMessage())
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
+
 
     @PutMapping("/{userId}/{eventId}")
     public ResponseEntity<EventRegistration> acceptEventRegistration(
