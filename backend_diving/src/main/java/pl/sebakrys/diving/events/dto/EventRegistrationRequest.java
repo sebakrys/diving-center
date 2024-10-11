@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class EventRegistrationRequest {
-    private Long userId;
+    private String userEmail;
     private Long eventId;
     private String message;
 }

@@ -3,11 +3,22 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import {useTranslation, withTranslation} from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import i18n from "i18next";
+import SecurityService from "../../service/SecurityService";
+
 
 import './navbarStyles.css'
 
-function BasicExample() {
+function NavBar() {
+
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        SecurityService.logoutUser(); // Wywołaj funkcję do wylogowania
+        navigate('/login'); // Przekieruj użytkownika na stronę logowania
+    };
+
     return (
         <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark" style={{opacity: "90%"}} fixed={"top"}>
             <Container style={{opacity: "100%"}}>
@@ -19,8 +30,12 @@ function BasicExample() {
                     <Nav className="me-auto">
                         <Nav.Link href="#/home">Home</Nav.Link>
                         <Nav.Link href="#/events">Events</Nav.Link>
-                        <Nav.Link href="#/register">Register</Nav.Link>
-                        <Nav.Link href="#/login">Login</Nav.Link>
+                        {!SecurityService.isLoggedIn() &&
+                            <Nav.Link href="#/register">Register</Nav.Link>
+                        }
+                        {!SecurityService.isLoggedIn() &&
+                            <Nav.Link href="#/login">Login</Nav.Link>
+                        }
                         <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                             <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                             <NavDropdown.Item href="#action/3.2">
@@ -32,9 +47,11 @@ function BasicExample() {
                                 Separated link
                             </NavDropdown.Item>
                         </NavDropdown>
+                        {SecurityService.isLoggedIn() &&
+                            <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                        }
                     </Nav>
                 </Navbar.Collapse>
-                SEBAKRYS
                 <Navbar.Text className="ml-auto navbar-text-fixed">
                     <div>
                         <form>
@@ -52,4 +69,4 @@ function BasicExample() {
     );
 }
 
-export default BasicExample;
+export default NavBar;

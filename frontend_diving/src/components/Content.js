@@ -23,8 +23,8 @@ class Content extends React.Component {
                 overflowX: "auto",
                 height: '100%'
             }}>
-                <NavBar />
                 <HashRouter>
+                    <NavBar />
 
                     <Routes>
                         <Route path={"/"} element={<Home />}/>

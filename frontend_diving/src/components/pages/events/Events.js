@@ -6,6 +6,7 @@ import './eventsStyles.css';
 import 'moment/locale/pl';
 import { CreateEventForm, RegisterForm } from './EventsForms';
 import {Button} from "react-bootstrap";
+import EventsService from "../../../service/EventsService";
 
 const localizer = momentLocalizer(moment);
 
@@ -15,19 +16,28 @@ class Events extends React.Component {
         this.state = {
             selectedEvent: null,
             showCreateForm: false,
-            events: [
-                {
-                    title: 'Sample Event1',
-                    start: new Date(moment().add(-3, 'days').toDate()),
-                    end: new Date(moment().add(3, 'days').add(1, 'hour').toDate()),
-                },
-                {
-                    title: 'Sample Event2',
-                    start: new Date(),
-                    end: new Date(moment().add(1, 'hour').toDate()),
-                },
-            ],
+            events: [],
         };
+    }
+
+    componentDidMount() {
+        const loadEvents = async () => {
+            const month = moment().month() + 1;
+            const year = moment().year();
+            const result = await EventsService.getEventsForThreeMonths(month, year);
+            if (result.success) {
+                console.log(result.events)
+                this.setState({
+                    events: result.events.map(event => ({
+                        eventId: event.id,
+                        title: event.name,
+                        start: new Date(event.startDate),
+                        end: new Date(event.endDate),
+                    }))
+                });
+            }
+        };
+        loadEvents();
     }
 
     handleSelected = (event) => {

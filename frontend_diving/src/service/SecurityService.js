@@ -1,4 +1,6 @@
 import axios from 'axios';
+import {jwtDecode} from "jwt-decode";
+
 const SECURITY_REST_URL = 'http://localhost:8080';
 
 class SecurityService {
@@ -58,6 +60,34 @@ class SecurityService {
             }
             return { success: false, message };
         }
+    }
+
+    isLoggedIn() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            return false;
+        }
+
+        try {
+            const decoded = jwtDecode(token);
+            const currentTime = Date.now() / 1000;
+            if (decoded.exp < currentTime) {
+                this.logoutUser(); // Token wygasł, wyloguj użytkownika
+                return false;
+            }
+            return true;
+        } catch (err) {
+            return false; // Błąd dekodowania, traktuj token jako nieważny
+        }
+    }
+
+    getCurrentUserEmail() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            const decodedToken = jwtDecode(token);
+            return decodedToken.sub; // Zakładamy, że ID użytkownika jest zapisane w polu 'sub' tokena
+        }
+        return null;
     }
 
     getRoles() {

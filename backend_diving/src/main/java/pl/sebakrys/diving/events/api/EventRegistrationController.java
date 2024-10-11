@@ -2,6 +2,7 @@ package pl.sebakrys.diving.events.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.sebakrys.diving.events.dto.EventRegistrationRequest;
 import pl.sebakrys.diving.events.entity.EventRegistration;
@@ -26,7 +27,7 @@ public class EventRegistrationController {
     public ResponseEntity<EventRegistration> addEventRegistration(
             @RequestBody EventRegistrationRequest request) {
         return eventRegistrationService
-                .addEventRegistration(request.getUserId(), request.getEventId(), request.getMessage())
+                .addEventRegistration(request.getUserEmail(), request.getEventId(), request.getMessage())
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
