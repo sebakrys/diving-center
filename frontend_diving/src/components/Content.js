@@ -4,6 +4,8 @@ import NavBar from "./navbar/NavBar";
 import {Button} from "react-bootstrap";
 import Home from "./pages/Home";
 import Events from "./pages/events/Events";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
 
 class Content extends React.Component {
     constructor(props) {
@@ -28,6 +30,8 @@ class Content extends React.Component {
                         <Route path={"/"} element={<Home />}/>
                         <Route path={"/home"} element={<Home />}/>
                         <Route path={"/events"} element={<Events />}/>
+                        <Route path={"/register"} element={<Register />}/>
+                        <Route path={"/login"} element={<Login />}/>
                     </Routes>
                 </HashRouter>
             </div>

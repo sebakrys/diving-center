@@ -1,9 +1,8 @@
 package pl.sebakrys.diving.users.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.sebakrys.diving.users.entity.Role;
 import pl.sebakrys.diving.users.entity.User;
@@ -20,14 +19,15 @@ public class UserService {
 
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepo userRepo, RoleRepo roleRepo, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepo userRepo, RoleRepo roleRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
         this.passwordEncoder = passwordEncoder;
     }
+
 
     // Dodanie nowego użytkownika
     public User addUser(User user) {
@@ -71,24 +71,6 @@ public class UserService {
     // Pobranie użytkownika po ID
     public Optional<User> getUserByEmail(String email) {
         return userRepo.findByEmail(email);
-    }
-
-
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> userOptional = userRepo.findByEmail(email);
-        if (userOptional.isEmpty()) {
-            throw new UsernameNotFoundException("Nie znaleziono użytkownika o email: " + email);
-        }
-
-        User user = userOptional.get();
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                user.isActive(),
-                true, true, true,
-                user.getRoles()
-        );
     }
 
 
