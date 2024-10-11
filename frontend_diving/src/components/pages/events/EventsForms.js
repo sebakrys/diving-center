@@ -126,10 +126,10 @@ export const RegisterForm = ({ event, onCancel }) => {
             <Row className="justify-content-md-center">
                 <Col md="6">
                     <h2 className="mt-5 text-white">Rejestracja na wydarzenie: {event.title}</h2>
+                    <p className='fs-4 text-white'>{event.description}</p>
                     <p className='text-white'>
                         Start: {moment(event.start).format('LLL')} <br />
-                        Koniec: {moment(event.end).format('LLL')} <br />
-                        {event.eventId}
+                        Koniec: {moment(event.end).format('LLL')}
                     </p>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="formName" className="mt-3">

@@ -30,6 +30,7 @@ class Events extends React.Component {
                 this.setState({
                     events: result.events.map(event => ({
                         eventId: event.id,
+                        description: event.description,
                         title: event.name,
                         start: new Date(event.startDate),
                         end: new Date(event.endDate),
