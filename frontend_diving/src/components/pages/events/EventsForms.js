@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
+import {Form, Button, Container, Row, Col, Alert} from 'react-bootstrap';
 import moment from 'moment';
-import {Button} from "react-bootstrap";
-import Form from 'react-bootstrap/Form';
 
 // Formularz do tworzenia nowego wydarzenia
 export const CreateEventForm = ({ onAddEvent, onCancel }) => {
     const [title, setTitle] = useState('');
     const [start, setStart] = useState('');
     const [end, setEnd] = useState('');
+    const [error, setError] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (new Date(start) >= new Date(end)) {
+            setError('Data rozpoczęcia musi być wcześniejsza niż data zakończenia');
+            return;
+        }
         const newEvent = {
             title,
             start: new Date(start),
@@ -20,44 +24,53 @@ export const CreateEventForm = ({ onAddEvent, onCancel }) => {
     };
 
     return (
-        <div className="form-container" style={{
-            color: '#fff'
-        }}>
-            <h3>Create New Event</h3>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Title:</label>
-                    <Form.Control
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Start Date:</label>
-                    <Form.Control
-                        type="datetime-local"
-                        value={start}
-                        onChange={(e) => setStart(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>End Date:</label>
-                    <Form.Control
-                        type="datetime-local"
-                        value={end}
-                        onChange={(e) => setEnd(e.target.value)}
-                        required
-                    />
-                </div>
-                <Button type="submit">Add Event</Button>
-                <Button type="button" onClick={onCancel}>
-                    Cancel
-                </Button>
-            </form>
-        </div>
+        <Container data-bs-theme="dark">
+            <Row className="justify-content-md-center">
+                <Col md="6">
+                    <h2 className="mt-5 text-white">Tworzenie nowego wydarzenia</h2>
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group controlId="formTitle" className="mt-3">
+                            <Form.Label className='text-white'>Tytuł</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Wprowadź tytuł"
+                                value={title}
+                                onChange={e => setTitle(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="formStartDate" className="mt-3">
+                            <Form.Label className='text-white'>Data rozpoczęcia</Form.Label>
+                            <Form.Control
+                                type="datetime-local"
+                                value={start}
+                                onChange={e => setStart(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="formEndDate" className="mt-3">
+                            <Form.Label className='text-white'>Data zakończenia</Form.Label>
+                            <Form.Control
+                                type="datetime-local"
+                                value={end}
+                                onChange={e => setEnd(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Button variant="primary" type="submit" className="mt-4">
+                            Dodaj wydarzenie
+                        </Button>
+                        <Button variant="secondary" type="button" onClick={onCancel} className="mt-4 ms-2">
+                            Anuluj
+                        </Button>
+                    </Form>
+                    {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+                </Col>
+            </Row>
+        </Container>
     );
 };
 
@@ -65,46 +78,60 @@ export const CreateEventForm = ({ onAddEvent, onCancel }) => {
 export const RegisterForm = ({ event, onCancel }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [error, setError] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Registered for event:', event.title, 'Name:', name, 'Email:', email);
+        if (!name || !email) {
+            setError('Proszę wypełnić wszystkie pola');
+            return;
+        }
+        console.log('Zapisano na wydarzenie:', event.title, 'Imię:', name, 'Email:', email);
         onCancel(); // Zamknij formularz po rejestracji
     };
 
     return (
-        <div className="form-container" style={{
-            color: '#fff'
-        }}>
-            <h3>Register for {event.title}</h3>
-            <p>
-                Start: {moment(event.start).format('LLL')} <br />
-                End: {moment(event.end).format('LLL')}
-            </p>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Name:</label>
-                    <Form.Control
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Email:</label>
-                    <Form.Control
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </div>
-                <Button type="submit">Register</Button>
-                <Button type="button" onClick={onCancel}>
-                    Cancel
-                </Button>
-            </form>
-        </div>
+        <Container data-bs-theme="dark">
+            <Row className="justify-content-md-center">
+                <Col md="6">
+                    <h2 className="mt-5 text-white">Rejestracja na wydarzenie: {event.title}</h2>
+                    <p className='text-white'>
+                        Start: {moment(event.start).format('LLL')} <br />
+                        Koniec: {moment(event.end).format('LLL')}
+                    </p>
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group controlId="formName" className="mt-3">
+                            <Form.Label className='text-white'>Imię</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Wprowadź imię"
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="formEmail" className="mt-3">
+                            <Form.Label className='text-white'>Adres email</Form.Label>
+                            <Form.Control
+                                type="email"
+                                placeholder="Wprowadź email"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Button variant="primary" type="submit" className="mt-4">
+                            Zarejestruj się
+                        </Button>
+                        <Button variant="secondary" type="button" onClick={onCancel} className="mt-4 ms-2">
+                            Anuluj
+                        </Button>
+                    </Form>
+                    {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+                </Col>
+            </Row>
+        </Container>
     );
 };

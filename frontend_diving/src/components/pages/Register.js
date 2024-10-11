@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {Form, Button, Container, Row, Col, Alert} from 'react-bootstrap';
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
+import SecurityService from "../../service/SecurityService";
 
 function Register() {
     const [firstName, setFirstName] = useState('');
@@ -13,16 +14,13 @@ function Register() {
 
     const handleSubmit = async e => {
         e.preventDefault();
-        try {
-            await axios.post('http://localhost:8080/users/', {
-                firstName,
-                lastName,
-                email,
-                password,
-            });
+
+        const result = await SecurityService.registerUser(firstName, lastName, email, password);
+
+        if (result.success) {
             navigate('/login');
-        } catch (err) {
-            setError('Rejestracja nie powiodła się. Spróbuj ponownie.');
+        } else {
+            setError(result.message);
         }
     };
 

@@ -34,6 +34,7 @@ function BasicExample() {
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>
+                SEBAKRYS
                 <Navbar.Text className="ml-auto navbar-text-fixed">
                     <div>
                         <form>

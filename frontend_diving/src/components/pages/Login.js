@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {Form, Button, Container, Row, Col, Alert} from 'react-bootstrap';
 import {useNavigate} from "react-router-dom";
 import axios from 'axios';
+import SecurityService from "../../service/SecurityService";
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -13,17 +14,13 @@ function Login() {
     const handleSubmit = async e => {
         e.preventDefault();
 
+        // Użycie metody z SecurityService
+        const result = await SecurityService.loginUser(email, password);
 
-        try {
-            const response = await axios.post('http://localhost:8080/authenticate', {
-                email,
-                password,
-            });
-            const token = response.data.jwt;
-            localStorage.setItem('token', token);
+        if (result.success) {
             navigate('/');
-        } catch (err) {
-            setError('Nieprawidłowy email lub hasło');
+        } else {
+            setError(result.message);
         }
     };
 

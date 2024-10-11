@@ -1,30 +1,74 @@
 import axios from 'axios';
-const SECURITY_REST_URL = 'http://localhost:8080/';
+const SECURITY_REST_URL = 'http://localhost:8080';
 
-class SecurityService{
-    login = async (email, password) => {
+class SecurityService {
+    async loginUser(email, password) {
         try {
             const response = await axios.post(SECURITY_REST_URL+'/authenticate', {
-                email: email,
-                password: password
+                email,
+                password,
             });
 
             const token = response.data.jwt;
-            // Przechowaj token w localStorage lub w stanie aplikacji
+            const roles = response.data.roles;
+
             localStorage.setItem('token', token);
+            localStorage.setItem('roles', JSON.stringify(roles)); // Przechowaj role w LocalStorage
+
+            // Ustawienie nagłówka Authorization dla wszystkich przyszłych żądań
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-            // Możesz przekierować użytkownika lub zaktualizować stan aplikacji
+            return { success: true };
         } catch (error) {
-            console.error('Błąd podczas logowania', error);
-            // Obsłuż błąd, np. wyświetl komunikat użytkownikowi
+            let message = 'Wystąpił błąd. Spróbuj ponownie.';
+            if (error.response) {
+                if (error.response.status === 401) {
+                    message = 'Nieprawidłowy email lub hasło';
+                } else if (error.response.data) {
+                    message = error.response.data;
+                }
+            }
+            return { success: false, message };
         }
-    };
+    }
 
-    logout = () => {
+    logoutUser() {
         localStorage.removeItem('token');
+        localStorage.removeItem('roles');
         delete axios.defaults.headers.common['Authorization'];
-        // Zresetuj stan aplikacji, np. wyczyść dane użytkownika
-    };
+    }
+
+    async registerUser(firstName, lastName, email, password) {
+        try {
+            await axios.post(SECURITY_REST_URL+'/users/', {
+                firstName,
+                lastName,
+                email,
+                password,
+            });
+            return { success: true };
+        } catch (error) {
+            let message = 'Wystąpił błąd. Spróbuj ponownie.';
+            if (error.response) {
+                if (error.response.status === 401) {
+                    message = 'Nieprawidłowy email lub hasło';
+                } else if (error.response.data) {
+                    message = error.response.data;
+                }
+            }
+            return { success: false, message };
+        }
+    }
+
+    getRoles() {
+        const roles = localStorage.getItem('roles');
+        return roles ? JSON.parse(roles) : [];
+    }
+
+    isUserInRole(role) {
+        const roles = this.getRoles();
+        return roles.some(r => r.name === role);
+    }
 }
+
 export default new SecurityService();

@@ -5,11 +5,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import pl.sebakrys.diving.users.entity.User;
+import pl.sebakrys.diving.users.repo.UserRepo;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
 public class AuthenticationController {
 
+    @Autowired
+    UserRepo userRepo;
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -30,13 +37,17 @@ public class AuthenticationController {
             );
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(401).body("Nieprawidłowe dane uwierzytelniające");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Wystąpił błąd serwera: " + e.getMessage());
         }
 
         final UserDetails userDetails = userSecurityService.loadUserByUsername(authenticationRequest.getEmail());
-        final String jwt = jwtUtil.generateToken(userDetails);
+        final User user = userRepo.findByEmail(authenticationRequest.getEmail()).orElseThrow();
+        final String jwt = jwtUtil.generateToken(user);
 
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        Map<String, Object> response = new HashMap<>();
+        response.put("jwt", jwt);
+        response.put("roles", user.getRoles());
+
+        return ResponseEntity.ok(response);
     }
+
 }
