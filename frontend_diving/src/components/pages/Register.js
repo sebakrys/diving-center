@@ -27,15 +27,15 @@ function Register() {
     };
 
     return (
-        <Container>
+        <Container data-bs-theme="dark">
             <Row className="justify-content-md-center">
                 <Col md="6">
-                    <h2 className="mt-5">Rejestracja</h2>
+                    <h2 className="mt-5 text-white">Rejestracja</h2>
                     <Form onSubmit={handleSubmit}>
                         <Row>
                             <Col>
                                 <Form.Group controlId="formFirstName">
-                                    <Form.Label>Imię</Form.Label>
+                                    <Form.Label className='text-white'>Imię</Form.Label>
                                     <Form.Control
                                         type="text"
                                         placeholder="Wprowadź imię"
@@ -47,7 +47,7 @@ function Register() {
                             </Col>
                             <Col>
                                 <Form.Group controlId="formLastName">
-                                    <Form.Label>Nazwisko</Form.Label>
+                                    <Form.Label className='text-white'>Nazwisko</Form.Label>
                                     <Form.Control
                                         type="text"
                                         placeholder="Wprowadź nazwisko"
@@ -60,7 +60,7 @@ function Register() {
                         </Row>
 
                         <Form.Group controlId="formEmail" className="mt-3">
-                            <Form.Label>Adres email</Form.Label>
+                            <Form.Label className='text-white'>Adres email</Form.Label>
                             <Form.Control
                                 type="email"
                                 placeholder="Wprowadź email"
@@ -71,7 +71,7 @@ function Register() {
                         </Form.Group>
 
                         <Form.Group controlId="formPassword" className="mt-3">
-                            <Form.Label>Hasło</Form.Label>
+                            <Form.Label className='text-white'>Hasło</Form.Label>
                             <Form.Control
                                 type="password"
                                 placeholder="Hasło"

@@ -28,13 +28,13 @@ function Login() {
     };
 
     return (
-        <Container>
+        <Container data-bs-theme="dark">
             <Row className="justify-content-md-center">
                 <Col md="4">
-                    <h2 className="mt-5">Logowanie</h2>
+                    <h2 className="mt-5 text-white" >Logowanie</h2>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="formBasicEmail">
-                            <Form.Label>Adres email</Form.Label>
+                            <Form.Label className='text-white'>Adres email</Form.Label>
                             <Form.Control
                                 type="email"
                                 placeholder="Wprowadź email"
@@ -45,7 +45,7 @@ function Login() {
                         </Form.Group>
 
                         <Form.Group controlId="formBasicPassword" className="mt-3">
-                            <Form.Label>Hasło</Form.Label>
+                            <Form.Label className='text-white'>Hasło</Form.Label>
                             <Form.Control
                                 type="password"
                                 placeholder="Hasło"
