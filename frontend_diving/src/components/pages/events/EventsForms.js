@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {Form, Button, Container, Row, Col, Alert} from 'react-bootstrap';
 import moment from 'moment';
 import EventsService from "../../../service/EventsService";
@@ -93,6 +93,109 @@ export const CreateEventForm = ({ onAddEvent, onCancel }) => {
     );
 };
 
+// Formularz do edycji wybranego wydarzenia
+export const EditEventForm = ({ onEditEvent, onCancel, selectedEvent }) => {
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [start, setStart] = useState('');
+    const [end, setEnd] = useState('');
+    const [error, setError] = useState('');
+
+    // Używamy useEffect, aby zaktualizować wartości, gdy selectedEvent się zmieni
+    useEffect(() => {
+        if (selectedEvent) {
+            setTitle(selectedEvent.title || '');
+            setDescription(selectedEvent.description || '');
+            setStart(selectedEvent.start ? new Date(selectedEvent.start).toISOString().slice(0, 16) : '');
+            setEnd(selectedEvent.end ? new Date(selectedEvent.end).toISOString().slice(0, 16) : '');
+        }
+    }, [selectedEvent]); // Ta funkcja wykona się za każdym razem, gdy selectedEvent się zmieni
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (new Date(start) >= new Date(end)) {
+            setError('Data rozpoczęcia musi być wcześniejsza niż data zakończenia');
+            return;
+        }
+        const result = await EventsService.editEvent(title, description, start, end, selectedEvent.eventId)
+        if(result.success){
+            const newEvent = {
+                ...selectedEvent, // Zachowaj inne właściwości eventu (np. id)
+                title,
+                start: new Date(start),
+                end: new Date(end),
+            };
+            onEditEvent(newEvent);
+        }else {
+            setError(result.message);
+        }
+    };
+
+    return (
+        <Container data-bs-theme="dark">
+            <Row className="justify-content-md-center">
+                <Col md="6">
+                    <h2 className="mt-5 text-white">Edytowanie wydarzenia</h2>
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group controlId="formTitle" className="mt-3">
+                            <Form.Label className='text-white'>Tytuł</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Wprowadź tytuł"
+                                value={title}
+                                onChange={e => setTitle(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="formDescription" className="mt-3">
+                            <Form.Label className='text-white'>Opis</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Wprowadź opis"
+                                value={description}
+                                onChange={e => setDescription(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="formStartDate" className="mt-3">
+                            <Form.Label className='text-white'>Data rozpoczęcia</Form.Label>
+                            <Form.Control
+                                type="datetime-local"
+                                value={start}
+                                onChange={e => setStart(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="formEndDate" className="mt-3">
+                            <Form.Label className='text-white'>Data zakończenia</Form.Label>
+                            <Form.Control
+                                type="datetime-local"
+                                value={end}
+                                onChange={e => setEnd(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Button variant="primary" type="submit" className="mt-4">
+                            Edytuj wydarzenie
+                        </Button>
+                        <Button variant="secondary" type="button" onClick={onCancel} className="mt-4 ms-2">
+                            Anuluj
+                        </Button>
+                    </Form>
+                    {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+                </Col>
+            </Row>
+        </Container>
+    );
+};
+
+
+
 // Formularz do zapisywania się na wydarzenie
 export const RegisterForm = ({ event, onCancel }) => {
     const [name, setName] = useState('');
@@ -152,6 +255,63 @@ export const RegisterForm = ({ event, onCancel }) => {
                     {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
                 </Col>
             </Row>
+        </Container>
+    );
+};
+
+
+// Tabela z Rejestracjami na dane wydarzenie
+export const EventRegistrationTable = ({ selectedEvent}) => {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [eventRegistrations, setEventRegistrations] = useState([]);
+
+
+    useEffect(() => {
+        const fetchEventRegistrations = async () => {
+            if (selectedEvent) {
+                try {
+                    const result = await EventsService.getEventRegistrations(selectedEvent.eventId);
+                    if (result.success) {
+                        setEventRegistrations(result.event_registrations); // Zakładam, że to jest tablica rejestracji
+                    }
+                } catch (error) {
+                    console.error('Błąd podczas pobierania rejestracji:', error);
+                }
+            }
+        };
+
+        fetchEventRegistrations();
+    }, [selectedEvent]); // Zależność - gdy selectedEvent się zmienia
+
+
+    return (
+        <Container data-bs-theme="dark">
+            <tbody>
+            {
+
+                eventRegistrations.map(
+                    (er) =>
+                        <tr key={er.id}>
+                            <td>{er.user.firstName}</td>
+                            <td>{er.user.lastName}</td>
+                            <td>{er.accepted}</td>
+                            <td>{er.message}</td>
+                            <td><a type="button" className="btn btn-secondary btn-sm"
+                                   onClick={() => alert("aa")}>
+
+                            </a></td>
+                            <td><a id={er.id} type="button" className="btn btn-danger btn-sm"
+                                   onClick={() => alert("aa")}>
+
+                            </a></td>
+                        </tr>
+                )
+            }
+            </tbody>
         </Container>
     );
 };

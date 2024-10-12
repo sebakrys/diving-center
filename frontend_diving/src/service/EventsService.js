@@ -22,6 +22,22 @@ class EventsService {
 
     }
 
+    async editEvent(name, description, startDate, endDate, eventId) {
+        try {
+            const response = await axios.put(`${EVENTS_REST_URL}/event/${eventId}`, {
+                name,
+                description,
+                startDate,
+                endDate
+            });
+            return { success: true };
+        }catch (error) {
+            let message = 'Wystąpił błąd. Spróbuj ponownie.';
+            return { success: false, message };
+        }
+
+    }
+
 
     async registerForEvent(userEmail, eventId, message) {
         console.log("getCurrentUserId: "+SecurityService.getCurrentUserEmail())
@@ -45,6 +61,16 @@ class EventsService {
             return { success: true, events: response.data };
         } catch (error) {
             let message = 'Wystąpił błąd podczas pobierania wydarzeń. Spróbuj ponownie.';
+            return { success: false, message };
+        }
+    }
+
+    async getEventRegistrations(eventId) {
+        try {
+            const response = await axios.get(`${EVENTS_REST_URL}/event-registration/event/${eventId}`);
+            return { success: true, event_registrations: response.data };
+        } catch (error) {
+            let message = 'Wystąpił błąd podczas pobierania rezerwacji wydarzeń. Spróbuj ponownie.';
             return { success: false, message };
         }
     }

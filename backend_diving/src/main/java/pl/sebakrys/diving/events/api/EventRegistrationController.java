@@ -58,7 +58,15 @@ public class EventRegistrationController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+
+    @GetMapping("/event/{eventId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
+    public ResponseEntity<List<EventRegistration>> getEventRegistrationsByEventId(@PathVariable Long eventId) {
+        return ResponseEntity.ok(eventRegistrationService.getEventRegistrationsByEventId(eventId));
+    }
+
     @DeleteMapping("/{userId}/{eventId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
     public ResponseEntity<List<EventRegistration>> removeEventRegistrationFromEvent(
             @PathVariable Long userId,
             @PathVariable Long eventId) {

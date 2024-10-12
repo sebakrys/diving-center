@@ -66,7 +66,7 @@ public class EventRegistrationService {
         return eventRegistrationRepo.findAll();
     }
 
-    public List<EventRegistration> getEventRegistrationsByEvent(Long eventId) {
+    public List<EventRegistration> getEventRegistrationsByEventId(Long eventId) {
         return eventRegistrationRepo.getEventRegistrationsByEvent_Id(eventId);
     }
 

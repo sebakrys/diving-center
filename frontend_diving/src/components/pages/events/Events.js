@@ -4,7 +4,7 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './eventsStyles.css';
 import 'moment/locale/pl';
-import { CreateEventForm, RegisterForm } from './EventsForms';
+import {CreateEventForm, EditEventForm, EventRegistrationTable, RegisterForm} from './EventsForms';
 import {Button} from "react-bootstrap";
 import EventsService from "../../../service/EventsService";
 
@@ -16,6 +16,8 @@ class Events extends React.Component {
         this.state = {
             selectedEvent: null,
             showCreateForm: false,
+            showEditEventForm: false,//TODO dodac ten formularz
+            showEventRegistrations: false,//TODO dodac ten formularz
             events: [],
         };
     }
@@ -53,9 +55,18 @@ class Events extends React.Component {
         }));
     };
 
+    handleEditEvent = (editedEvent) => {
+        this.setState((prevState) => ({
+            events: prevState.events.map(event =>
+                event.eventId === editedEvent.eventId ? editedEvent : event
+            ),
+        }));
+    };
+
     toggleCreateForm = () => {
         this.setState((prevState) => ({ showCreateForm: !prevState.showCreateForm }));
     };
+
 
     // Funkcja do dostosowania stylu wybranego wydarzenia
     eventStyleGetter = (event) => {
@@ -111,6 +122,18 @@ class Events extends React.Component {
                     <RegisterForm
                         event={this.state.selectedEvent}
                         onCancel={() => this.setState({ selectedEvent: null })}
+                    />
+                )}
+                {this.state.selectedEvent && (
+                    <EditEventForm
+                        onEditEvent={this.handleEditEvent}
+                        onCancel={() => this.setState({ selectedEvent: null })}
+                        selectedEvent={this.state.selectedEvent}
+                    />
+                )}
+                {this.state.selectedEvent && (
+                    <EventRegistrationTable
+                        selectedEvent={this.state.selectedEvent}
                     />
                 )}
             </div>
