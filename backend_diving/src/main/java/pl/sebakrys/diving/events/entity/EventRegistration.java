@@ -26,7 +26,7 @@ public class EventRegistration {
 
     private String message;
 
-    @JsonIgnore
-    private boolean accepted;
+
+    private boolean accepted = false;
 }
 

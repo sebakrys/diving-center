@@ -1,5 +1,6 @@
 package pl.sebakrys.diving.events.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.sebakrys.diving.events.entity.Event;
@@ -56,10 +57,24 @@ public class EventRegistrationService {
                 });
     }
 
+    public Optional<EventRegistration> acceptEventRegistration(Long eventRegistrationId, boolean accepted) {
+        return eventRegistrationRepo.findById(eventRegistrationId)
+                .map(eventRegistration -> {
+                    eventRegistration.setAccepted(accepted);
+                    return eventRegistrationRepo.save(eventRegistration);
+                });
+    }
+
     public List<EventRegistration> removeEventRegistrationFromEvent(Long userId, Long eventId) {
         eventRegistrationRepo.getEventRegistrationsByUser_IdAndEvent_Id(userId, eventId)
                 .ifPresent(eventRegistrationRepo::delete);
         return eventRegistrationRepo.getEventRegistrationsByEvent_Id(eventId);
+    }
+
+    public Optional<EventRegistration> removeEventRegistration(Long eventRegistrationId) {
+        Optional<EventRegistration> er = eventRegistrationRepo.findById(eventRegistrationId);
+        er.ifPresent(eventRegistrationRepo::delete);
+        return er;
     }
 
     public List<EventRegistration> getAllEventRegistrations() {

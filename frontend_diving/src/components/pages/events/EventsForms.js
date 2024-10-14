@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Button, Container, Row, Col, Alert} from 'react-bootstrap';
+import {Form, Button, Container, Row, Col, Alert, Table} from 'react-bootstrap';
 import moment from 'moment';
 import EventsService from "../../../service/EventsService";
 import SecurityService from "../../../service/SecurityService";
@@ -262,56 +262,110 @@ export const RegisterForm = ({ event, onCancel }) => {
 
 // Tabela z Rejestracjami na dane wydarzenie
 export const EventRegistrationTable = ({ selectedEvent}) => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [message, setMessage] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
     const [eventRegistrations, setEventRegistrations] = useState([]);
+    const [switchStates, setSwitchStates] = useState({});
 
-
-    useEffect(() => {
-        const fetchEventRegistrations = async () => {
-            if (selectedEvent) {
-                try {
-                    const result = await EventsService.getEventRegistrations(selectedEvent.eventId);
-                    if (result.success) {
-                        setEventRegistrations(result.event_registrations); // Zakładam, że to jest tablica rejestracji
-                    }
-                } catch (error) {
-                    console.error('Błąd podczas pobierania rejestracji:', error);
+    const fetchEventRegistrations = async () => {
+        if (selectedEvent) {
+            try {
+                const result = await EventsService.getEventRegistrations(selectedEvent.eventId);
+                if (result.success) {
+                    setEventRegistrations(result.event_registrations);
                 }
+            } catch (error) {
+                console.error('Błąd podczas pobierania rejestracji:', error);
             }
-        };
+        }
+    };
 
-        fetchEventRegistrations();
-    }, [selectedEvent]); // Zależność - gdy selectedEvent się zmienia
+    // Funkcja obsługująca zmianę przełącznika
+    const handleSwitchChange = (id) => {
+        const newSwitchState = !switchStates[id];
+
+        setSwitchStates((prevState) => ({
+            ...prevState,
+            [id]: newSwitchState // Odwracamy stan dla danego id
+        }));
+        EventsService.acceptEventRegistration(id, newSwitchState).then(() => {
+            console.log("Stan zaakceptowania Rezerwacji został zaktualizowany");
+        })
+            .catch((error) => {
+                console.error('Błąd podczas aktualizacji statusu akceptacji Rezerwacji:', error);
+            });
+    };
+
+    const handleDeleteEventRegistration = (id) => {
+        EventsService.removeEventRegistration(id).then(
+            ()=>{
+                fetchEventRegistrations();
+            }
+        ).catch((error)=>{
+            console.error('Błąd podczas usuwania rejestracji:', error);
+        });
+    };
+
+
+// Efekt do pobrania danych na podstawie zmiany `selectedEvent`
+    useEffect(() => {
+        if (selectedEvent) {
+            fetchEventRegistrations(); // Pobieramy rejestracje na podstawie wybranego wydarzenia
+        }
+    }, [selectedEvent]); // Zależność - uruchom, gdy `selectedEvent` się zmieni
+
+// Efekt do ustawienia stanów przełączników na podstawie `eventRegistrations`
+    useEffect(() => {
+        if (eventRegistrations.length > 0) { // Sprawdzamy, czy mamy rejestracje
+            const initialSwitchStates = {};
+
+            eventRegistrations.forEach((er) => {
+                initialSwitchStates[er.id] = er.accepted; // Ustawiamy stan na podstawie `er.accepted`
+            });
+
+            setSwitchStates(initialSwitchStates); // Ustawiamy stan przełączników
+        }
+    }, [eventRegistrations]); // Zależność - gdy `eventRegistrations` się zmieni
 
 
     return (
         <Container data-bs-theme="dark">
-            <tbody>
-            {
+            <h2 className="mt-5 text-white">Zapisy na wydarzenie</h2>
+            <Table striped bordered hover>
+                <thead>
+                <tr>
+                    <th>L.p.</th>
+                    <th>Imię</th>
+                    <th>Nazwisko</th>
+                    <th>Wiadomość</th>
+                    <th>Zakaceptowane</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {
 
-                eventRegistrations.map(
-                    (er) =>
-                        <tr key={er.id}>
-                            <td>{er.user.firstName}</td>
-                            <td>{er.user.lastName}</td>
-                            <td>{er.accepted}</td>
-                            <td>{er.message}</td>
-                            <td><a type="button" className="btn btn-secondary btn-sm"
-                                   onClick={() => alert("aa")}>
-
-                            </a></td>
-                            <td><a id={er.id} type="button" className="btn btn-danger btn-sm"
-                                   onClick={() => alert("aa")}>
-
-                            </a></td>
-                        </tr>
-                )
-            }
-            </tbody>
+                    eventRegistrations.map(
+                        (er, index) =>
+                            <tr key={er.id}>
+                                <td>{index+1}</td>
+                                <td>{er.user.firstName}</td>
+                                <td>{er.user.lastName}</td>
+                                <td>{er.message}</td>
+                                <td>
+                                    <Form.Check
+                                        type="switch"
+                                        id={`custom-switch-${er.id}`}
+                                        checked={switchStates[er.id]}
+                                        onChange={() => handleSwitchChange(er.id)}
+                                    />
+                                </td>
+                                <td><Button variant="outline-danger" onClick={() => handleDeleteEventRegistration(er.id)}>
+                                    Usuń
+                                </Button></td>
+                            </tr>
+                    )
+                }
+                </tbody>
+            </Table>
         </Container>
     );
 };

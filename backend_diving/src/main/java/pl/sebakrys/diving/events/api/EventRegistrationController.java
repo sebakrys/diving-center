@@ -1,5 +1,6 @@
 package pl.sebakrys.diving.events.api;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,6 +44,15 @@ public class EventRegistrationController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PutMapping("/{registrationId}")
+    public ResponseEntity<EventRegistration> acceptEventRegistration(
+            @PathVariable Long registrationId,
+            @RequestParam boolean accepted) {
+        return eventRegistrationService.acceptEventRegistration(registrationId, accepted)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
 
     @GetMapping("/")
@@ -76,6 +86,15 @@ public class EventRegistrationController {
         } else {
             return ResponseEntity.noContent().build(); // Zwraca 204 No Content, jeśli lista jest pusta
         }
+    }
+
+    @DeleteMapping("/{eventRegistrationId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
+    public ResponseEntity<EventRegistration> removeRegistration(@PathVariable Long eventRegistrationId) {
+        Optional<EventRegistration> deletedRegistration = eventRegistrationService.removeEventRegistration(eventRegistrationId);
+        return deletedRegistration
+                .map(ResponseEntity::ok)
+                .orElseGet(()->ResponseEntity.notFound().build());
     }
 
 }

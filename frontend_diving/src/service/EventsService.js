@@ -75,5 +75,25 @@ class EventsService {
         }
     }
 
+    async acceptEventRegistration(eventRegistrationId, accepted) {
+        try {
+            const response = await axios.put(`${EVENTS_REST_URL}/event-registration/${eventRegistrationId}?accepted=${accepted}`);
+            return { success: true, event_registration: response.data };
+        } catch (error) {
+            let message = 'Wystąpił błąd podczas akceptacji rezerwacji. Spróbuj ponownie.';
+            return { success: false, message };
+        }
+    }
+
+    async removeEventRegistration(eventRegistrationId) {
+        try {
+            const response = await axios.delete(`${EVENTS_REST_URL}/event-registration/${eventRegistrationId}`);
+            return { success: true, event_registration: response.data };
+        } catch (error) {
+            let message = 'Wystąpił błąd podczas usuwania rezerwacji wydarzeń. Spróbuj ponownie.';
+            return { success: false, message };
+        }
+    }
+
 }
 export default new EventsService();

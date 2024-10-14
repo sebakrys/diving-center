@@ -16,8 +16,8 @@ class Events extends React.Component {
         this.state = {
             selectedEvent: null,
             showCreateForm: false,
-            showEditEventForm: false,//TODO dodac ten formularz
-            showEventRegistrations: false,//TODO dodac ten formularz
+            showEditEventForm: false,
+            showEventRegistrations: false,
             events: [],
         };
     }
