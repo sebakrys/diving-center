@@ -44,17 +44,25 @@ public class EventService {
 
     // Pobranie eventów w zakresie trzech miesięcy wokół środkowego miesiąca
     public List<Event> getEventsFor3Months(int middleMonth, int year) {
+        // Sprawdź, czy middleMonth to styczeń (1) lub grudzień (12) i dostosuj miesiące oraz lata
+        int previousMonth = middleMonth == 1 ? 12 : middleMonth - 1;
+        int previousMonthYear = middleMonth == 1 ? year - 1 : year;
+
+        int nextMonth = middleMonth == 12 ? 1 : middleMonth + 1;
+        int nextMonthYear = middleMonth == 12 ? year + 1 : year;
+
         // Oblicz pierwszy dzień poprzedniego miesiąca
-        LocalDate startOfPreviousMonth = LocalDate.of(year, middleMonth - 1, 1);
+        LocalDate startOfPreviousMonth = LocalDate.of(previousMonthYear, previousMonth, 1);
         LocalDateTime startDateTime = startOfPreviousMonth.atStartOfDay();
 
         // Oblicz ostatni dzień następnego miesiąca
-        LocalDate endOfNextMonth = startOfPreviousMonth.plusMonths(2).withDayOfMonth(startOfPreviousMonth.plusMonths(2).lengthOfMonth());
+        LocalDate endOfNextMonth = LocalDate.of(nextMonthYear, nextMonth, 1).withDayOfMonth(LocalDate.of(nextMonthYear, nextMonth, 1).lengthOfMonth());
         LocalDateTime endDateTime = endOfNextMonth.atTime(23, 59, 59);
 
         // Znajdź wydarzenia w podanym zakresie
         return eventRepo.findAllByDateRange(startDateTime, endDateTime);
     }
+
 
     // Edytowanie eventu
     public Optional<Event> editEvent(Event event, Long eventId) {

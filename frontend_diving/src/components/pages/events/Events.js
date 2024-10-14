@@ -23,26 +23,40 @@ class Events extends React.Component {
         };
     }
 
+    loadEvents = async (month, year) => {
+        const result = await EventsService.getEventsForThreeMonths(month, year);
+        if (result.success) {
+            console.log(result.events)
+            this.setState({
+                events: result.events.map(event => ({
+                    eventId: event.id,
+                    description: event.description,
+                    title: event.name,
+                    start: new Date(event.startDate),
+                    end: new Date(event.endDate),
+                }))
+            });
+        }
+    };
+
+
     componentDidMount() {
-        const loadEvents = async () => {
-            const month = moment().month() + 1;
-            const year = moment().year();
-            const result = await EventsService.getEventsForThreeMonths(month, year);
-            if (result.success) {
-                console.log(result.events)
-                this.setState({
-                    events: result.events.map(event => ({
-                        eventId: event.id,
-                        description: event.description,
-                        title: event.name,
-                        start: new Date(event.startDate),
-                        end: new Date(event.endDate),
-                    }))
-                });
-            }
-        };
-        loadEvents();
+        const month = moment().month() + 1;
+        const year = moment().year();
+        this.loadEvents(month, year);
     }
+
+    handleRangeChange = (range) => {
+        const start = moment(range.start);
+        const end = moment(range.end);
+
+        // Oblicz środkowy punkt pomiędzy start i end
+        const middle = moment(start).add(end.diff(start, 'days') / 2, 'days');
+
+        const month = middle.month() + 1;
+        const year = middle.year();
+        this.loadEvents(month, year);
+    };
 
     handleSelected = (event) => {
         this.setState({ selectedEvent: event });
@@ -98,6 +112,7 @@ class Events extends React.Component {
                         eventPropGetter={this.eventStyleGetter}
                         culture='pl'
                         style={{ height: '100%', margin: '5%', background: '#F0F0FF' }}
+                        onRangeChange={this.handleRangeChange}
                         messages={{
                             next: "Nast.",
                             previous: "Poprz.",
