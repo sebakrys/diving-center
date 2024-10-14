@@ -7,6 +7,7 @@ import 'moment/locale/pl';
 import {CreateEventForm, EditEventForm, EventRegistrationTable, RegisterForm} from './EventsForms';
 import {Button} from "react-bootstrap";
 import EventsService from "../../../service/EventsService";
+import SecurityService from "../../../service/SecurityService";
 
 const localizer = momentLocalizer(moment);
 
@@ -108,30 +109,34 @@ class Events extends React.Component {
                         }}
                     />
                 </div>
-                <Button onClick={this.toggleCreateForm} style={{ marginBottom: '10px' }}>
-                    Create New Event
-                </Button>
-                {this.state.showCreateForm && (
-                    <CreateEventForm
-                        onAddEvent={this.handleAddEvent}
-                        onCancel={this.toggleCreateForm}
+                {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
+                    <div>
+                        <Button onClick={this.toggleCreateForm} style={{ marginBottom: '10px' }}>
+                            Create New Event
+                        </Button>
+                        {this.state.showCreateForm && (
+                            <CreateEventForm
+                                onAddEvent={this.handleAddEvent}
+                                onCancel={this.toggleCreateForm}
 
-                    />
+                            />
+                        )}
+                    </div>
                 )}
-                {this.state.selectedEvent && (
+                {(SecurityService.isUserInRole(["ROLE_CLIENT"]) && this.state.selectedEvent) && (
                     <RegisterForm
                         event={this.state.selectedEvent}
                         onCancel={() => this.setState({ selectedEvent: null })}
                     />
                 )}
-                {this.state.selectedEvent && (
+                {(SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && this.state.selectedEvent) && (
                     <EditEventForm
                         onEditEvent={this.handleEditEvent}
                         onCancel={() => this.setState({ selectedEvent: null })}
                         selectedEvent={this.state.selectedEvent}
                     />
                 )}
-                {this.state.selectedEvent && (
+                {(SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && this.state.selectedEvent) && (
                     <EventRegistrationTable
                         selectedEvent={this.state.selectedEvent}
                     />

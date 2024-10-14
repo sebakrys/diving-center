@@ -95,9 +95,12 @@ class SecurityService {
         return roles ? JSON.parse(roles) : [];
     }
 
-    isUserInRole(role) {
-        const roles = this.getRoles();
-        return roles.some(r => r.name === role);
+// Metoda, która akceptuje tablicę ról
+    isUserInRole(rolesToCheck) {
+        const userRoles = this.getRoles(); // Pobieramy role użytkownika z localStorage
+
+        // Sprawdzamy, czy którakolwiek z ról użytkownika znajduje się w liście 'rolesToCheck'
+        return userRoles.some(userRole => rolesToCheck.includes(userRole.name));
     }
 }
 

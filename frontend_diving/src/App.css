@@ -4,6 +4,12 @@ html, body, #root, .App, #AppContainer {
   padding: 0;
 }
 
+iframe {
+  display: block;  /* Usuń ewentualne marginesy iframe */
+  width: 100%;  /* Pełna szerokość */
+  height: 100%;  /* Pełna wysokość */
+}
+
 #AppContainer {
   flex-grow: 1; /* Sprawi, że AppContainer wypełni dostępne miejsce */
   display: flex;

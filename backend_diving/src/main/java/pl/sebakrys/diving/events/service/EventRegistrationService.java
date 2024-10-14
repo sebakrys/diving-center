@@ -49,6 +49,27 @@ public class EventRegistrationService {
         return Optional.of(eventRegistrationRepo.save(eventRegistration));
     }
 
+    public Optional<EventRegistration> editEventRegistration(String email, Long eventId, String message) {
+        Optional<Event> event = eventRepo.findById(eventId);
+        Optional<User> user = userRepo.findByEmail(email);
+
+        if (event.isEmpty() || user.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Optional<EventRegistration> oldEventRegistrationOptional = eventRegistrationRepo.getEventRegistrationsByUser_EmailAndEvent_Id(email, eventId);
+
+        // Check if exists
+        if (oldEventRegistrationOptional.isEmpty()) {
+            return Optional.empty();
+        }
+
+        EventRegistration eventRegistration = oldEventRegistrationOptional.get();
+        eventRegistration.setMessage(message);
+
+        return Optional.of(eventRegistrationRepo.save(eventRegistration));
+    }
+
     public Optional<EventRegistration> acceptEventRegistration(Long userId, Long eventId, boolean accepted) {
         return eventRegistrationRepo.getEventRegistrationsByUser_IdAndEvent_Id(userId, eventId)
                 .map(eventRegistration -> {
@@ -87,5 +108,9 @@ public class EventRegistrationService {
 
     public Optional<EventRegistration> getEventRegistrationById(Long registrationId) {
         return eventRegistrationRepo.findById(registrationId);
+    }
+
+    public Optional<EventRegistration> getEventRegistrationByUserEmailAndEventId(String userEmail, Long eventId) {
+        return eventRegistrationRepo.getEventRegistrationsByUser_EmailAndEvent_Id(userEmail, eventId);
     }
 }

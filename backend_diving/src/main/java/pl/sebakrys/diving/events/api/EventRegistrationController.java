@@ -33,6 +33,15 @@ public class EventRegistrationController {
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
+    @PutMapping("/")
+    public ResponseEntity<EventRegistration> editEventRegistration(
+            @RequestBody EventRegistrationRequest request) {
+        return eventRegistrationService
+                .editEventRegistration(request.getUserEmail(), request.getEventId(), request.getMessage())
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
 
     @PutMapping("/{userId}/{eventId}")
     public ResponseEntity<EventRegistration> acceptEventRegistration(
@@ -73,6 +82,16 @@ public class EventRegistrationController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
     public ResponseEntity<List<EventRegistration>> getEventRegistrationsByEventId(@PathVariable Long eventId) {
         return ResponseEntity.ok(eventRegistrationService.getEventRegistrationsByEventId(eventId));
+    }
+
+    @GetMapping("/user-registration/{eventId}")
+    @PreAuthorize("hasAnyRole('ROLE_CLIENT')")
+    public ResponseEntity<EventRegistration> getEventRegistrationByUserEmailAndEventId(
+            @PathVariable Long eventId,
+            @RequestParam String userEmail) {
+        return eventRegistrationService.getEventRegistrationByUserEmailAndEventId(userEmail, eventId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{userId}/{eventId}")

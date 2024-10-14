@@ -3,6 +3,8 @@ import {Form, Button, Container, Row, Col, Alert, Table} from 'react-bootstrap';
 import moment from 'moment';
 import EventsService from "../../../service/EventsService";
 import SecurityService from "../../../service/SecurityService";
+import * as Icon from 'react-bootstrap-icons';
+
 
 // Formularz do tworzenia nowego wydarzenia
 export const CreateEventForm = ({ onAddEvent, onCancel }) => {
@@ -198,20 +200,54 @@ export const EditEventForm = ({ onEditEvent, onCancel, selectedEvent }) => {
 
 // Formularz do zapisywania się na wydarzenie
 export const RegisterForm = ({ event, onCancel }) => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
+    const [accepted, setAccepted] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [userReservation, setUserReservation] = useState(false);
+
+    useEffect(() => {
+        const fetchUserReservation = async () => {
+            if (event) {
+                try {
+                    const userEmail = SecurityService.getCurrentUserEmail(); // Pobieramy email użytkownika
+                    const eventId = event.eventId; // Pobieramy ID wydarzenia
+                    const response = await EventsService.getEventRegistrationForUserAndEvent(userEmail, eventId); // Wywołujemy API
+                    if(response.success){
+                        setUserReservation(response.event_registration); // Ustawiamy stan z odpowiedzią
+                        setMessage(response.event_registration.message);
+                        setAccepted(response.event_registration.accepted)
+                        console.log(JSON.stringify(response.event_registration)); // Logujemy rejestrację w konsoli
+                    }else{
+                        setUserReservation(false);
+                        setMessage('');
+                        setAccepted(false)
+                    }
+                } catch (error) {
+                    console.error('Błąd podczas pobierania rejestracji użytkownika:', error);
+                }
+            }
+        };
+
+        fetchUserReservation(); // Wywołujemy asynchroniczną funkcję
+    }, [event]); // Efekt uruchomi się za każdym razem, gdy `event` się zmieni
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("RegisterForm")
+        //TODO jesli juz jest to edytuj wiadomosc zamiast dodawać i sypać błędem
 
         try {
-            const userEmail = SecurityService.getCurrentUserEmail(); // Zakładamy, że istnieje metoda zwracająca ID zalogowanego użytkownika
+            const userEmail = SecurityService.getCurrentUserEmail();
             const eventId = event.eventId;
-            const response = await EventsService.registerForEvent(userEmail, eventId, message);
+            let response;
+
+            if(userReservation){
+                response = await EventsService.editRegisterForEventMessage(userEmail, eventId, message);
+            }else{
+                response = await EventsService.registerForEvent(userEmail, eventId, message);
+            }
+
             if (response.success) {
                 setSuccess('Zarejestrowano na wydarzenie!');
                 onCancel();
@@ -234,6 +270,25 @@ export const RegisterForm = ({ event, onCancel }) => {
                         Start: {moment(event.start).format('LLL')} <br />
                         Koniec: {moment(event.end).format('LLL')}
                     </p>
+
+                    {userReservation && (
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <p className='text-success fw-bold' style={{ marginRight: '10px' }}>
+                                Rejestracja: <Icon.Check2 />
+                            </p>
+                            {accepted ? (
+                                <p className='text-success fw-bold'>
+                                    Akceptacja: <Icon.Check2All />
+                                </p>
+                            ) : (
+                                <p className='text-warning'>
+                                    Akceptacja: <Icon.XLg />
+                                </p>
+                            )}
+                        </div>
+                    )}
+
+
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="formName" className="mt-3">
                             <Form.Label className='text-white'>Wiadomość</Form.Label>
@@ -245,9 +300,15 @@ export const RegisterForm = ({ event, onCancel }) => {
                             />
                         </Form.Group>
 
-                        <Button variant="primary" type="submit" className="mt-4">
-                            Zarejestruj się
-                        </Button>
+                        {userReservation ?
+                            <Button variant="warning" type="submit" className="mt-4">
+                                Edytuj Wiadomość
+                            </Button>
+                            :
+                            <Button variant="primary" type="submit" className="mt-4">
+                                Zarejestruj się
+                            </Button>
+                        }
                         <Button variant="secondary" type="button" onClick={onCancel} className="mt-4 ms-2">
                             Anuluj
                         </Button>
@@ -266,6 +327,7 @@ export const EventRegistrationTable = ({ selectedEvent}) => {
     const [switchStates, setSwitchStates] = useState({});
 
     const fetchEventRegistrations = async () => {
+        setEventRegistrations([])
         if (selectedEvent) {
             try {
                 const result = await EventsService.getEventRegistrations(selectedEvent.eventId);
@@ -326,46 +388,53 @@ export const EventRegistrationTable = ({ selectedEvent}) => {
     }, [eventRegistrations]); // Zależność - gdy `eventRegistrations` się zmieni
 
 
-    return (
-        <Container data-bs-theme="dark">
-            <h2 className="mt-5 text-white">Zapisy na wydarzenie</h2>
-            <Table striped bordered hover>
-                <thead>
-                <tr>
-                    <th>L.p.</th>
-                    <th>Imię</th>
-                    <th>Nazwisko</th>
-                    <th>Wiadomość</th>
-                    <th>Zakaceptowane</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {
 
-                    eventRegistrations.map(
-                        (er, index) =>
-                            <tr key={er.id}>
-                                <td>{index+1}</td>
-                                <td>{er.user.firstName}</td>
-                                <td>{er.user.lastName}</td>
-                                <td>{er.message}</td>
-                                <td>
-                                    <Form.Check
-                                        type="switch"
-                                        id={`custom-switch-${er.id}`}
-                                        checked={switchStates[er.id]}
-                                        onChange={() => handleSwitchChange(er.id)}
-                                    />
-                                </td>
-                                <td><Button variant="outline-danger" onClick={() => handleDeleteEventRegistration(er.id)}>
-                                    Usuń
-                                </Button></td>
-                            </tr>
-                    )
-                }
-                </tbody>
-            </Table>
-        </Container>
-    );
+    if(eventRegistrations.length>0) {
+        return (
+
+            <Container data-bs-theme="dark">
+                <h2 className="mt-5 text-white">Zapisy na wydarzenie</h2>
+                <Table striped bordered hover>
+                    <thead>
+                    <tr>
+                        <th>L.p.</th>
+                        <th>Imię</th>
+                        <th>Nazwisko</th>
+                        <th>Wiadomość</th>
+                        <th>Zakaceptowane</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+
+                        eventRegistrations.map(
+                            (er, index) =>
+                                <tr key={er.id}>
+                                    <td>{index + 1}</td>
+                                    <td>{er.user.firstName}</td>
+                                    <td>{er.user.lastName}</td>
+                                    <td>{er.message}</td>
+                                    <td>
+                                        <Form.Check
+                                            type="switch"
+                                            id={`custom-switch-${er.id}`}
+                                            checked={switchStates[er.id]}
+                                            onChange={() => handleSwitchChange(er.id)}
+                                        />
+                                    </td>
+                                    <td><Button variant="outline-danger"
+                                                onClick={() => handleDeleteEventRegistration(er.id)}>
+                                        Usuń
+                                    </Button></td>
+                                </tr>
+                        )
+                    }
+                    </tbody>
+                </Table>
+            </Container>
+        );
+    }else{
+        return ;
+    }
 };

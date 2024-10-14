@@ -38,6 +38,15 @@ class EventsService {
 
     }
 
+    async getEventRegistrationForUserAndEvent(userEmail, eventId) {
+        try {
+            const response = await axios.get(`${EVENTS_REST_URL}/event-registration/user-registration/${eventId}?userEmail=${userEmail}`);
+            return { success: true, event_registration: response.data };
+        } catch (error) {
+            let message = 'Wystąpił błąd podczas pobierania rezerwacji wydarzeń. Spróbuj ponownie.';
+            return { success: false, message };
+        }
+    }
 
     async registerForEvent(userEmail, eventId, message) {
         console.log("getCurrentUserId: "+SecurityService.getCurrentUserEmail())
@@ -54,6 +63,23 @@ class EventsService {
             return { success: false, message };
         }
     }
+
+    async editRegisterForEventMessage(userEmail, eventId, message) {
+        console.log("getCurrentUserId: "+SecurityService.getCurrentUserEmail())
+        console.log(userEmail, eventId, message)
+        try {
+            const response = await axios.put(`${EVENTS_REST_URL}/event-registration/`, {
+                userEmail,
+                eventId,
+                message
+            });
+            return { success: true };
+        } catch (error) {
+            let message = 'Wystąpił błąd podczas rejestracji. Spróbuj ponownie.';
+            return { success: false, message };
+        }
+    }
+
 
     async getEventsForThreeMonths(month, year) {
         try {
@@ -74,6 +100,7 @@ class EventsService {
             return { success: false, message };
         }
     }
+
 
     async acceptEventRegistration(eventRegistrationId, accepted) {
         try {
