@@ -29,6 +29,7 @@ public class User {
     private boolean active;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

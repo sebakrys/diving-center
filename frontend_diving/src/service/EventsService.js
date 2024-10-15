@@ -14,7 +14,7 @@ class EventsService {
                 startDate,
                 endDate
             });
-            return { success: true };
+            return { event: response.data, success: true };
         }catch (error) {
             let message = 'Wystąpił błąd. Spróbuj ponownie.';
             return { success: false, message };
@@ -30,6 +30,17 @@ class EventsService {
                 startDate,
                 endDate
             });
+            return { success: true };
+        }catch (error) {
+            let message = 'Wystąpił błąd. Spróbuj ponownie.';
+            return { success: false, message };
+        }
+
+    }
+
+    async deleteEvent(eventId) {
+        try {
+            const response = await axios.delete(`${EVENTS_REST_URL}/event/${eventId}`);
             return { success: true };
         }catch (error) {
             let message = 'Wystąpił błąd. Spróbuj ponownie.';

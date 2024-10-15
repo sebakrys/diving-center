@@ -22,8 +22,12 @@ export const CreateEventForm = ({ onAddEvent, onCancel }) => {
         }
         const result = await EventsService.addEvent(title, description, start, end)
         if(result.success){
+
+
             const newEvent = {
-                title,
+                eventId: result.event.id,
+                description: result.event.description,
+                title: result.event.name,
                 start: new Date(start),
                 end: new Date(end),
             };
@@ -96,7 +100,7 @@ export const CreateEventForm = ({ onAddEvent, onCancel }) => {
 };
 
 // Formularz do edycji wybranego wydarzenia
-export const EditEventForm = ({ onEditEvent, onCancel, selectedEvent }) => {
+export const EditEventForm = ({ onEditEvent, onDeleteEvent, onCancel, selectedEvent }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [start, setStart] = useState('');
@@ -113,6 +117,15 @@ export const EditEventForm = ({ onEditEvent, onCancel, selectedEvent }) => {
         }
     }, [selectedEvent]); // Ta funkcja wykona się za każdym razem, gdy selectedEvent się zmieni
 
+    const handleDeleteEvent = async (e) => {
+        e.preventDefault();
+        const result = await EventsService.deleteEvent(selectedEvent.eventId)//TODO
+        if(result.success){
+            onDeleteEvent(selectedEvent);
+        }else {
+            setError(result.message);
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -133,6 +146,8 @@ export const EditEventForm = ({ onEditEvent, onCancel, selectedEvent }) => {
             setError(result.message);
         }
     };
+
+
 
     return (
         <Container data-bs-theme="dark">
@@ -185,6 +200,9 @@ export const EditEventForm = ({ onEditEvent, onCancel, selectedEvent }) => {
                         <Button variant="primary" type="submit" className="mt-4">
                             Edytuj wydarzenie
                         </Button>
+                        <Button variant="danger" type="button" onClick={handleDeleteEvent} className="mt-4 ms-2">
+                            Usuń wydarzenie
+                        </Button>
                         <Button variant="secondary" type="button" onClick={onCancel} className="mt-4 ms-2">
                             Anuluj
                         </Button>
@@ -217,7 +235,7 @@ export const RegisterForm = ({ event, onCancel }) => {
                         setUserReservation(response.event_registration); // Ustawiamy stan z odpowiedzią
                         setMessage(response.event_registration.message);
                         setAccepted(response.event_registration.accepted)
-                        console.log(JSON.stringify(response.event_registration)); // Logujemy rejestrację w konsoli
+                        console.log("response.event_registration: "+JSON.stringify(response.event_registration)); // Logujemy rejestrację w konsoli
                     }else{
                         setUserReservation(false);
                         setMessage('');
@@ -235,7 +253,6 @@ export const RegisterForm = ({ event, onCancel }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("RegisterForm")
-        //TODO jesli juz jest to edytuj wiadomosc zamiast dodawać i sypać błędem
 
         try {
             const userEmail = SecurityService.getCurrentUserEmail();

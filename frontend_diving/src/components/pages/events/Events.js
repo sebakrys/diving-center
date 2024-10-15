@@ -67,6 +67,7 @@ class Events extends React.Component {
         this.setState((prevState) => ({
             events: [...prevState.events, newEvent],
             showCreateForm: false,
+            selectedEvent: newEvent
         }));
     };
 
@@ -75,6 +76,13 @@ class Events extends React.Component {
             events: prevState.events.map(event =>
                 event.eventId === editedEvent.eventId ? editedEvent : event
             ),
+        }));
+    };
+
+    handleDeleteEvent = (deletedEvent) => {
+        this.setState((prevState) => ({
+            events: prevState.events.filter(event => event.eventId !== deletedEvent.eventId),
+            selectedEvent: null
         }));
     };
 
@@ -147,6 +155,7 @@ class Events extends React.Component {
                 {(SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && this.state.selectedEvent) && (
                     <EditEventForm
                         onEditEvent={this.handleEditEvent}
+                        onDeleteEvent={this.handleDeleteEvent}
                         onCancel={() => this.setState({ selectedEvent: null })}
                         selectedEvent={this.state.selectedEvent}
                     />
