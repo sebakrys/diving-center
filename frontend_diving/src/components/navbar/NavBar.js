@@ -30,6 +30,7 @@ function NavBar() {
                     <Nav className="me-auto">
                         <Nav.Link href="#/home">Home</Nav.Link>
                         <Nav.Link href="#/events">Events</Nav.Link>
+                        <Nav.Link href="#/blog">Blog</Nav.Link>
                         {!SecurityService.isLoggedIn() &&
                             <Nav.Link href="#/register">Register</Nav.Link>
                         }

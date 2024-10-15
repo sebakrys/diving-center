@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Events from "./pages/events/Events";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import Blog from "./pages/blog/Blog";
 
 class Content extends React.Component {
     constructor(props) {
@@ -30,6 +31,7 @@ class Content extends React.Component {
                         <Route path={"/"} element={<Home />}/>
                         <Route path={"/home"} element={<Home />}/>
                         <Route path={"/events"} element={<Events />}/>
+                        <Route path={"/blog"} element={<Blog />}/>
                         <Route path={"/register"} element={<Register />}/>
                         <Route path={"/login"} element={<Login />}/>
                     </Routes>

@@ -17,6 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
+import static pl.sebakrys.diving.blog.service.BlogService.BLOG_IMAGES_ACCES_DIRECTORY;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
@@ -41,6 +43,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/authenticate", "/users/", "/event/{month}/{year}").permitAll()
+                        .requestMatchers(BLOG_IMAGES_ACCES_DIRECTORY+"*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

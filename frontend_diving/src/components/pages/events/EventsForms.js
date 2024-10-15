@@ -119,7 +119,7 @@ export const EditEventForm = ({ onEditEvent, onDeleteEvent, onCancel, selectedEv
 
     const handleDeleteEvent = async (e) => {
         e.preventDefault();
-        const result = await EventsService.deleteEvent(selectedEvent.eventId)//TODO
+        const result = await EventsService.deleteEvent(selectedEvent.eventId)
         if(result.success){
             onDeleteEvent(selectedEvent);
         }else {
