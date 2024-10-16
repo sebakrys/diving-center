@@ -37,10 +37,12 @@ class Blog extends React.Component {
             <div>
                 {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
                     <div>
-                        <CreateBlogPostForm fetchPosts={this.fetchPosts}/>
+                        <div>
+                            <CreateBlogPostForm fetchPosts={this.fetchPosts}/>
+                        </div>
+                        <h2 className="text-white mt-5 mb-4">Lista postów na blogu</h2>
                     </div>
                 )}
-                <h2 className="text-white mt-5 mb-4">Lista postów na blogu</h2>
                 <BlogPostsList posts={this.state.posts}/>
             </div>
         );

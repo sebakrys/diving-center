@@ -188,7 +188,7 @@ export const BlogPostsList = ({posts}) => {
                             </Button>
                         }
                         {/* Wyświetlenie miniaturek obrazków */}
-                        <div className="d-flex flex-wrap mt-2">
+                        <div className="d-flex flex-wrap justify-content-center mt-2">
                             {post.images &&
                                 post.images.map((image, index) => (
                                     <img
