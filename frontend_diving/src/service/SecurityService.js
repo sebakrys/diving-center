@@ -3,7 +3,7 @@ import {jwtDecode} from "jwt-decode";
 
 const SECURITY_REST_URL = 'http://localhost:8080';
 
-class SecurityService {
+class SecurityService {//TODO Przedłużanie tokena
     async loginUser(email, password) {
         try {
             const response = await axios.post(SECURITY_REST_URL+'/authenticate', {

@@ -12,6 +12,8 @@ import pl.sebakrys.diving.blog.entity.BlogPost;
 import pl.sebakrys.diving.blog.entity.BlogPostImage;
 import pl.sebakrys.diving.blog.repo.BlogPostImageRepo;
 import pl.sebakrys.diving.blog.repo.BlogPostRepo;
+import pl.sebakrys.diving.users.entity.User;
+import pl.sebakrys.diving.users.repo.UserRepo;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,10 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class BlogService {
@@ -36,6 +35,9 @@ public class BlogService {
     private BlogPostRepo blogPostRepository;
     @Autowired
     private BlogPostImageRepo blogPostImageRepository;
+    @Autowired
+    private UserRepo userRepo;
+
 
     // Metoda wykonywana po wstrzyknięciu zależności i wartości
     @PostConstruct
@@ -108,9 +110,30 @@ public class BlogService {
     @Transactional
     public BlogPost createPost(BlogPostDto postDto) {
         BlogPost post = new BlogPost();
+
+        if (postDto.getTitle().length() > 255) {
+            throw new IllegalArgumentException("Title is too long, it must be less than 255 characters.");
+        }
+
+        if (postDto.getContent().length() >3500) {
+            throw new IllegalArgumentException("Content is too long, it must be less than 3500 characters.");
+        }
+
+
+
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
+
+        User author = userRepo.findByEmail(
+                postDto.getEmail())
+                .orElse(null);
+        post.setAuthor(author);
+
+
+
         post.setPublishDate(LocalDateTime.now());
+
+
 
         BlogPost savedPost = blogPostRepository.save(post);
 
@@ -127,5 +150,11 @@ public class BlogService {
         }
 
         return savedPost;
+    }
+
+    public List<BlogPost> getAllBlogPosts(){
+        List<BlogPost> blogPostList = blogPostRepository.findAllByOrderByIdDesc();
+
+        return blogPostList;
     }
 }

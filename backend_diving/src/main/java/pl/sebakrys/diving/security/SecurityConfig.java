@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/authenticate", "/users/", "/event/{month}/{year}").permitAll()
                         .requestMatchers(BLOG_IMAGES_ACCES_DIRECTORY+"*").permitAll()
+                        .requestMatchers("/blog/post").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

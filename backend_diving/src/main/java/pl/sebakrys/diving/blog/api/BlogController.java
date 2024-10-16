@@ -42,4 +42,11 @@ public class BlogController {
         BlogPost createdPost = blogService.createPost(postDto);
         return ResponseEntity.ok(createdPost);
     }
+
+    @GetMapping("/post")
+    public ResponseEntity<List<BlogPost>>getAllPosts() {
+        List<BlogPost> allPosts = blogService.getAllBlogPosts();
+        System.out.println(allPosts.toString());
+        return ResponseEntity.ok(allPosts);
+    }
 }

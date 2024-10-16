@@ -34,6 +34,16 @@ class BlogService {
             return [];
         }
     }
+
+    async getAllPosts() {
+        try {
+            const response = await axios.get(`${BLOG_REST_URL}/blog/post`);
+            return response.data; // Zwracamy dane postów
+        } catch (error) {
+            console.error("Błąd podczas pobierania postów:", error);
+            return [];
+        }
+    }
 }
 
 export default new BlogService();

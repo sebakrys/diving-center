@@ -5,27 +5,31 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'moment/locale/pl';
 import {Button} from "react-bootstrap";
 import SecurityService from "../../../service/SecurityService";
-import {CreateBlogPostForm} from "./BlogForms";
+import {BlogPostsList, CreateBlogPostForm} from "./BlogForms";
+import BlogService from "../../../service/BlogService";
 
 const localizer = momentLocalizer(moment);
 
-class Events extends React.Component {
+class Blog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedEvent: null,
-            showCreateForm: false,
-            showEditEventForm: false,
-            showEventRegistrations: false,
-            events: [],
+            posts: [],
         };
     }
 
     componentDidMount() {
         const month = moment().month() + 1;
         const year = moment().year();
+
+        this.fetchPosts();
     }
 
+
+    fetchPosts = async () => {
+        const allPosts = await BlogService.getAllPosts();
+        this.setState({ posts: allPosts });
+    };
 
 
     render() {
@@ -33,13 +37,14 @@ class Events extends React.Component {
             <div>
                 {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
                     <div>
-                        <CreateBlogPostForm/>
+                        <CreateBlogPostForm fetchPosts={this.fetchPosts}/>
                     </div>
                 )}
-                POSTY
+                <h2 className="text-white mt-5 mb-4">Lista postów na blogu</h2>
+                <BlogPostsList posts={this.state.posts}/>
             </div>
         );
     }
 }
 
-export default Events;
+export default Blog;
