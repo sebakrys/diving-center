@@ -49,4 +49,31 @@ public class BlogController {
         System.out.println(allPosts.toString());
         return ResponseEntity.ok(allPosts);
     }
+
+    @GetMapping("/{postId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
+    public ResponseEntity<BlogPost> getPost(@PathVariable Long postId) {
+        return blogService.getBlogPost(postId)
+                .map(ResponseEntity::ok)
+                .orElseGet(()->ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{postId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
+    public ResponseEntity<BlogPost> editPost(@RequestBody BlogPostDto postDto, @PathVariable Long postId) {
+        BlogPost editedPost = blogService.editPost(postDto, postId);
+        if (editedPost == null) return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(editedPost);
+    }
+
+    @DeleteMapping("/{postId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
+    public ResponseEntity<BlogPost> deletePost(@PathVariable Long postId) {
+        BlogPost deletedPost = blogService.deleteBlogPosts(postId);
+        if (deletedPost == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(deletedPost);
+    }
+
+
 }

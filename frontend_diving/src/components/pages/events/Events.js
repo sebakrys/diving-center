@@ -4,8 +4,8 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './eventsStyles.css';
 import 'moment/locale/pl';
-import {CreateEventForm, EditEventForm, EventRegistrationTable, RegisterForm} from './EventsForms';
-import {Button} from "react-bootstrap";
+import { CreateEventForm, EditEventForm, EventRegistrationTable, RegisterForm } from './EventsForms';
+import { Button, Container } from "react-bootstrap";
 import EventsService from "../../../service/EventsService";
 import SecurityService from "../../../service/SecurityService";
 
@@ -38,7 +38,6 @@ class Events extends React.Component {
             });
         }
     };
-
 
     componentDidMount() {
         const month = moment().month() + 1;
@@ -90,7 +89,6 @@ class Events extends React.Component {
         this.setState((prevState) => ({ showCreateForm: !prevState.showCreateForm }));
     };
 
-
     // Funkcja do dostosowania stylu wybranego wydarzenia
     eventStyleGetter = (event) => {
         const isSelected = this.state.selectedEvent && this.state.selectedEvent.title === event.title;
@@ -109,7 +107,7 @@ class Events extends React.Component {
 
     render() {
         return (
-            <div>
+            <Container>
                 <div style={{ height: 500, opacity: "90%" }}>
                     <Calendar
                         localizer={localizer}
@@ -132,40 +130,51 @@ class Events extends React.Component {
                         }}
                     />
                 </div>
-                {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
-                    <div>
-                        <Button onClick={this.toggleCreateForm} style={{ marginBottom: '10px' }}>
-                            Create New Event
-                        </Button>
-                        {this.state.showCreateForm && (
-                            <CreateEventForm
-                                onAddEvent={this.handleAddEvent}
-                                onCancel={this.toggleCreateForm}
 
+                <div className="d-flex flex-wrap justify-content-center mt-4">
+                    {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
+                        <div className="p-2" style={{ flex: '1 1 600px', maxWidth: '800px' }}>
+                            <Button variant="outline-success" onClick={this.toggleCreateForm} style={{ marginBottom: '10px' }}>
+                                Utwórz nowe wydarzenie
+                            </Button>
+                            {this.state.showCreateForm && (
+                                <CreateEventForm
+                                    onAddEvent={this.handleAddEvent}
+                                    onCancel={this.toggleCreateForm}
+                                />
+                            )}
+                        </div>
+                    )}
+
+                    {(SecurityService.isUserInRole(["ROLE_CLIENT"]) && this.state.selectedEvent) && (
+                        <div className="p-2" style={{ flex: '1 1 600px', maxWidth: '800px' }}>
+                            <RegisterForm
+                                event={this.state.selectedEvent}
+                                onCancel={() => this.setState({ selectedEvent: null })}
                             />
-                        )}
-                    </div>
-                )}
-                {(SecurityService.isUserInRole(["ROLE_CLIENT"]) && this.state.selectedEvent) && (
-                    <RegisterForm
-                        event={this.state.selectedEvent}
-                        onCancel={() => this.setState({ selectedEvent: null })}
-                    />
-                )}
-                {(SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && this.state.selectedEvent) && (
-                    <EditEventForm
-                        onEditEvent={this.handleEditEvent}
-                        onDeleteEvent={this.handleDeleteEvent}
-                        onCancel={() => this.setState({ selectedEvent: null })}
-                        selectedEvent={this.state.selectedEvent}
-                    />
-                )}
-                {(SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && this.state.selectedEvent) && (
-                    <EventRegistrationTable
-                        selectedEvent={this.state.selectedEvent}
-                    />
-                )}
-            </div>
+                        </div>
+                    )}
+
+                    {(SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && this.state.selectedEvent) && (
+                        <div className="p-2" style={{ flex: '1 1 600px', maxWidth: '800px' }}>
+                            <EditEventForm
+                                onEditEvent={this.handleEditEvent}
+                                onDeleteEvent={this.handleDeleteEvent}
+                                onCancel={() => this.setState({ selectedEvent: null })}
+                                selectedEvent={this.state.selectedEvent}
+                            />
+                        </div>
+                    )/*TODO Ustawić sensowie (LAYOUT) formularze*/}
+
+                    {(SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && this.state.selectedEvent) && (
+                        <div className="p-2" style={{ flex: '1 0 600px', maxWidth: '1200px' }}>
+                            <EventRegistrationTable
+                                selectedEvent={this.state.selectedEvent}
+                            />
+                        </div>
+                    )}
+                </div>
+            </Container>
         );
     }
 }

@@ -43,7 +43,7 @@ class Blog extends React.Component {
                         <h2 className="text-white mt-5 mb-4">Lista postów na blogu</h2>
                     </div>
                 )}
-                <BlogPostsList posts={this.state.posts}/>
+                <BlogPostsList posts={this.state.posts} fetchPosts={this.fetchPosts}/>
             </div>
         );
     }

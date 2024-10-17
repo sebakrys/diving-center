@@ -152,9 +152,84 @@ public class BlogService {
         return savedPost;
     }
 
+    @Transactional
+    public BlogPost editPost(BlogPostDto postDto, Long postId) {
+        Optional<BlogPost> postOptional = blogPostRepository.findById(postId);
+
+        if(postOptional.isEmpty()) return null;
+        BlogPost post = postOptional.get();
+
+        if (postDto.getTitle().length() > 255) {
+            throw new IllegalArgumentException("Title is too long, it must be less than 255 characters.");
+        }
+
+        if (postDto.getContent().length() >3500) {
+            throw new IllegalArgumentException("Content is too long, it must be less than 3500 characters.");
+        }
+
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+
+        User author = userRepo.findByEmail(
+                        postDto.getEmail())
+                .orElse(null);
+        post.setAuthor(author);
+
+        //post.setPublishDate(LocalDateTime.now());// nie zmianiaj daty publikacji
+
+
+        //usuń obrazy z posta
+        for (BlogPostImage image:
+        post.getImages()) {
+            image.setPost(null);
+            blogPostImageRepository.save(image);
+        }
+
+        post.getImages().clear();
+
+        // Przypisz obrazy do posta
+        for (String imageUrl : postDto.getImages()) {
+            Optional<BlogPostImage> optionalImage = blogPostImageRepository.findByUrl(imageUrl);
+            if(optionalImage.isPresent()){
+                BlogPostImage image = optionalImage.get();
+                image.setPost(post);
+                blogPostImageRepository.save(image);  // Aktualizuj obrazek z przypisanym postem
+            }
+        }
+
+        BlogPost savedPost = blogPostRepository.save(post);
+
+        return savedPost;
+    }
+
+    @Transactional
+    public BlogPost deleteBlogPosts(Long postId){
+        Optional<BlogPost> postOptional = blogPostRepository.findById(postId);
+
+        if(postOptional.isEmpty()) return null;
+        BlogPost post = postOptional.get();
+
+        //TODO usun tez obrazy z dysku
+        //usuń obrazy z posta
+        for (BlogPostImage image:
+                post.getImages()) {
+            blogPostImageRepository.delete(image);
+        }
+
+        blogPostRepository.delete(post);
+
+        return post;
+    }
+
+    public Optional<BlogPost> getBlogPost(Long postId){
+        Optional<BlogPost> blogPost = blogPostRepository.findById(postId);
+
+        return blogPost;
+    }
     public List<BlogPost> getAllBlogPosts(){
         List<BlogPost> blogPostList = blogPostRepository.findAllByOrderByIdDesc();
 
         return blogPostList;
     }
+
 }

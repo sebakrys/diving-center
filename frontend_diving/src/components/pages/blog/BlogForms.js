@@ -130,14 +130,22 @@ export const CreateBlogPostForm = ({ fetchPosts }) => {
     );
 };
 
+//TODO (MODAL) ustal jedną wspolną wysokośc zdjec aby nie skakało podaczas przewijania jesli proporcje sa rozne
+
 const IMAGE_REST_URL = 'http://localhost:8080';
 
-export const BlogPostsList = ({posts}) => {
+export const BlogPostsList = ({ posts, fetchPosts }) => {
     const [showCarousel, setShowCarousel] = useState(false);
     const [showMoreStates, setShowMoreStates] = useState({});
     const [currentImages, setCurrentImages] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
-
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [selectedPost, setSelectedPost] = useState(null);
+    const [editedTitle, setEditedTitle] = useState("");
+    const [editedContent, setEditedContent] = useState("");
+    const [editedImages, setEditedImages] = useState([]);
+    const [previewImages, setPreviewImages] = useState([]);
+    const [isUploading, setIsUploading] = useState(false);
 
     // Funkcja obsługująca kliknięcie w miniaturkę
     const handleThumbnailClick = (images, index) => {
@@ -153,6 +161,7 @@ export const BlogPostsList = ({posts}) => {
         setCurrentIndex(0);
     };
 
+    // Funkcja obsługująca "Czytaj więcej"
     const handleShowMore = (postId) => {
         setShowMoreStates((prevStates) => ({
             ...prevStates,
@@ -160,33 +169,114 @@ export const BlogPostsList = ({posts}) => {
         }));
     };
 
+    // Funkcja obsługująca usuwanie posta
+    const handleDeletePost = async (postId) => {
+        const confirmed = window.confirm("Czy na pewno chcesz usunąć tego posta?");
+        if (confirmed) {
+            await BlogService.deletePost(postId);
+            fetchPosts(); // Odśwież listę postów po usunięciu
+        }
+    };
+
+    // Funkcja otwierająca modal edycji
+    const handleEditPost = (post) => {
+        setSelectedPost(post);
+        setEditedTitle(post.title);
+        setEditedContent(post.content);
+        setEditedImages(post.images || []);
+        setPreviewImages(post.images.map((image) => `${IMAGE_REST_URL}${image.thumbnail_url}`));
+        setShowEditModal(true);
+    };
+
+    // Funkcja obsługująca aktualizację obrazów podczas edycji
+    const handleEditFileUpload = async (event) => {
+        const files = Array.from(event.target.files);
+
+        // Generowanie podglądu obrazów
+        const previews = files.map((file) => URL.createObjectURL(file));
+        setPreviewImages((prevPreviews) => [...prevPreviews, ...previews]);
+
+        // Zablokuj przycisk "Zapisz zmiany" podczas przesyłania zdjęć
+        setIsUploading(true);
+
+        // Wyślij pliki na serwer
+        const uploadedUrls = await BlogService.uploadFiles(files);
+
+        // Zaktualizuj adresy URL zdjęć
+        setEditedImages((prevImages) => [...prevImages, ...uploadedUrls]);
+
+        // Odblokuj przycisk "Zapisz zmiany" po zakończeniu przesyłania
+        setIsUploading(false);
+    };
+
+    // Funkcja obsługująca usuwanie obrazka podczas edycji
+    const handleRemoveImage = (index) => {
+        setEditedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+        setPreviewImages((prevPreviews) => prevPreviews.filter((_, i) => i !== index));
+    };
+
+    // Funkcja obsługująca zapisanie edytowanego posta
+    const handleEditSubmit = async (event) => {
+        event.preventDefault();
+
+        const updatedPost = {
+            title: editedTitle,
+            content: editedContent,
+            email: SecurityService.getCurrentUserEmail(),
+            images: editedImages,
+        };
+
+        await BlogService.editPost(selectedPost.id, updatedPost);
+        setShowEditModal(false);
+        setSelectedPost(null);
+        //fetchPosts(); // Odśwież listę postów po edycji
+    };
+
     return (
         <Container className="mt-1">
             {posts.map((post) => (
                 <Card key={post.id} className="mb-4 bg-dark text-white" style={{ opacity: "90%" }}>
                     <Card.Body>
-                        <Card.Title className="mb-3">{post.title}</Card.Title>
-                        <Card.Subtitle className="mb-4 text-white">
-                            {new Date(post.publishDate).toLocaleDateString('pl-PL', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                            })}{' '}
-                            | {post.author.firstName} {post.author.lastName}
-                        </Card.Subtitle>
+                        <div className="d-flex justify-content-between align-items-start">
+                            <div>
+                                <Card.Title className="mb-3">{post.title}</Card.Title>
+                                <Card.Subtitle className="mb-4 text-white">
+                                    {new Date(post.publishDate).toLocaleDateString('pl-PL', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric',
+                                    })}{' '}
+                                    | {post.author.firstName} {post.author.lastName}
+                                </Card.Subtitle>
+                            </div>
+                        </div>
                         <Card.Text>
                             {(post.content.length > 200 && !showMoreStates[post.id])
                                 ? `${post.content.substring(0, 200)}...`
                                 : post.content}
                         </Card.Text>
                         {/* Przycisk "Czytaj więcej" */}
-                        {!showMoreStates[post.id] &&
-                            <Button variant="outline-light" className="mt-2" onClick={() => {
-                                handleShowMore(post.id)
-                            }}>
+                        {(post.content.length > 200 && !showMoreStates[post.id]) && (
+                            <Button
+                                variant="outline-light"
+                                className="mt-2"
+                                onClick={() => handleShowMore(post.id)}
+                            >
                                 Czytaj więcej
                             </Button>
-                        }
+                        )}
+
+                        {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
+                            <div>
+                                <Button variant="link" className="text-danger" onClick={() => handleDeletePost(post.id)}>
+                                    &times;
+                                </Button>
+                                <Button variant="outline-light" className="ml-2" onClick={() => handleEditPost(post)}>
+                                    Edytuj
+                                </Button>
+                            </div>
+                        )}
+
                         {/* Wyświetlenie miniaturek obrazków */}
                         <div className="d-flex flex-wrap justify-content-center mt-2">
                             {post.images &&
@@ -266,7 +356,99 @@ export const BlogPostsList = ({posts}) => {
                     </Button>
                 </Modal.Body>
             </Modal>
+
+            {/* Modal edycji posta */}
+            <Modal
+                show={showEditModal}
+                onHide={() => setShowEditModal(false)}
+                centered
+                size="lg"
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Edytuj post</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form onSubmit={handleEditSubmit}>
+                        <Form.Group controlId="editPostTitle" className="mb-3">
+                            <Form.Label>Tytuł posta</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Wprowadź tytuł"
+                                value={editedTitle}
+                                onChange={(e) => setEditedTitle(e.target.value)}
+                                maxLength={255}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="editPostContent" className="mb-3">
+                            <Form.Label>Treść posta</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={5}
+                                placeholder="Wprowadź treść posta"
+                                value={editedContent}
+                                onChange={(e) => setEditedContent(e.target.value)}
+                                maxLength={3500}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="editPostImages" className="mb-3">
+                            <Form.Label>Dodaj zdjęcia</Form.Label>
+                            <Form.Control
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                onChange={handleEditFileUpload}
+                                disabled={isUploading} // Zablokuj, gdy obrazy są przesyłane
+                            />
+                        </Form.Group>
+
+                        {isUploading && (
+                            <Spinner animation="border" role="status">
+                                <span className="sr-only"></span>
+                            </Spinner>
+                        )}
+
+                        {/* Podgląd obrazów */}
+                        {previewImages.length > 0 && (
+                            <Row className="mb-3">
+                                <Col>
+                                    <h5>Podgląd zdjęć</h5>
+                                    <div className="d-flex flex-wrap">
+                                        {previewImages.map((src, index) => (
+                                            <div key={index} style={{ position: 'relative', marginRight: '10px', marginBottom: '10px' }}>
+                                                <img
+                                                    src={src}
+                                                    alt={`preview_${index}`}
+                                                    style={{
+                                                        width: "100px",
+                                                        height: "100px",
+                                                        objectFit: "cover",
+                                                    }}
+                                                />
+                                                <Button
+                                                    variant="danger"
+                                                    size="sm"
+                                                    style={{ position: 'absolute', top: '0', right: '0' }}
+                                                    onClick={() => handleRemoveImage(index)}
+                                                >
+                                                    &times;
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </Col>
+                            </Row>
+                        )}
+
+                        <Button type="submit" variant="primary" disabled={isUploading}>
+                            Zapisz zmiany
+                        </Button>
+                    </Form>
+                </Modal.Body>
+            </Modal>
         </Container>
     );
 };
-
