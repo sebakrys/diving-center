@@ -1,0 +1,90 @@
+/* Ustaw tło kalendarza na przezroczyste */
+.rbc-calendar {
+    background-color: transparent;
+    color: #ffffff;
+}
+
+/* Ustaw kolory tekstu i tła dla nagłówków */
+.rbc-toolbar {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid #ffffff; /* Dodano białe obramowanie */
+}
+
+.rbc-toolbar button {
+    color: #ffffff;
+    background-color: transparent;
+    border: none;
+}
+
+.rbc-toolbar button:hover {
+    background-color: #444444;
+}
+
+.rbc-header {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid #333333;
+}
+
+/* Ustaw kolory dla komórek dni */
+.rbc-day-bg {
+    background-color: transparent;
+    border: 1px solid #333333;
+}
+
+.rbc-day-bg:hover {
+    background-color: #1a1a1a;
+}
+
+/* Ustaw kolory dla wydarzeń */
+.rbc-event {
+    background-color: #265985;
+    color: #ffffff;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+/* Ustaw kolory dla zaznaczonego dnia */
+.rbc-selected-cell {
+    background-color: #333333 !important;
+}
+
+/* Ustaw kolory dla dni poza aktualnym miesiącem */
+.rbc-month-row .rbc-off-range-bg {
+    background-color: transparent;
+    color: #666666;
+}
+
+/* Ustaw kolory dla bieżącego dnia */
+.rbc-today {
+    background-color: transparent;
+}
+
+/* Ustawienia dla paska nawigacji */
+.rbc-toolbar-label {
+    color: #ffffff;
+}
+
+/* Ustawienia dla widoku tygodnia i dnia */
+.rbc-time-view {
+    background-color: transparent;
+    color: #ffffff;
+}
+
+.rbc-timeslot-group {
+    border-color: #333333;
+}
+
+.rbc-time-header {
+    border-color: #333333;
+}
+
+.rbc-time-content {
+    border-top: 1px solid #333333;
+}
+
+/* Ustawienia dla scrollbara */
+.rbc-time-content {
+    scrollbar-color: #333333 transparent;
+}

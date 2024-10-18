@@ -93,7 +93,7 @@ class Events extends React.Component {
     eventStyleGetter = (event) => {
         const isSelected = this.state.selectedEvent && this.state.selectedEvent.title === event.title;
         const style = {
-            backgroundColor: isSelected ? '#265985' : '#3174ad',
+            backgroundColor: isSelected ? '#B658FC' : '#3174ad',
             color: 'white',
             borderRadius: '5px',
             opacity: 0.8,
@@ -108,7 +108,7 @@ class Events extends React.Component {
     render() {
         return (
             <Container>
-                <div style={{ height: 500, opacity: "90%" }}>
+                <div style={{ height: 500 }}>
                     <Calendar
                         localizer={localizer}
                         events={this.state.events}
@@ -117,7 +117,7 @@ class Events extends React.Component {
                         onSelectEvent={this.handleSelected}
                         eventPropGetter={this.eventStyleGetter}
                         culture='pl'
-                        style={{ height: '100%', margin: '5%', background: '#F0F0FF' }}
+                        style={{ height: '100%', margin: '5%' }} // Bez tła
                         onRangeChange={this.handleRangeChange}
                         messages={{
                             next: "Nast.",
@@ -164,7 +164,7 @@ class Events extends React.Component {
                                 selectedEvent={this.state.selectedEvent}
                             />
                         </div>
-                    )/*TODO Ustawić sensowie (LAYOUT) formularze*/}
+                    )}
 
                     {(SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && this.state.selectedEvent) && (
                         <div className="p-2" style={{ flex: '1 0 600px', maxWidth: '1200px' }}>
