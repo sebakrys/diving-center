@@ -11,25 +11,37 @@ export const CreateBlogPostForm = ({ fetchPosts }) => {
     const [previewImages, setPreviewImages] = useState([]);
     const [isUploading, setIsUploading] = useState(false);
 
+    // Funkcja obsługująca aktualizację obrazów podczas edycji
     const handleFileUpload = async (event) => {
         const files = Array.from(event.target.files);
 
         // Generowanie podglądu obrazów
-        const previews = files.map(file => URL.createObjectURL(file));
-        setPreviewImages(previews);
+        const previews = files.map((file) => URL.createObjectURL(file));
+        setPreviewImages((prevPreviews) => [...prevPreviews, ...previews]);
 
-        // Zablokuj przycisk "Zapisz post" podczas przesyłania zdjęć
+        // Zablokuj przycisk "Zapisz zmiany" podczas przesyłania zdjęć
         setIsUploading(true);
 
         // Wyślij pliki na serwer
         const uploadedUrls = await BlogService.uploadFiles(files);
 
-        // Zaktualizuj adresy URL zdjęć
-        setUploadedImagesUrls(uploadedUrls);
 
-        // Odblokuj przycisk "Zapisz post" po zakończeniu przesyłania
+        // Przekształć tablicę łańcuchów w tablicę obiektów z kluczem 'url'
+        //const uploadedImages = uploadedUrls.map((url) => ({ url }));
+
+        console.log(JSON.stringify(uploadedUrls))
+        // Zaktualizuj adresy URL zdjęć
+        setUploadedImagesUrls((prevImages) => [...prevImages, ...uploadedUrls]);
+
+        // Odblokuj przycisk "Zapisz zmiany" po zakończeniu przesyłania
         setIsUploading(false);
     };
+
+    const handleRemoveImage = (index) => {
+        setUploadedImagesUrls((prevImages) => prevImages.filter((_, i) => i !== index));
+        setPreviewImages((prevPreviews) => prevPreviews.filter((_, i) => i !== index));
+    };
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -41,6 +53,8 @@ export const CreateBlogPostForm = ({ fetchPosts }) => {
             content: postContent,
             images: uploadedImagesUrls, // Adresy URL przesłanych obrazów
         };
+
+        console.log(JSON.stringify(formData))
 
         // Wysyłanie posta do serwera
         const response = await BlogService.createPostWithImages(formData);
@@ -55,6 +69,8 @@ export const CreateBlogPostForm = ({ fetchPosts }) => {
             fetchPosts();
         }
     };
+
+
 
     return (
         <Container data-bs-theme="dark">
@@ -99,23 +115,34 @@ export const CreateBlogPostForm = ({ fetchPosts }) => {
                 {isUploading && <Spinner animation="border" role="status"><span className="sr-only text-white h4"></span></Spinner>}
 
                 {/* Podgląd obrazów */}
+                {/* Podgląd obrazów */}
                 {previewImages.length > 0 && (
                     <Row className="mb-3">
                         <Col>
-                            <h5 className="mt-3 text-white">Podgląd zdjęć</h5>
-                            <div className="d-flex">
+                            <h5>Podgląd zdjęć</h5>
+                            <div className="d-flex flex-wrap">
                                 {previewImages.map((src, index) => (
-                                    <img
-                                        key={index}
-                                        src={src}
-                                        alt={`preview_${index}`}
-                                        style={{
-                                            width: "100px",
-                                            height: "100px",
-                                            objectFit: "cover",
-                                            marginRight: "10px",
-                                        }}
-                                    />
+                                    <div key={index} style={{ position: 'relative', marginRight: '10px', marginBottom: '10px' }}>
+                                        <img
+                                            src={src}
+                                            alt={`preview_${index}`}
+                                            style={{
+                                                width: "100px",
+                                                height: "100px",
+                                                objectFit: "cover",
+                                            }}
+                                        />
+                                        {!isUploading &&
+                                        <Button
+                                            variant="danger"
+                                            size="sm"
+                                            style={{ position: 'absolute', top: '0', right: '0' }}
+                                            onClick={() => handleRemoveImage(index)}
+                                        >
+                                            &times;
+                                        </Button>
+                                        }
+                                    </div>
                                 ))}
                             </div>
                         </Col>
@@ -437,14 +464,16 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
                                                         objectFit: "cover",
                                                     }}
                                                 />
-                                                <Button
-                                                    variant="danger"
-                                                    size="sm"
-                                                    style={{ position: 'absolute', top: '0', right: '0' }}
-                                                    onClick={() => handleRemoveImage(index)}
-                                                >
-                                                    &times;
-                                                </Button>
+                                                {!isUploading &&
+                                                    <Button
+                                                        variant="danger"
+                                                        size="sm"
+                                                        style={{position: 'absolute', top: '0', right: '0'}}
+                                                        onClick={() => handleRemoveImage(index)}
+                                                    >
+                                                        &times;
+                                                    </Button>
+                                                }
                                             </div>
                                         ))}
                                     </div>
