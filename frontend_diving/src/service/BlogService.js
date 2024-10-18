@@ -52,7 +52,18 @@ class BlogService {
             const response = await axios.put(`${BLOG_REST_URL}/blog/${postId}`, updatedPost);
             return { success: true, data: response.data };
         } catch (error) {
-            console.error("Błąd podczas tworzenia posta:", error);
+            console.error("Błąd podczas edycji posta:", error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async deletePost(postId, updatedPost) {
+
+        try {
+            const response = await axios.delete(`${BLOG_REST_URL}/blog/${postId}`);
+            return { success: true, data: response.data };
+        } catch (error) {
+            console.error("Błąd podczas usuwania posta:", error);
             return { success: false, error: error.message };
         }
     }

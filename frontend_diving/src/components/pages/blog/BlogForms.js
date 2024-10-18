@@ -271,22 +271,57 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
     return (
         <Container className="mt-1">
             {posts.map((post) => (
-                <Card key={post.id} className="mb-4 bg-dark text-white" style={{ opacity: "90%" }}>
+                <Card
+                    key={post.id}
+                    className="mb-4 bg-dark text-white"
+                    style={{
+                        opacity: "90%",
+                        borderRadius: "15px",
+                        overflow: "hidden",
+                        position: "relative",
+                    }}
+                >
                     <Card.Body>
-                        <div className="d-flex justify-content-between align-items-start">
+                        {/* Górna sekcja: data, tytuł, autor */}
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                            {/* Data po lewej */}
                             <div>
-                                <Card.Title className="mb-3">{post.title}</Card.Title>
-                                <Card.Subtitle className="mb-4 text-white">
+                                <Card.Subtitle className="text-white">
                                     {new Date(post.publishDate).toLocaleDateString('pl-PL', {
                                         year: 'numeric',
                                         month: 'long',
                                         day: 'numeric',
-                                    })}{' '}
-                                    | {post.author.firstName} {post.author.lastName}
+                                    })}
+                                </Card.Subtitle>
+                            </div>
+                            {/* Tytuł na środku */}
+                            <div style={{ flex: 1, textAlign: 'center' }}>
+                                <Card.Title style={{ fontSize: "1.8rem", marginBottom: 0 }}>
+                                    {post.title}
+                                </Card.Title>
+                            </div>
+                            {/* Autor po prawej */}
+                            <div>
+                                <Card.Subtitle className="text-white">
+                                    {post.author.firstName} {post.author.lastName}
                                 </Card.Subtitle>
                             </div>
                         </div>
-                        <Card.Text>
+
+                        {/* Przyciski "Edytuj" i "Usuń" */}
+                        {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
+                            <div className="d-flex justify-content-between mt-3">
+                                <Button variant="outline-light" onClick={() => handleEditPost(post)}>
+                                    Edytuj
+                                </Button>
+                                <Button variant="danger" onClick={() => handleDeletePost(post.id)}>
+                                    Usuń
+                                </Button>
+                            </div>
+                        )}
+
+                        {/* Treść posta */}
+                        <Card.Text className="mt-3">
                             {(post.content.length > 200 && !showMoreStates[post.id])
                                 ? `${post.content.substring(0, 200)}...`
                                 : post.content}
@@ -302,18 +337,7 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
                             </Button>
                         )}
 
-                        {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
-                            <div>
-                                <Button variant="link" className="text-danger" onClick={() => handleDeletePost(post.id)}>
-                                    &times;
-                                </Button>
-                                <Button variant="outline-light" className="ml-2" onClick={() => handleEditPost(post)}>
-                                    Edytuj
-                                </Button>
-                            </div>
-                        )}
-
-                        {/* Wyświetlenie miniaturek obrazków */}
+                        {/* Miniaturki obrazków */}
                         <div className="d-flex flex-wrap justify-content-center mt-2">
                             {post.images &&
                                 post.images.map((image, index) => (
@@ -334,6 +358,19 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
                                     />
                                 ))}
                         </div>
+
+                        {/* Efekt rozmytych krawędzi */}
+                        <div
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                pointerEvents: "none",
+                                boxShadow: "inset 0 0 25px rgba(0, 0, 0, 1)",
+                            }}
+                        ></div>
                     </Card.Body>
                 </Card>
             ))}
