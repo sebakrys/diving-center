@@ -202,8 +202,11 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
         // Wyślij pliki na serwer
         const uploadedUrls = await BlogService.uploadFiles(files);
 
+
+        // Przekształć tablicę łańcuchów w tablicę obiektów z kluczem 'url'
+        const uploadedImages = uploadedUrls.map((url) => ({ url }));
         // Zaktualizuj adresy URL zdjęć
-        setEditedImages((prevImages) => [...prevImages, ...uploadedUrls]);
+        setEditedImages((prevImages) => [...prevImages, ...uploadedImages]);
 
         // Odblokuj przycisk "Zapisz zmiany" po zakończeniu przesyłania
         setIsUploading(false);
@@ -219,17 +222,23 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
     const handleEditSubmit = async (event) => {
         event.preventDefault();
 
+
+
         const updatedPost = {
             title: editedTitle,
-            content: editedContent,
             email: SecurityService.getCurrentUserEmail(),
-            images: editedImages,
+            content: editedContent,
+            images: editedImages.map(image => image.url), // Adresy URL przesłanych obrazów
         };
+
+        console.log((JSON.stringify(editedImages)))
+        console.log(JSON.stringify(updatedPost))
+
 
         await BlogService.editPost(selectedPost.id, updatedPost);
         setShowEditModal(false);
         setSelectedPost(null);
-        //fetchPosts(); // Odśwież listę postów po edycji
+        fetchPosts(); // Odśwież listę postów po edycji
     };
 
     return (

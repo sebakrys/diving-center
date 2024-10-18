@@ -48,14 +48,8 @@ class BlogService {
 
     async editPost(postId, updatedPost) {
 
-        const formData = {
-            title: updatedPost.title,
-            email: SecurityService.getCurrentUserEmail(),
-            content: updatedPost.content,
-            images: updatedPost.images, // Adresy URL przesłanych obrazów
-        };
         try {
-            const response = await axios.put(`${BLOG_REST_URL}/blog/${postId}`, formData);
+            const response = await axios.put(`${BLOG_REST_URL}/blog/${postId}`, updatedPost);
             return { success: true, data: response.data };
         } catch (error) {
             console.error("Błąd podczas tworzenia posta:", error);
