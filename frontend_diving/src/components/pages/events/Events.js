@@ -4,8 +4,14 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './eventsStyles.css';
 import 'moment/locale/pl';
-import { CreateEventForm, EditEventForm, EventRegistrationTable, RegisterForm } from './EventsForms';
-import { Button, Container } from "react-bootstrap";
+import {
+    CreateEventForm,
+    DisplayBasicEventInformations,
+    EditEventForm,
+    EventRegistrationTable,
+    RegisterForm
+} from './EventsForms';
+import {Button, Col, Container, Modal, Row} from "react-bootstrap";
 import EventsService from "../../../service/EventsService";
 import SecurityService from "../../../service/SecurityService";
 
@@ -17,7 +23,7 @@ class Events extends React.Component {
         this.state = {
             selectedEvent: null,
             showCreateForm: false,
-            showEditEventForm: false,
+            showEditForm: false,
             showEventRegistrations: false,
             events: [],
         };
@@ -75,18 +81,25 @@ class Events extends React.Component {
             events: prevState.events.map(event =>
                 event.eventId === editedEvent.eventId ? editedEvent : event
             ),
+            showEditForm: false,
+            selectedEvent: null
         }));
     };
 
     handleDeleteEvent = (deletedEvent) => {
         this.setState((prevState) => ({
             events: prevState.events.filter(event => event.eventId !== deletedEvent.eventId),
-            selectedEvent: null
+            selectedEvent: null,
+            showEditForm: false
         }));
     };
 
     toggleCreateForm = () => {
         this.setState((prevState) => ({ showCreateForm: !prevState.showCreateForm }));
+    };
+
+    toggleEditForm = () => {
+        this.setState((prevState) => ({ showEditForm: !prevState.showEditForm }));
     };
 
     // Funkcja do dostosowania stylu wybranego wydarzenia
@@ -117,7 +130,7 @@ class Events extends React.Component {
                         onSelectEvent={this.handleSelected}
                         eventPropGetter={this.eventStyleGetter}
                         culture='pl'
-                        style={{ height: '100%', margin: '5%' }} // Bez tła
+                        style={{ height: '100%', margin: '5%' }}
                         onRangeChange={this.handleRangeChange}
                         messages={{
                             next: "Nast.",
@@ -133,37 +146,68 @@ class Events extends React.Component {
 
                 <div className="d-flex flex-wrap justify-content-center mt-4">
                     {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
-                        <div className="p-2" style={{ flex: '1 1 600px', maxWidth: '800px' }}>
-                            <Button variant="outline-success" onClick={this.toggleCreateForm} style={{ marginBottom: '10px' }}>
+                        <div className="d-flex mb-3">
+                            <Button
+                                variant="outline-success"
+                                onClick={this.toggleCreateForm}
+                                className="me-2"
+                            >
                                 Utwórz nowe wydarzenie
                             </Button>
-                            {this.state.showCreateForm && (
-                                <CreateEventForm
-                                    onAddEvent={this.handleAddEvent}
-                                    onCancel={this.toggleCreateForm}
-                                />
+
+                            {this.state.selectedEvent && (
+                                <>
+                                    <Button
+                                        variant="outline-primary"
+                                        onClick={this.toggleEditForm}
+                                    >
+                                        Edytuj wydarzenie
+                                    </Button>
+                                </>
                             )}
                         </div>
                     )}
 
-                    {(SecurityService.isUserInRole(["ROLE_CLIENT"]) && this.state.selectedEvent) && (
-                        <div className="p-2" style={{ flex: '1 1 600px', maxWidth: '800px' }}>
-                            <RegisterForm
-                                event={this.state.selectedEvent}
-                                onCancel={() => this.setState({ selectedEvent: null })}
+                    {/* Modal tworzenia nowego wydarzenia */}
+                    <Modal show={this.state.showCreateForm} onHide={this.toggleCreateForm} centered>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Utwórz nowe wydarzenie</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <CreateEventForm
+                                onAddEvent={this.handleAddEvent}
+                                onCancel={this.toggleCreateForm}
                             />
-                        </div>
-                    )}
+                        </Modal.Body>
+                    </Modal>
 
-                    {(SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && this.state.selectedEvent) && (
-                        <div className="p-2" style={{ flex: '1 1 600px', maxWidth: '800px' }}>
+                    {/* Modal edycji wydarzenia */}
+                    <Modal show={this.state.showEditForm} onHide={this.toggleEditForm} centered>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Edytuj wydarzenie</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
                             <EditEventForm
                                 onEditEvent={this.handleEditEvent}
                                 onDeleteEvent={this.handleDeleteEvent}
-                                onCancel={() => this.setState({ selectedEvent: null })}
+                                onCancel={this.toggleEditForm}
                                 selectedEvent={this.state.selectedEvent}
                             />
-                        </div>
+                        </Modal.Body>
+                    </Modal>
+                    {(SecurityService.getRoles().length===0 && this.state.selectedEvent) && (
+
+                            <DisplayBasicEventInformations
+                                event={this.state.selectedEvent}
+                            />
+
+                    )}
+
+                    {(SecurityService.isUserInRole(["ROLE_CLIENT"]) && this.state.selectedEvent) && (
+                        <RegisterForm
+                            event={this.state.selectedEvent}
+                            onCancel={() => this.setState({ selectedEvent: null })}
+                        />
                     )}
 
                     {(SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && this.state.selectedEvent) && (

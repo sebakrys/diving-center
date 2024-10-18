@@ -6,6 +6,24 @@ import SecurityService from "../../../service/SecurityService";
 import * as Icon from 'react-bootstrap-icons';
 
 
+export const DisplayBasicEventInformations = ({ event }) => {
+
+    return(
+        <Container data-bs-theme="dark">
+            <Row className="justify-content-md-center">
+                <Col md="6">
+                    <h2 className="mt-1 text-white">{event.title}</h2>
+                    <p className='fs-4 text-white'>{event.description}</p>
+                    <p className='text-white'>
+                        Start: {moment(event.start).format('LLL')} <br />
+                        Koniec: {moment(event.end).format('LLL')}
+                    </p>
+                </Col>
+            </Row>
+        </Container>
+    );
+}
+
 // Formularz do tworzenia nowego wydarzenia
 export const CreateEventForm = ({ onAddEvent, onCancel }) => {
     const [title, setTitle] = useState('');
@@ -38,13 +56,11 @@ export const CreateEventForm = ({ onAddEvent, onCancel }) => {
     };
 
     return (
-        <Container data-bs-theme="dark">
-            <Row className="justify-content-md-center">
-                <Col md="6">
-                    <h2 className="mt-5 text-white">Tworzenie nowego wydarzenia</h2>
+        <>
                     <Form onSubmit={handleSubmit}>
+                        {/* Pola formularza */}
                         <Form.Group controlId="formTitle" className="mt-3">
-                            <Form.Label className='text-white'>Tytuł</Form.Label>
+                            <Form.Label>Tytuł</Form.Label>
                             <Form.Control
                                 type="text"
                                 placeholder="Wprowadź tytuł"
@@ -85,19 +101,20 @@ export const CreateEventForm = ({ onAddEvent, onCancel }) => {
                             />
                         </Form.Group>
 
-                        <Button variant="primary" type="submit" className="mt-4">
-                            Dodaj wydarzenie
-                        </Button>
-                        <Button variant="secondary" type="button" onClick={onCancel} className="mt-4 ms-2">
-                            Anuluj
-                        </Button>
+                        {/* Przyciski akcji */}
+                        <div className="d-flex justify-content-end mt-4">
+                            <Button variant="secondary" onClick={onCancel} className="me-2">
+                                Anuluj
+                            </Button>
+                            <Button variant="primary" type="submit">
+                                Dodaj wydarzenie
+                            </Button>
+                        </div>
                     </Form>
                     {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
-                </Col>
-            </Row>
-        </Container>
-    );
-};
+                </>
+                );
+                };
 
 // Formularz do edycji wybranego wydarzenia
 export const EditEventForm = ({ onEditEvent, onDeleteEvent, onCancel, selectedEvent }) => {
@@ -119,11 +136,14 @@ export const EditEventForm = ({ onEditEvent, onDeleteEvent, onCancel, selectedEv
 
     const handleDeleteEvent = async (e) => {
         e.preventDefault();
-        const result = await EventsService.deleteEvent(selectedEvent.eventId)
-        if(result.success){
-            onDeleteEvent(selectedEvent);
-        }else {
-            setError(result.message);
+        const confirmed = window.confirm("Czy na pewno chcesz usunąć to wydarzenie?");
+        if (confirmed) {
+            const result = await EventsService.deleteEvent(selectedEvent.eventId)
+            if (result.success) {
+                onDeleteEvent(selectedEvent);
+            } else {
+                setError(result.message);
+            }
         }
     }
 
@@ -138,6 +158,7 @@ export const EditEventForm = ({ onEditEvent, onDeleteEvent, onCancel, selectedEv
             const newEvent = {
                 ...selectedEvent, // Zachowaj inne właściwości eventu (np. id)
                 title,
+                description,
                 start: new Date(start),
                 end: new Date(end),
             };
@@ -150,21 +171,19 @@ export const EditEventForm = ({ onEditEvent, onDeleteEvent, onCancel, selectedEv
 
 
     return (
-        <Container data-bs-theme="dark">
-            <Row className="justify-content-md-center">
-                <Col md="6">
-                    <h2 className="mt-5 text-white">Edytowanie wydarzenia</h2>
-                    <Form onSubmit={handleSubmit}>
-                        <Form.Group controlId="formTitle" className="mt-3">
-                            <Form.Label className='text-white'>Tytuł</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Wprowadź tytuł"
-                                value={title}
-                                onChange={e => setTitle(e.target.value)}
-                                required
-                            />
-                        </Form.Group>
+        <>
+        <Form onSubmit={handleSubmit}>
+            {/* Pola formularza */}
+            <Form.Group controlId="formTitle" className="mt-3">
+                <Form.Label>Tytuł</Form.Label>
+                <Form.Control
+                    type="text"
+                    placeholder="Wprowadź tytuł"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                    required
+                />
+            </Form.Group>
 
                         <Form.Group controlId="formDescription" className="mt-3">
                             <Form.Label className='text-white'>Opis</Form.Label>
@@ -197,20 +216,21 @@ export const EditEventForm = ({ onEditEvent, onDeleteEvent, onCancel, selectedEv
                             />
                         </Form.Group>
 
-                        <Button variant="primary" type="submit" className="mt-4">
-                            Edytuj wydarzenie
-                        </Button>
-                        <Button variant="danger" type="button" onClick={handleDeleteEvent} className="mt-4 ms-2">
-                            Usuń wydarzenie
-                        </Button>
-                        <Button variant="secondary" type="button" onClick={onCancel} className="mt-4 ms-2">
-                            Anuluj
-                        </Button>
-                    </Form>
-                    {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
-                </Col>
-            </Row>
-        </Container>
+            {/* Przyciski akcji */}
+            <div className="d-flex justify-content-end mt-4">
+                <Button variant="danger" onClick={handleDeleteEvent} className="me-auto">
+                    Usuń wydarzenie
+                </Button>
+                <Button variant="secondary" onClick={onCancel} className="me-2">
+                    Anuluj
+                </Button>
+                <Button variant="primary" type="submit">
+                    Zapisz zmiany
+                </Button>
+            </div>
+        </Form>
+            {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+        </>
     );
 };
 
@@ -374,13 +394,16 @@ export const EventRegistrationTable = ({ selectedEvent}) => {
     };
 
     const handleDeleteEventRegistration = (id) => {
-        EventsService.removeEventRegistration(id).then(
-            ()=>{
-                fetchEventRegistrations();
-            }
-        ).catch((error)=>{
-            console.error('Błąd podczas usuwania rejestracji:', error);
-        });
+        const confirmed = window.confirm("Czy na pewno chcesz usunąć tą rejestrację?");
+        if (confirmed) {
+            EventsService.removeEventRegistration(id).then(
+                () => {
+                    fetchEventRegistrations();
+                }
+            ).catch((error) => {
+                console.error('Błąd podczas usuwania rejestracji:', error);
+            });
+        }
     };
 
 
