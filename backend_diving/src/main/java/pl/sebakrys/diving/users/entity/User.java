@@ -28,7 +28,7 @@ public class User {
 
     private boolean active;
 
-    @ManyToMany(fetch = FetchType.EAGER)//TODO PRIOB zamienić na LAZY i dodać @Transactional w metodach gdzie są pobierane role Usera
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnore
     @JoinTable(
             name = "user_roles",

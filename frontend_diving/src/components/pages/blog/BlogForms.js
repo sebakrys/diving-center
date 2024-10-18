@@ -273,7 +273,7 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
             {posts.map((post) => (
                 <Card
                     key={post.id}
-                    className="mb-4 bg-dark text-white"
+                    className="mt-5 mb-4 bg-dark text-white"
                     style={{
                         opacity: "90%",
                         borderRadius: "15px",
@@ -286,7 +286,7 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
                         <div className="d-flex justify-content-between align-items-center mb-3">
                             {/* Data po lewej */}
                             <div>
-                                <Card.Subtitle className="text-white">
+                                <Card.Subtitle className="text-secondary">
                                     {new Date(post.publishDate).toLocaleDateString('pl-PL', {
                                         year: 'numeric',
                                         month: 'long',
@@ -302,7 +302,7 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
                             </div>
                             {/* Autor po prawej */}
                             <div>
-                                <Card.Subtitle className="text-white">
+                                <Card.Subtitle className="text-secondary">
                                     {post.author.firstName} {post.author.lastName}
                                 </Card.Subtitle>
                             </div>

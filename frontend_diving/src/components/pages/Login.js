@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, {useContext, useState} from 'react';
 import {Form, Button, Container, Row, Col, Alert} from 'react-bootstrap';
 import {useNavigate} from "react-router-dom";
 import axios from 'axios';
 import SecurityService from "../../service/SecurityService";
+import {UserContext} from "../../service/UserContext";
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const [error, setError] = useState('');
+    const { setIsLoggedIn } = useContext(UserContext);
     const navigate = useNavigate();
 
     const handleSubmit = async e => {
@@ -18,6 +20,7 @@ function Login() {
         const result = await SecurityService.loginUser(email, password);
 
         if (result.success) {
+            setIsLoggedIn(true); // Ustawiamy stan zalogowania na true
             navigate('/');
         } else {
             setError(result.message);

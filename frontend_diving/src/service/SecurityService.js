@@ -4,6 +4,32 @@ import {jwtDecode} from "jwt-decode";
 const SECURITY_REST_URL = 'http://localhost:8080';
 
 class SecurityService {//TODO Przedłużanie tokena
+
+    initialize() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        }
+    }
+
+    async refreshToken() {
+        try {
+            const response = await axios.post(SECURITY_REST_URL+'/refresh-token');
+            const newToken = response.data.jwt;
+            const roles = response.data.roles;
+
+            localStorage.setItem('token', newToken);
+            localStorage.setItem('roles', JSON.stringify(roles));
+            axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+            return true;
+        } catch (error) {
+            console.error('Error refreshing token:', error);
+            this.logoutUser();
+            return false;
+        }
+    }
+
+
     async loginUser(email, password) {
         try {
             const response = await axios.post(SECURITY_REST_URL+'/authenticate', {
@@ -17,8 +43,10 @@ class SecurityService {//TODO Przedłużanie tokena
             localStorage.setItem('token', token);
             localStorage.setItem('roles', JSON.stringify(roles)); // Przechowaj role w LocalStorage
 
+
             // Ustawienie nagłówka Authorization dla wszystkich przyszłych żądań
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
 
             return { success: true };
         } catch (error) {
@@ -90,18 +118,38 @@ class SecurityService {//TODO Przedłużanie tokena
         return null;
     }
 
-    getRoles() {
-        const roles = localStorage.getItem('roles');
-        return roles ? JSON.parse(roles) : [];
+    async getCurrentUserNames() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            const decodedToken = jwtDecode(token);
+            const email = decodedToken.sub; // Zakładamy, że email użytkownika jest zapisane w polu 'sub' tokena
+
+            try {
+                const response = await axios.get(SECURITY_REST_URL + '/users/names/' + email);
+                return {success: true, userNames: response.data};
+            } catch (error) {
+                let message = 'Wystąpił błąd podczas pobierania danych użytkownika.';
+                return {success: false, message};
+            }
+
+            return null;
+        }
     }
+
+        getRoles()
+        {
+            const roles = localStorage.getItem('roles');
+            return roles ? JSON.parse(roles) : [];
+        }
 
 // Metoda, która akceptuje tablicę ról
-    isUserInRole(rolesToCheck) {
-        const userRoles = this.getRoles(); // Pobieramy role użytkownika z localStorage
+        isUserInRole(rolesToCheck)
+        {
+            const userRoles = this.getRoles(); // Pobieramy role użytkownika z localStorage
 
-        // Sprawdzamy, czy którakolwiek z ról użytkownika znajduje się w liście 'rolesToCheck'
-        return userRoles.some(userRole => rolesToCheck.includes(userRole.name));
+            // Sprawdzamy, czy którakolwiek z ról użytkownika znajduje się w liście 'rolesToCheck'
+            return userRoles.some(userRole => rolesToCheck.includes(userRole.name));
+        }
     }
-}
 
 export default new SecurityService();

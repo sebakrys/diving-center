@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.sebakrys.diving.users.dto.UserNamesDto;
 import pl.sebakrys.diving.users.entity.Role;
 import pl.sebakrys.diving.users.entity.User;
 import pl.sebakrys.diving.users.repo.RoleRepo;
@@ -71,6 +72,18 @@ public class UserService {
     // Pobranie użytkownika po ID
     public Optional<User> getUserByEmail(String email) {
         return userRepo.findByEmail(email);
+    }
+
+    public UserNamesDto getUserNamesByEmail(String email) {
+        Optional<User> optionalUser = userRepo.findByEmail(email);
+        if(optionalUser.isEmpty()) return null;
+        User user = optionalUser.get();
+        UserNamesDto userNamesDto = new UserNamesDto();
+        userNamesDto.setEmail(user.getEmail());
+        userNamesDto.setFirstName(user.getFirstName());
+        userNamesDto.setLastName(user.getLastName());
+        return userNamesDto;
+
     }
 
 

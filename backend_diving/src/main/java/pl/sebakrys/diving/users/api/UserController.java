@@ -3,6 +3,7 @@ package pl.sebakrys.diving.users.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.sebakrys.diving.users.dto.UserNamesDto;
 import pl.sebakrys.diving.users.entity.User;
 import pl.sebakrys.diving.users.service.UserService;
 
@@ -73,6 +74,13 @@ public class UserController {
         return userService.getUserByEmail(email)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/names/{email}")
+    public ResponseEntity<UserNamesDto> getUserNamesByEmail(@PathVariable String email) {
+        UserNamesDto userNamesDto = userService.getUserNamesByEmail(email);
+        if(userNamesDto==null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(userNamesDto);
     }
 
     @PutMapping("/{userId}")

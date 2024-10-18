@@ -42,7 +42,7 @@ public class SecurityConfig {
                 }))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/authenticate", "/users/", "/event/{month}/{year}").permitAll()
+                        .requestMatchers("/authenticate", "/refresh-token", "/users/", "/event/{month}/{year}").permitAll()
                         .requestMatchers(BLOG_IMAGES_ACCES_DIRECTORY+"*").permitAll()
                         .requestMatchers("/blog/post").permitAll()
                         .anyRequest().authenticated()

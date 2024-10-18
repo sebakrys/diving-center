@@ -16,7 +16,7 @@ class Content extends React.Component {
                     <img
                         src="/74f3ec6c-4574-4bc5-9517-3fdcd5e6fe56.png"
                         alt="Opis obrazka"
-                        style={{ width: "100%", height: "auto" , opacity: "95%"}}
+                        style={{ width: "100%", height: "auto" , opacity: "80%"}}
                     />
 
                     {/* NavBar z pozycją sticky */}

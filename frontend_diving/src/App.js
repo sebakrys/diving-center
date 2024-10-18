@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, {useCallback, useEffect} from "react";
 import logo from './logo.svg';
 import './App.css';
 import Particles from "react-tsparticles";
@@ -8,6 +8,8 @@ import Content from "./components/Content";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import {Button} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import SecurityService from "./service/SecurityService";
+import {UserProvider} from "./service/UserContext";
 
 
 const theme = createTheme({
@@ -32,6 +34,13 @@ function App() {
   const particlesLoaded = useCallback(async (container) => {
     console.log(container);
   }, []);
+
+
+  useEffect(() => {
+    SecurityService.initialize();
+  }, []);
+
+
 
   return (
       <ThemeProvider theme={theme}>
@@ -119,8 +128,10 @@ function App() {
             }}
         />
         <div id="AppContainer">
+          <UserProvider>
 
-          <Content/>
+            <Content/>
+          </UserProvider>
         </div>
       </div>
       </ThemeProvider>
