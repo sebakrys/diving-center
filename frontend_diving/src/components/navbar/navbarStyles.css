@@ -1,18 +1,13 @@
-/* Domyślna wysokość dla większych ekranów */
+/* Usuń klasę, jeśli nie jest używana */
 .navbar-sebakrys {
-    height: auto;
+    /* height: auto; */ /* Możesz usunąć tę klasę, jeśli nie jest używana */
 }
 
+/* Usuń lub zmodyfikuj klasę navbar-text-fixed */
 .navbar-text-fixed {
-    position: fixed;
-    top: 0;
-    right: 0px;
+    /* Usuń position: fixed; */
+    /* Jeśli chcesz wyrównać tekst do prawej, użyj float lub flexbox */
+    /* float: right; */
 }
 
-/* Zwiększ wysokość navbaru na ekranach o szerokości mniejszej niż 768px */
-@media screen and (max-width: 1000px) {
-    .navbar-sebakrys {
-        min-height: 60px;
-    }
-
-}
+/* Możesz dodać dodatkowe style według potrzeb */

@@ -120,7 +120,9 @@ class Events extends React.Component {
 
     render() {
         return (
-            <Container>
+            <Container style={{
+                height: "100vh",
+            }}>
                 <div style={{ height: 500 }}>
                     <Calendar
                         localizer={localizer}

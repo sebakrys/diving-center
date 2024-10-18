@@ -1,19 +1,51 @@
-import React from "react";
-import {useTranslation, withTranslation} from 'react-i18next';
+import React, { useState, useEffect, useRef } from "react";
+import { withTranslation } from 'react-i18next';
 
+function Home() {
+    const [scrollBlocked, setScrollBlocked] = useState(true);
+    const iframeRef = useRef(null);
 
-class Home extends React.Component {
-    render() {
-        const { t } = this.props;
-        return(
+    useEffect(() => {
+        const handleScroll = () => {
+            const navbar = document.getElementById('navbar');
+            if (navbar) {
+                const navbarRect = navbar.getBoundingClientRect();
+                if (navbarRect.top <= 0) {
+                    // Navbar jest na górze
+                    setScrollBlocked(false);
+                } else {
+                    // Navbar nie jest na górze
+                    setScrollBlocked(true);
+                }
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        // Czyszczenie eventu przy odmontowaniu komponentu
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    return (
+        <div style={{ position: "relative", height: "100vh", overflow: "hidden" }}>
             <iframe
+                ref={iframeRef}
                 title="Static HTML"
                 src="/aboutUs.html"
-                width="100%"
-                height="100%"
-                style={{ border: "none" }}
+                style={{
+                    width: "100%",
+                    height: "100vh",
+                    border: "none",
+                    margin: "0",
+                    padding: "0",
+                    paddingTop: "50px",
+                    pointerEvents: scrollBlocked ? "none" : "auto",
+                }}
             />
-        )
-    }
+        </div>
+    );
 }
-export default  withTranslation()(Home);
+
+export default withTranslation()(Home);

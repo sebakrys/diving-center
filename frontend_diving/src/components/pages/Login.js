@@ -25,7 +25,9 @@ function Login() {
     };
 
     return (
-        <Container data-bs-theme="dark">
+        <Container data-bs-theme="dark" style={{
+            height: "100hv",
+        }}>
             <Row className="justify-content-md-center">
                 <Col md="4">
                     <h2 className="mt-5 text-white" >Logowanie</h2>
