@@ -23,6 +23,8 @@ public class WebConfig implements WebMvcConfigurer {
         // Konfiguracja serwowania zasobów statycznych z folderu uploads
         registry.addResourceHandler(BLOG_IMAGES_ACCES_DIRECTORY+"**")
                 .addResourceLocations("file:"+absoluteUploadPath+BLOG_IMAGES_ACCES_DIRECTORY); // Ścieżka do katalogu na pliki
+        registry.addResourceHandler("/video/"+"**")
+                .addResourceLocations("file:"+absoluteUploadPath+"/video/"); // Ścieżka do katalogu na pliki
     }
 }
 

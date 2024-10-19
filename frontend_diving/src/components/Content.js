@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Blog from "./pages/blog/Blog";
 import Users from "./pages/users/Users";
+import Video from "./pages/Video";
 
 class Content extends React.Component {
     render() {
@@ -35,6 +36,7 @@ class Content extends React.Component {
                             <Route path="/users" element={<Users />} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/login" element={<Login />} />
+                            <Route path="/video" element={<Video />} />
                         </Routes>
                     </div>
                 </div>

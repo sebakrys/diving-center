@@ -6,13 +6,25 @@ import EventsService from "../../../service/EventsService";
 
 
 function Users() {
-    const [allRoles, setAllRoles] = useState([]);
-    const [allUsers, setAllUsers] = useState([]);
+    const [allRoles, setAllRoles] = useState([
+        {name: "AAAAAAAAAAAAA"},
+        {name: "ABC"},
+        {name: "ABC"},
+    ]);
+    const [allUsers, setAllUsers] = useState([
+        {"firstName":"AAAAAAAAA","lastName":"AAAAAAAAAA","email":"AAAAAAAAAAAAAAAAAAA.com","active":true,"nonBlocked":true,"roles":[]},
+        {"firstName":"","lastName":"","email":"@.com","active":true,"nonBlocked":true,"roles":[]},
+        {"firstName":"","lastName":"","email":"@.com","active":true,"nonBlocked":true,"roles":[]},
+        {"firstName":"","lastName":"","email":"@.com","active":true,"nonBlocked":true,"roles":[]},
+        {"firstName":"","lastName":"","email":"@.com","active":true,"nonBlocked":true,"roles":[]},
+        {"firstName":"","lastName":"","email":"@.com","active":true,"nonBlocked":true,"roles":[]},
+        {"firstName":"","lastName":"","email":"@.com","active":true,"nonBlocked":true,"roles":[]},
+    ]);
     const [switchActiveStates, setSwitchActiveStates] = useState({});
     const [switchNonBlockedStates, setSwitchNonBlockedStates] = useState({});
 
     const fetchUsers = async () => {
-        setAllUsers([])
+        //setAllUsers([])
         if (SecurityService.isUserInRole("ROLE_ADMIN")) {
             try {
                 const result = await UsersService.getAllUsers();

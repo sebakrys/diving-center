@@ -32,7 +32,10 @@ function NavBar() {
                         <Nav.Link href="#/events">Kalendarz</Nav.Link>
                         <Nav.Link href="#/blog">Blog</Nav.Link>
                         {SecurityService.isUserInRole(["ROLE_ADMIN"]) &&
-                            <Nav.Link href="#/users" >Użytkownicy</Nav.Link>
+                            <>
+                                <Nav.Link href="#/users" >Użytkownicy</Nav.Link>
+                                <Nav.Link href="#/video" className="danger">Video</Nav.Link>
+                            </>
                         }
                         {/*
                         <NavDropdown title="Dropdown" id="basic-nav-dropdown">
