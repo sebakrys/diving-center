@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pl.sebakrys.diving.users.dto.UserDto;
 import pl.sebakrys.diving.users.dto.UserNamesDto;
 import pl.sebakrys.diving.users.entity.User;
 import pl.sebakrys.diving.users.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -34,7 +36,7 @@ public class UserController {
     }
 
     // Endpoint do dodawania roli do użytkownika
-    @PostMapping("/{userId}/roles/{roleName}")
+    @PutMapping("/{userId}/roles/{roleName}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<User> addRoleToUser(
             @PathVariable Long userId,
@@ -61,6 +63,28 @@ public class UserController {
         List<User> users = userService.getAllUsers();
         if (!users.isEmpty()) {
             return ResponseEntity.ok(users);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+    @GetMapping("/roles")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<List<UserDto>> getAllUsersWithRoles() {
+        List<User> users = userService.getAllUsers();
+        List<UserDto> userDtos = users.stream()
+                .map(user -> new UserDto(
+                        user.getId(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail(),
+                        user.isActive(),
+                        user.isNonBlocked(),
+                        user.getRoles()
+                ))
+                .collect(Collectors.toList());
+        if (!userDtos.isEmpty()) {
+            return ResponseEntity.ok(userDtos);
         } else {
             return ResponseEntity.noContent().build();
         }

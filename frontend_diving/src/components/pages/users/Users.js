@@ -6,6 +6,7 @@ import EventsService from "../../../service/EventsService";
 
 
 function Users() {
+    const [allRoles, setAllRoles] = useState([]);
     const [allUsers, setAllUsers] = useState([]);
     const [switchActiveStates, setSwitchActiveStates] = useState({});
     const [switchNonBlockedStates, setSwitchNonBlockedStates] = useState({});
@@ -26,9 +27,19 @@ function Users() {
     };
 
     useEffect(() => {
+        const fetchRoles = async () => {
+            try {
+                const result = await UsersService.getAllRoles();
+                if (result.success) {
+                    setAllRoles(result.roles);
+                }
+            } catch (error) {
+                console.error('Błąd podczas pobierania ról:', error);
+            }
+        };
 
-
-            fetchUsers(); // Pobieramy rejestracje na podstawie wybranego wydarzenia
+        fetchRoles();
+        fetchUsers(); // Pobieramy rejestracje na podstawie wybranego wydarzenia
 
     }, []);
 
@@ -48,6 +59,49 @@ function Users() {
         }
 
     }, [allUsers]);
+
+
+
+    const handleRoleChange = async (userId, roleName) => {
+        const user = allUsers.find(u => u.id === userId);
+        const hasRole = user.roles.some(role => role.name === roleName);
+
+        try {
+            if (hasRole) {
+                // Usuń rolę z użytkownika
+                await UsersService.removeRoleFromUser(userId, roleName);
+                // Aktualizuj stan
+                const updatedUsers = allUsers.map(u => {
+                    if (u.id === userId) {
+                        return {
+                            ...u,
+                            roles: u.roles.filter(role => role.name !== roleName),
+                        };
+                    }
+                    return u;
+                });
+                setAllUsers(updatedUsers);
+            } else {
+                // Dodaj rolę do użytkownika
+                await UsersService.assignRoleToUser(userId, roleName);
+                // Aktualizuj stan
+                const updatedUsers = allUsers.map(u => {
+                    if (u.id === userId) {
+                        return {
+                            ...u,
+                            roles: [...u.roles, allRoles.find(role => role.name === roleName)],
+                        };
+                    }
+                    return u;
+                });
+                setAllUsers(updatedUsers);
+            }
+        } catch (error) {
+            console.error('Błąd podczas aktualizacji ról użytkownika:', error);
+        }
+    };
+
+
 
 
     const handleActiveSwitchChange = (id) => {
@@ -105,7 +159,20 @@ function Users() {
                                 <td>{user.firstName}</td>
                                 <td>{user.lastName}</td>
                                 <td>{user.email}</td>
-                                <td>{user.roles}</td>
+                                <td>
+
+                                    {/* Wyświetlanie ról jako checkboxów */}
+                                    {allRoles.map(role => (
+                                        <Form.Check
+                                            key={`${user.id}-${role.id}`}
+                                            type="checkbox"
+                                            label={role.name}
+                                            checked={user.roles.some(userRole => userRole.id === role.id)}
+                                            onChange={() => handleRoleChange(user.id, role.name)}
+                                        ></Form.Check>
+                                    ))}
+
+                                </td>
                                 <td>
                                     <Form.Check
                                         type="switch"
@@ -122,7 +189,8 @@ function Users() {
                                         onChange={() => handleNonBlockedSwitchChange(user.id)}
                                     />
                                 </td>
-                                <td></td>
+                                <td>
+                                </td>
                             </tr>
                     )
                 }

@@ -6,10 +6,40 @@ class UsersService {
 
     async getAllUsers() {
         try {
-            const response = await axios.get(`${USERS_REST_URL}/users/`);
+            const response = await axios.get(`${USERS_REST_URL}/users/roles`);
             return { success: true, users: response.data };
         } catch (error) {
             let message = 'Wystąpił błąd podczas pobierania Użytkowników. Spróbuj ponownie.';
+            return { success: false, message };
+        }
+    }
+
+    async getAllRoles() {
+        try {
+            const response = await axios.get(`${USERS_REST_URL}/roles/`);
+            return { success: true, roles: response.data };
+        } catch (error) {
+            let message = 'Wystąpił błąd podczas pobierania Użytkowników. Spróbuj ponownie.';
+            return { success: false, message };
+        }
+    }
+
+    async removeRoleFromUser(userId, roleName) {
+        try {
+            const response = await axios.delete(`${USERS_REST_URL}/users/`+userId+"/roles/"+roleName);
+            return { success: true, users: response.data };
+        } catch (error) {
+            let message = 'Wystąpił błąd podczas aktywacji Użytkowników. Spróbuj ponownie.';
+            return { success: false, message };
+        }
+    }
+
+    async assignRoleToUser(userId, roleName) {
+        try {
+            const response = await axios.put(`${USERS_REST_URL}/users/`+userId+"/roles/"+roleName);
+            return { success: true, users: response.data };
+        } catch (error) {
+            let message = 'Wystąpił błąd podczas aktywacji Użytkowników. Spróbuj ponownie.';
             return { success: false, message };
         }
     }

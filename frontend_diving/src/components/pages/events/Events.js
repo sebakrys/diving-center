@@ -197,7 +197,7 @@ class Events extends React.Component {
                             />
                         </Modal.Body>
                     </Modal>
-                    {(SecurityService.getRoles().length===0 && this.state.selectedEvent) && (
+                    {(!SecurityService.isUserInRole(["ROLE_CLIENT"]) && this.state.selectedEvent) && (
 
                             <DisplayBasicEventInformations
                                 event={this.state.selectedEvent}

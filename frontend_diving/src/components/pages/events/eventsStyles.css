@@ -58,7 +58,8 @@
 
 /* Ustaw kolory dla bieżącego dnia */
 .rbc-today {
-    background-color: transparent;
+    background-color: white;
+    opacity: 50%;
 }
 
 /* Ustawienia dla paska nawigacji */
