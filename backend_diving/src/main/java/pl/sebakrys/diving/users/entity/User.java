@@ -3,6 +3,7 @@ package pl.sebakrys.diving.users.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -27,6 +28,8 @@ public class User {
     private String password;
 
     private boolean active;
+
+    private boolean nonBlocked;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnore

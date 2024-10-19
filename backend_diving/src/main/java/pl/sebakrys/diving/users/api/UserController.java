@@ -2,6 +2,7 @@ package pl.sebakrys.diving.users.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.sebakrys.diving.users.dto.UserNamesDto;
 import pl.sebakrys.diving.users.entity.User;
@@ -34,6 +35,7 @@ public class UserController {
 
     // Endpoint do dodawania roli do użytkownika
     @PostMapping("/{userId}/roles/{roleName}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<User> addRoleToUser(
             @PathVariable Long userId,
             @PathVariable String roleName) {
@@ -44,6 +46,7 @@ public class UserController {
 
     // Endpoint do usuwania roli od użytkownika
     @DeleteMapping("/{userId}/roles/{roleName}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<User> removeRoleFromUser(
             @PathVariable Long userId,
             @PathVariable String roleName) {
@@ -53,6 +56,7 @@ public class UserController {
     }
 
     @GetMapping("/")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         if (!users.isEmpty()) {
@@ -60,6 +64,26 @@ public class UserController {
         } else {
             return ResponseEntity.noContent().build();
         }
+    }
+
+    @PutMapping("/{userId}/activ/{activ}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<User> setActivateUser(
+            @PathVariable Long userId,
+            @PathVariable boolean activ) {
+        return userService.setActiveUser(userId, activ)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{userId}/nonblock/{nonblock}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<User> setNonBlockUser(
+            @PathVariable Long userId,
+            @PathVariable boolean nonblock) {
+        return userService.setNonBlockedUser(userId, nonblock)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{userId}")

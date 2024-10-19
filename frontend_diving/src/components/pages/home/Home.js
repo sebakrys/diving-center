@@ -22,6 +22,11 @@ function Home() {
 
         window.addEventListener('scroll', handleScroll);
 
+        const isAtBottom = (window.innerHeight + window.scrollY) >= document.body.scrollHeight;
+        if(isAtBottom) setScrollBlocked(false);//naprawia problem gdy przechodzimy na strone z innej i juz jest na samym dole
+
+        console.log(window.innerHeight +" "+ window.scrollY+" "+(window.innerHeight+window.scrollY)+" "+document.body.scrollHeight);
+
         // Czyszczenie eventu przy odmontowaniu komponentu
         return () => {
             window.removeEventListener('scroll', handleScroll);

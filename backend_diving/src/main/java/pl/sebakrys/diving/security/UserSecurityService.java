@@ -29,7 +29,8 @@ public class UserSecurityService implements UserDetailsService {
                 user.getEmail(),
                 user.getPassword(),
                 user.isActive(),
-                true, true, true,
+                true, true,
+                user.isNonBlocked(),
                 user.getRoles()
         );
     }

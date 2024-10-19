@@ -1,11 +1,12 @@
 import React from "react";
 import { Routes, Route, HashRouter } from "react-router-dom";
 import NavBar from "./navbar/NavBar";
-import Home from "./pages/Home";
+import Home from "./pages/home/Home";
 import Events from "./pages/events/Events";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Blog from "./pages/blog/Blog";
+import Users from "./pages/users/Users";
 
 class Content extends React.Component {
     render() {
@@ -31,6 +32,7 @@ class Content extends React.Component {
                             <Route path="/home" element={<Home />} />
                             <Route path="/events" element={<Events />} />
                             <Route path="/blog" element={<Blog />} />
+                            <Route path="/users" element={<Users />} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/login" element={<Login />} />
                         </Routes>

@@ -59,6 +59,7 @@ public class UserService {
         }
 
         user.setActive(true);
+        user.setNonBlocked(true);
 
         return userRepo.save(user);
     }
@@ -89,7 +90,7 @@ public class UserService {
 
     // Pobranie wszystkich użytkowników
     public List<User> getAllUsers() {
-        return userRepo.findAll();
+        return userRepo.findAllByOrderByIdAsc();
     }
 
     // Aktualizacja użytkownika
@@ -106,6 +107,31 @@ public class UserService {
                     user.setRoles(userDetails.getRoles());
                     return userRepo.save(user);
                 });
+    }
+
+    public Optional<User> setNonBlockedUser(Long userId, boolean nonBlocked) {
+        Optional<User> userOptional = userRepo.findById(userId);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setNonBlocked(nonBlocked);
+            userRepo.save(user);
+            return Optional.of(user);
+        }
+
+        return Optional.empty();
+    }
+    public Optional<User> setActiveUser(Long userId, boolean active) {
+        Optional<User> userOptional = userRepo.findById(userId);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setActive(active);
+            userRepo.save(user);
+            return Optional.of(user);
+        }
+
+        return Optional.empty();
     }
 
     public Optional<User> addRoleToUser(Long userId, String roleName) {
