@@ -44,7 +44,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/authenticate", "/refresh-token", "/users/", "/event/{month}/{year}").permitAll()
                         .requestMatchers(BLOG_IMAGES_ACCES_DIRECTORY+"*").permitAll()
-                        .requestMatchers("/video/**").permitAll()
+                        .requestMatchers("/video/**").permitAll()//TODO zmienić później
+                        .requestMatchers("/courses/**", "/materials/**").permitAll()//TODO zmienić poźniej
                         .requestMatchers("/blog/post").permitAll()
                         .requestMatchers("/roles/").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()

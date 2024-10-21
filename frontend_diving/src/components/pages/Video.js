@@ -5,6 +5,8 @@ import "./videoStyles.css"
 import UsersService from "../../service/UsersService";
 import SecurityService from "../../service/SecurityService";
 
+
+
 function Video() {
     const [sessionId, setSessionId] =  useState("ABC123"); // Przykładowy unikalny identyfikator sesji
     const videoRef = useRef(null);
@@ -112,7 +114,9 @@ function Video() {
             try {
                 const result = await SecurityService.getCurrentUserNamesByToken();
                 if (result.success) {
-                    setSessionId(result.userNames.firstName + " " + result.userNames.lastName);
+                    setSessionId(
+                        result.userNames.firstName + " " + result.userNames.lastName+" "+result.userNames.email
+                    );
                 } else {
                     // Możesz tutaj dodać obsługę błędu, jeśli `result.success` jest false
                     console.error("Nie udało się pobrać danych użytkownika.");
@@ -194,6 +198,21 @@ function Video() {
         console.error('Shaka Player Error:', event.detail);
     };
 
+
+    const pako = require('pako');
+    function compressAndEncode(input) {
+        const compressed = pako.deflate(input, { to: 'string' });
+        return btoa(compressed);
+    }
+
+    function decodeAndDecompress(encoded) {
+        const compressed = atob(encoded);
+        const decompressed = pako.inflate(compressed, { to: 'string' });
+        return decompressed;
+    }
+
+
+
     return (
         <div className="video-container">
             {/* Znak wodny */}
@@ -201,7 +220,7 @@ function Video() {
                 className="watermark"
                 style={{ top: watermarkPosition.top, left: watermarkPosition.left }}
             >
-                ID sesji: {sessionId}
+                {sessionId}
             </div>
 
             {/* Czarny ekran po zatrzymaniu wideo */}
