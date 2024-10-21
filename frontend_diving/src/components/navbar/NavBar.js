@@ -31,7 +31,7 @@ function NavBar() {
                         <Nav.Link href="#/home">Wstęp</Nav.Link>
                         <Nav.Link href="#/events">Kalendarz</Nav.Link>
                         <Nav.Link href="#/blog">Blog</Nav.Link>
-                        <Nav.Link href="#/course">Kurs</Nav.Link>
+                        <Nav.Link href="#/courses">Kursy</Nav.Link>
                         {SecurityService.isUserInRole(["ROLE_ADMIN"]) &&
                             <>
                                 <Nav.Link href="#/users" >Użytkownicy</Nav.Link>

@@ -1,5 +1,6 @@
 package pl.sebakrys.diving.users.repo;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,7 +19,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
 
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :role AND " +
-            "(u.firstName LIKE %:query% OR u.lastName LIKE %:query% OR u.email LIKE %:query%)")
-    List<User> findByRoleAndQuery(@Param("role") String role, @Param("query") String query);
+            "(upper(u.firstName) LIKE upper(%:query%) OR upper(u.lastName) LIKE upper(%:query%) OR upper(u.email) LIKE upper(%:query%))")
+    List<User> findByRoleAndQuery(@Param("role") String role, @Param("query") String query, Pageable pageable);
 
 }

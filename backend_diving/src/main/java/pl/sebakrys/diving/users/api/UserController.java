@@ -2,6 +2,7 @@ package pl.sebakrys.diving.users.api;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -93,7 +94,7 @@ public class UserController {
 
     @GetMapping("/search")
     public ResponseEntity<List<User>> searchUsers(@RequestParam String query) {
-        List<User> users = userService.searchUsersByRoleAndQuery(query);
+        List<User> users = userService.searchUsersByRoleAndQuery(query, PageRequest.of(0, 10));//TODO dostosowywać z requestem
         return ResponseEntity.ok(users);
     }
 

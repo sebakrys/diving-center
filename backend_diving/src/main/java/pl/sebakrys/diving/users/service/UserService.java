@@ -2,6 +2,8 @@ package pl.sebakrys.diving.users.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -104,8 +106,10 @@ public class UserService {
         return userRepo.findAllByOrderByIdAsc();
     }
 
-    public List<User> searchUsersByRoleAndQuery(String query) {
-        return userRepo.findByRoleAndQuery("ROLE_CLIENT", "%" + query + "%");
+    public List<User> searchUsersByRoleAndQuery(String query, Pageable pageable) {
+        return userRepo.findByRoleAndQuery("ROLE_CLIENT", "%" + query + "%",
+                pageable
+        );
     }
 
     public UserNamesDto getUserNamesByAuthTokenRequest(HttpServletRequest request){

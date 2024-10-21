@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 
-const CourseDetailPage = ({ match }) => {
+const COURSE_REST_URL = 'http://localhost:8080';
+
+const CourseDetailPage = () => {
+    const { id } = useParams();  // Hook do pobierania parametru 'id' z URL
     const [course, setCourse] = useState(null);
     const [materials, setMaterials] = useState([]);
     const [users, setUsers] = useState([]);
@@ -10,38 +14,41 @@ const CourseDetailPage = ({ match }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [newMaterial, setNewMaterial] = useState({ title: '', type: '', content: '' });
 
-    const courseId = match.params.id;
-
     useEffect(() => {
         // Pobranie szczegółów kursu
-        axios.get(`/courses/${courseId}`)
+        axios.get(COURSE_REST_URL+`/courses/${id}`)
             .then(response => setCourse(response.data))
             .catch(error => console.error('Error fetching course details:', error));
 
         // Pobranie materiałów kursu
-        axios.get(`/materials/course/${courseId}`)
+        axios.get(COURSE_REST_URL+`/materials/course/${id}`)
             .then(response => setMaterials(response.data))
             .catch(error => console.error('Error fetching materials:', error));
 
         // Pobranie użytkowników zapisanych na kurs
-        axios.get(`/courses/${courseId}/users`)
+        axios.get(COURSE_REST_URL+`/courses/${id}/users`)
             .then(response => setUsers(response.data))
             .catch(error => console.error('Error fetching users:', error));
-    }, [courseId]);
+    }, [id]);  // 'id' jest teraz dynamicznym parametrem z URL
 
     // Funkcja wyszukująca użytkowników do zapisania na kurs
-    const searchUsers = () => {
-        axios.get(`/users/search?query=${searchQuery}`)
+    const searchUsers = (phrase) => {
+        axios.get(COURSE_REST_URL+`/users/search?query=${phrase}`)
             .then(response => setAvailableUsers(response.data))
             .catch(error => console.error('Error searching users:', error));
     };
 
     // Dodanie nowego materiału do kursu
     const handleAddMaterial = () => {
-        axios.post(`/materials/${courseId}`, newMaterial)
+        axios.post(COURSE_REST_URL+`/materials/${id}`, newMaterial)
             .then(response => setMaterials([...materials, response.data]))
             .catch(error => console.error('Error adding material:', error));
     };
+
+
+    useEffect(() => {//dynamiczne wyszukiwanie
+        searchUsers(searchQuery)
+    }, [searchQuery]);  // 'id' jest teraz dynamicznym parametrem z URL
 
     return (
         <div>

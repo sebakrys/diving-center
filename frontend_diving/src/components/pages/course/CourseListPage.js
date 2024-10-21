@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {Modal, Button, Form, Table} from 'react-bootstrap';
+import {useNavigate} from "react-router-dom";
 
 const COURSE_REST_URL = 'http://localhost:8080';
 
@@ -8,6 +9,10 @@ const CourseListPage = () => {
     const [courses, setCourses] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [newCourse, setNewCourse] = useState({ name: '', description: '' });
+
+    const navigate = useNavigate(); // Hook do nawigacji
+
+
 
     useEffect(() => {
         // Pobranie wszystkich kursów
@@ -44,9 +49,13 @@ const CourseListPage = () => {
                 </thead>
                 <tbody>
                 {courses.map(course => (
-                    <tr key={course.id}>
+                    <tr key={course.id}
+                        onClick={() => navigate(`/courses/${course.id}`)}
+                    >
                         <td>{course.id}</td>
-                        <td>{course.name}</td>
+                        <td>
+                            {course.name}
+                        </td>
                         <td>{course.description}</td>
                         <td><Button variant="outline-danger"
                                     onClick={() => alert(course.id+" "+course.name)}>
