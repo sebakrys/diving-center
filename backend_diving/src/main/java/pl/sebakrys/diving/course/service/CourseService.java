@@ -30,6 +30,10 @@ public class CourseService {
         return courseRepository.findById(id);
     }
 
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
+    }
+
     public List<Course> getCoursesForUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
         return courseRepository.findAll().stream()

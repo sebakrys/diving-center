@@ -104,6 +104,10 @@ public class UserService {
         return userRepo.findAllByOrderByIdAsc();
     }
 
+    public List<User> searchUsersByRoleAndQuery(String query) {
+        return userRepo.findByRoleAndQuery("ROLE_CLIENT", "%" + query + "%");
+    }
+
     public UserNamesDto getUserNamesByAuthTokenRequest(HttpServletRequest request){
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {

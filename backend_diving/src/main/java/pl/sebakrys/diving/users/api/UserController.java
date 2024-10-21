@@ -91,6 +91,12 @@ public class UserController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<User>> searchUsers(@RequestParam String query) {
+        List<User> users = userService.searchUsersByRoleAndQuery(query);
+        return ResponseEntity.ok(users);
+    }
+
     @PutMapping("/{userId}/activ/{activ}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<User> setActivateUser(

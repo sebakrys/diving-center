@@ -2,6 +2,7 @@ package pl.sebakrys.diving.course.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.sebakrys.diving.course.entity.Course;
 import pl.sebakrys.diving.course.service.CourseService;
@@ -28,6 +29,13 @@ public class CourseController {
     public ResponseEntity<Course> getCourse(@PathVariable Long id) {
         Optional<Course> course = courseService.getCourse(id);
         return course.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
+    public ResponseEntity<List<Course>> getAllCourses() {
+        List<Course> allCourses = courseService.getAllCourses();
+        return ResponseEntity.ok(allCourses);
     }
 
     @GetMapping("/user/{userId}")
