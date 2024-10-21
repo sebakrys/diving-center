@@ -1,0 +1,1 @@
+ffmpeg -i 2016_06_11_FILM_egz._karate_CAM00596.mp4 -c:v libx264 -g 30 -c:a copy -start_number 0 -hls_time 1 -hls_list_size 0 -f hls output.m3u8

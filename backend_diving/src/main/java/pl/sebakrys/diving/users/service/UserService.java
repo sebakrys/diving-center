@@ -1,9 +1,14 @@
 package pl.sebakrys.diving.users.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.sebakrys.diving.security.JwtUtil;
+import pl.sebakrys.diving.security.UserSecurityService;
 import pl.sebakrys.diving.users.dto.UserNamesDto;
 import pl.sebakrys.diving.users.entity.Role;
 import pl.sebakrys.diving.users.entity.User;
@@ -21,6 +26,12 @@ public class UserService {
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private UserSecurityService userSecurityService;
 
     @Autowired
     public UserService(UserRepo userRepo, RoleRepo roleRepo, PasswordEncoder passwordEncoder) {
@@ -91,6 +102,22 @@ public class UserService {
     // Pobranie wszystkich użytkowników
     public List<User> getAllUsers() {
         return userRepo.findAllByOrderByIdAsc();
+    }
+
+    public UserNamesDto getUserNamesByAuthTokenRequest(HttpServletRequest request){
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String oldToken = authHeader.substring(7);
+            // Wyodrębnij nazwę użytkownika z tokena
+            String email = jwtUtil.extractUsername(oldToken);
+            Optional<User> userOptional = userRepo.findByEmail(email);
+            if(userOptional.isPresent()){
+                User user = userOptional.get();
+                UserNamesDto userNamesDto = new UserNamesDto(user.getFirstName(), user.getLastName(), user.getEmail());
+                return userNamesDto;
+            }
+        }
+        return null;
     }
 
     // Aktualizacja użytkownika

@@ -1,5 +1,6 @@
 package pl.sebakrys.diving.users.api;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -127,6 +128,13 @@ public class UserController {
     @GetMapping("/names/{email}")
     public ResponseEntity<UserNamesDto> getUserNamesByEmail(@PathVariable String email) {
         UserNamesDto userNamesDto = userService.getUserNamesByEmail(email);
+        if(userNamesDto==null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(userNamesDto);
+    }
+
+    @GetMapping("/names/")
+    public ResponseEntity<UserNamesDto> getUserNamesByAuthToken(HttpServletRequest request) {
+        UserNamesDto userNamesDto = userService.getUserNamesByAuthTokenRequest(request);
         if(userNamesDto==null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(userNamesDto);
     }
