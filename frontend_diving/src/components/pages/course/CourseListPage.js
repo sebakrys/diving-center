@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {Modal, Button, Form, Table} from 'react-bootstrap';
+import {Modal, Button, Form, Table, Container} from 'react-bootstrap';
 import {useNavigate} from "react-router-dom";
 
 const COURSE_REST_URL = 'http://localhost:8080';
@@ -35,9 +35,9 @@ const CourseListPage = () => {
     };
 
     return (
-        <div>
-            <h1>Lista Kursów</h1>
-            <Button onClick={toggleModal}>Dodaj Nowy Kurs</Button>
+        <Container data-bs-theme="dark">
+            <h1 className="mt-5 text-white">Lista kursów</h1>
+            <Button className="mt-3 mb-4 text-white"onClick={toggleModal}>Dodaj Nowy Kurs</Button>
             <Table striped bordered hover>
                 <thead>
                 <tr>
@@ -49,14 +49,18 @@ const CourseListPage = () => {
                 </thead>
                 <tbody>
                 {courses.map(course => (
-                    <tr key={course.id}
-                        onClick={() => navigate(`/courses/${course.id}`)}
-                    >
-                        <td>{course.id}</td>
-                        <td>
+                    <tr key={course.id}>
+                        <td
+                            onClick={() => navigate(`/courses/${course.id}`)}
+                        >{course.id}</td>
+                        <td
+                            onClick={() => navigate(`/courses/${course.id}`)}
+                        >
                             {course.name}
                         </td>
-                        <td>{course.description}</td>
+                        <td
+                            onClick={() => navigate(`/courses/${course.id}`)}
+                        >{course.description}</td>
                         <td><Button variant="outline-danger"
                                     onClick={() => alert(course.id+" "+course.name)}>
                             Usuń
@@ -98,7 +102,7 @@ const CourseListPage = () => {
                     <Button variant="primary" onClick={handleCreateCourse}>Zapisz Kurs</Button>
                 </Modal.Footer>
             </Modal>
-        </div>
+        </Container>
     );
 };
 

@@ -19,9 +19,21 @@ public class CourseMaterialController {
     @Autowired
     private CourseMaterialService courseMaterialService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<Map<String, Object>> uploadMaterials(@RequestParam("files") List<MultipartFile> files) {
-        List<String> urls = courseMaterialService.uploadMaterialFiles(files);
+    @PostMapping("/upload/{type}")
+    public ResponseEntity<Map<String, Object>> uploadMaterials(@RequestParam("file") List<MultipartFile> files, @PathVariable String type) {
+        List<String> urls;
+        switch (type){
+            case "FILE":
+                urls = courseMaterialService.uploadMaterialFiles(files);
+                break;
+            case "VIDEO":
+                urls = courseMaterialService.uploadMaterialVideo(files);
+                break;
+            default:
+                urls = courseMaterialService.uploadMaterialFiles(files);
+                break;
+        }
+
         Map<String, Object> response = new HashMap<>();
         response.put("urls", urls);
         return ResponseEntity.ok(response);

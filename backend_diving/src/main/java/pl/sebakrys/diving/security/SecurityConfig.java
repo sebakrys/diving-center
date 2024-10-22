@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers(BLOG_IMAGES_ACCES_DIRECTORY+"*").permitAll()
                         .requestMatchers("/video/**").permitAll()//TODO zmienić później
                         .requestMatchers("/courses/**", "/materials/**").permitAll()//TODO zmienić poźniej
+                        .requestMatchers("/course_materials/**").permitAll()//TODO zmienić poźniej
                         .requestMatchers("/blog/post").permitAll()
                         .requestMatchers("/roles/").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
