@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import {Button, Col, Form, Row, Spinner, Table} from 'react-bootstrap';
+import {Button, Col, Container, Form, Row, Spinner, Table} from 'react-bootstrap';
 import BlogService from "../../../service/BlogService";
 import CourseService from "../../../service/CourseService";
 
@@ -14,10 +14,12 @@ const CourseDetailPage = () => {
     const [users, setUsers] = useState([]);
     const [availableUsers, setAvailableUsers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const [newMaterial, setNewMaterial] = useState({ title: '', type: '', content: '' });
+    const [newMaterial, setNewMaterial] = useState({ title: '', type: '', content: '', url: []});
     const [isUploading, setIsUploading] = useState(false);
+    const [isFileUploaded, setIsFileUploaded] = useState(false);
     const [previewImages, setPreviewImages] = useState([]);
     const [uploadedFilesUrls, setUploadedFilesUrls] = useState([]);
+
 
     useEffect(() => {
         // Pobranie szczegółów kursu
@@ -48,6 +50,10 @@ const CourseDetailPage = () => {
         axios.post(COURSE_REST_URL+`/materials/${id}`, newMaterial)
             .then(response => setMaterials([...materials, response.data]))
             .catch(error => console.error('Error adding material:', error));
+        setNewMaterial({ title: '', type: '', content: '', url: []})
+        setIsFileUploaded(false)
+        setPreviewImages([])
+
     };
 
     // Usuwanie  materiału do kursu
@@ -69,6 +75,11 @@ const CourseDetailPage = () => {
     const handleRemoveImage = (index) => {
         setUploadedFilesUrls((prevImages) => prevImages.filter((_, i) => i !== index));
         setPreviewImages((prevPreviews) => prevPreviews.filter((_, i) => i !== index));
+        // Zaktualizuj listę URL-i w newMaterial, usuwając odpowiedni element
+        setNewMaterial(prevMaterial => ({
+            ...prevMaterial,
+            url: prevMaterial.url ? prevMaterial.url.filter((_, i) => i !== index) : [] // Usunięcie URL-a z listy
+        }));
     };
 
     // Funkcja obsługująca aktualizację obrazów podczas edycji
@@ -85,23 +96,26 @@ const CourseDetailPage = () => {
         setIsUploading(true);
 
         // Wyślij pliki na serwer
-        const uploadedUrls = await CourseService.uploadFiles(files, type);
-        setNewMaterial({ ...newMaterial, url: uploadedUrls })
+        const uploadedUrls = await CourseService.uploadFiles(files, type, newMaterial.url);
+        //setNewMaterial({ ...newMaterial, url: uploadedUrls })
+        // Dodaj nowe URL-e do istniejącej listy URL-i w newMaterial
+        setNewMaterial(prevMaterial => ({
+            ...prevMaterial,
+            url: [...(prevMaterial.url || []), ...uploadedUrls]  // Łączymy stare URL-e z nowymi
+        }));
 
 
         console.log(JSON.stringify(uploadedUrls))
-        if(type==="IMAGE"){
-            // Zaktualizuj adresy URL zdjęć
-            setUploadedFilesUrls((prevImages) => [...prevImages, ...uploadedUrls]);
-        }
+        setUploadedFilesUrls((prevImages) => [...prevImages, ...uploadedUrls]);
 
         // Odblokuj przycisk "Zapisz zmiany" po zakończeniu przesyłania
         setIsUploading(false);
+        setIsFileUploaded(true)
     };
 
 
     return (
-        <div>
+        <Container data-bs-theme="dark">
             {course && (
                 <>
                     <h3 className="text-white">Kurs:</h3>
@@ -147,6 +161,24 @@ const CourseDetailPage = () => {
 
                     <h3 className="text-white">Dodaj Nowy Materiał(PRACOWNIK/ADMIN)</h3>
                     <Form>
+                        <Form.Group controlId="formMaterialType">
+                            <Form.Label className="text-white">Typ Materiału</Form.Label>
+                            <Form.Select
+                                as="select"
+                                value={newMaterial.type}
+                                onChange={(e) => setNewMaterial({ ...newMaterial, type: e.target.value })}
+                                required
+                                disabled={isFileUploaded}
+                            >
+                                <option>Wybierz typ materiału</option>
+                                <option value="TEXT">TEXT</option>
+                                <option value="VIDEO">VIDEO</option>
+                                <option value="PDF">PDF</option>
+                                <option value="IMAGE">IMAGE</option>
+                                <option value="FILE">FILE</option>
+                                <option value="LINK">LINK</option>//TODO linki tez zapisywac w formie url, ale zamienić form od plików na pole textowe albo na liste
+                            </Form.Select>
+                        </Form.Group>
                         <Form.Group controlId="formMaterialTitle">
                             <Form.Label className="text-white">Tytuł</Form.Label>
                             <Form.Control
@@ -155,23 +187,6 @@ const CourseDetailPage = () => {
                                 value={newMaterial.title}
                                 onChange={(e) => setNewMaterial({ ...newMaterial, title: e.target.value })}
                             />
-                        </Form.Group>
-                        <Form.Group controlId="formMaterialType">
-                            <Form.Label className="text-white">Typ Materiału</Form.Label>
-                            <Form.Select
-                                as="select"
-                                value={newMaterial.type}
-                                onChange={(e) => setNewMaterial({ ...newMaterial, type: e.target.value })}
-                                required
-                            >
-                                <option>Wybierz typ materiału</option>
-                                <option value="TEXT">TEXT</option>
-                                <option value="VIDEO">VIDEO</option>
-                                <option value="PDF">PDF</option>
-                                <option value="IMAGE">IMAGE</option>
-                                <option value="FILE">FILE</option>
-                                <option value="LINK">LINK</option>
-                            </Form.Select>
                         </Form.Group>
                         <Form.Group controlId="formMaterialContent">
                             <Form.Label className="text-white">Zawartość</Form.Label>
@@ -263,7 +278,7 @@ const CourseDetailPage = () => {
                     </ul>
                 </>
             )}
-        </div>
+        </Container>
     );
 };
 

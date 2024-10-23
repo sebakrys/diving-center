@@ -25,7 +25,7 @@ public class CourseMaterial {
     private String content; // np. dla textu, albo link, a dla plików dodatkowe informacje
 
     @ElementCollection
-    @CollectionTable(name = "material_urls", joinColumns = @JoinColumn(name = "material_id"))
+    @CollectionTable(name = "course_material_urls", joinColumns = @JoinColumn(name = "material_id"))
     @Column(name = "url")
     private List<String> url; // Przechowywanie listy URL-i
 

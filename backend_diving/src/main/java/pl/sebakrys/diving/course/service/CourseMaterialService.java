@@ -1,6 +1,7 @@
 package pl.sebakrys.diving.course.service;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -70,25 +71,53 @@ public class CourseMaterialService {
 
 
     public CourseMaterial addMaterial(Long courseId, CourseMaterial material) {
-        Course course = courseRepository.findById(courseId).orElseThrow();
-        if(!material.getUrl().isEmpty() && !material.getType().equals("TEXT")){
+        // Znajdź kurs na podstawie ID
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + courseId));
+
+        // Inicjalizacja listy url, jeśli jest null
+        if (material.getUrl() == null) {
+            material.setUrl(new ArrayList<>()); // Inicjalizujemy pustą listę
+        }
+
+        // Sprawdzenie, czy materiał zawiera URL i czy typ nie jest "TEXT"
+        if (!material.getUrl().isEmpty() && !material.getType().equals("TEXT")) {
             Optional<CourseMaterial> courseMaterialOptional = courseMaterialRepository.findByUrl(material.getUrl().get(0));
-            if(courseMaterialOptional.isPresent()){
+
+            // Jeśli znaleziono materiał, nadpisz jego listę URL-i
+            if (courseMaterialOptional.isPresent()) {
                 CourseMaterial courseMaterial = courseMaterialOptional.get();
+
+                // Uaktualnienie pól materiału
                 courseMaterial.setType(material.getType());
                 courseMaterial.setTitle(material.getTitle());
                 courseMaterial.setContent(material.getContent());
                 courseMaterial.setCourse(course);
+
+                System.out.println("courseMaterial.getUrl: "+courseMaterial.getUrl().toString());
+                System.out.println("material.getUrl(): "+material.getUrl().toString());
+
+                // Nadpisanie istniejącej listy URL-i nową listą
+                courseMaterial.setUrl(material.getUrl());
+                System.out.println("courseMaterial.getUrl{2}: "+courseMaterial.getUrl().toString());
+
+                // Zapisz zaktualizowany materiał
                 return courseMaterialRepository.save(courseMaterial);
             }
-        } else {
-            if(material.getType().equals("TEXT")) material.setUrl(null);
-            material.setCourse(course);
-            return courseMaterialRepository.save(material);
         }
 
-        return null;
+        // W przypadku typu TEXT, ustaw pustą listę URL-i
+        if (material.getType().equals("TEXT")) {
+            material.setUrl(new ArrayList<>()); // Pusta lista zamiast null
+        }
+
+        // Ustaw kurs dla materiału i zapisz nowy materiał
+        material.setCourse(course);
+        return courseMaterialRepository.save(material);
     }
+
+
+
 
 
     public List<CourseMaterial> getMaterialsForCourse(Long courseId) {
@@ -141,22 +170,41 @@ public class CourseMaterialService {
         }
         return urls;
     }
-    public List<String> uploadMaterialFiles(List<MultipartFile> files) {
-        List<String> urls = new ArrayList<>();
-        String fileDir = rootUploadPath+FILES_COURSE_ACCES_DIRECTORY;
 
-        CourseMaterial courseMaterial = new CourseMaterial();
-        courseMaterial.setType("FILE");
+    public List<String> uploadMaterialImages(List<MultipartFile> files, List<String> urlList) {
+        String date = (new SimpleDateFormat("yyyyMMddHHmmss"))
+                .format(new java.util.Date());
+        String fileDir = rootUploadPath+IMAGES_COURSE_ACCES_DIRECTORY;
+
+        Optional<CourseMaterial> courseMaterialOptional;
+        if(urlList!=null)courseMaterialOptional = courseMaterialRepository.findByUrl(urlList.get(0));
+        else courseMaterialOptional = Optional.empty();
+
+        CourseMaterial courseMaterial;
+        List<String> urls;
+        if(courseMaterialOptional.isPresent()){
+            courseMaterial = courseMaterialOptional.get();
+            urls = courseMaterial.getUrl();
+        }else{
+            courseMaterial = new CourseMaterial();
+            urls = new ArrayList<>();
+        }
+
+
+        courseMaterial.setType("IMAGE");
+
+        List<String> thisTimeUploadedUrls = new ArrayList<>();
 
 
         for (MultipartFile file : files) {
-            String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            String filename = date+"_"+UUID.randomUUID().toString();
             Path filePath = Paths.get(fileDir, filename);
 
             try {
                 Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
                 String fileUrl = fileDir + filename; // Ścieżka do pliku
                 urls.add(fileUrl); // Dodanie URL do listy zwracanej
+                thisTimeUploadedUrls.add(fileUrl);
 
             } catch (IOException e) {
                 throw new RuntimeException("Błąd podczas przesyłania pliku", e);
@@ -169,6 +217,56 @@ public class CourseMaterialService {
         // Zapisz CourseMaterial w bazie danych
         courseMaterialRepository.save(courseMaterial);
 
-        return urls;
+        return thisTimeUploadedUrls;
+    }
+
+
+    public List<String> uploadMaterialFiles(List<MultipartFile> files, List<String> urlList) {
+        Format formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String date = formatter.format(new java.util.Date());
+
+        String fileDir = rootUploadPath+FILES_COURSE_ACCES_DIRECTORY;
+
+        Optional<CourseMaterial> courseMaterialOptional;
+        if(urlList!=null)courseMaterialOptional = courseMaterialRepository.findByUrl(urlList.get(0));
+        else courseMaterialOptional = Optional.empty();
+
+        CourseMaterial courseMaterial;
+        List<String> urls;
+        if(courseMaterialOptional.isPresent()){
+            courseMaterial = courseMaterialOptional.get();
+            urls = courseMaterial.getUrl();
+        }else{
+            courseMaterial = new CourseMaterial();
+            urls = new ArrayList<>();
+        }
+
+        courseMaterial.setType("FILE");
+
+
+        List<String> thisTimeUploadedUrls = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            String filename = date+"_"+UUID.randomUUID().toString();
+            Path filePath = Paths.get(fileDir, filename);
+
+            try {
+                Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                String fileUrl = fileDir + filename; // Ścieżka do pliku
+                urls.add(fileUrl); // Dodanie URL do listy zwracanej
+                thisTimeUploadedUrls.add(fileUrl);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Błąd podczas przesyłania pliku", e);
+            }
+        }
+
+        // Przypisz listę URL-i do obiektu CourseMaterial
+        courseMaterial.setUrl(urls);
+
+        // Zapisz CourseMaterial w bazie danych
+        courseMaterialRepository.save(courseMaterial);
+
+        return thisTimeUploadedUrls;
     }
 }

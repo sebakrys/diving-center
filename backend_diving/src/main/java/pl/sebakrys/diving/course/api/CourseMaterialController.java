@@ -20,17 +20,20 @@ public class CourseMaterialController {
     private CourseMaterialService courseMaterialService;
 
     @PostMapping("/upload/{type}")
-    public ResponseEntity<Map<String, Object>> uploadMaterials(@RequestParam("file") List<MultipartFile> files, @PathVariable String type) {
+    public ResponseEntity<Map<String, Object>> uploadMaterials(@RequestParam("file") List<MultipartFile> files,@RequestParam(value = "url",  required = false) List<String> urlList,@PathVariable String type) {
         List<String> urls;
         switch (type){
             case "FILE":
-                urls = courseMaterialService.uploadMaterialFiles(files);
+                urls = courseMaterialService.uploadMaterialFiles(files, urlList);
                 break;
             case "VIDEO":
                 urls = courseMaterialService.uploadMaterialVideo(files);
                 break;
+            case "IMAGE":
+                urls = courseMaterialService.uploadMaterialImages(files, urlList);
+                break;
             default:
-                urls = courseMaterialService.uploadMaterialFiles(files);
+                urls = courseMaterialService.uploadMaterialFiles(files, urlList);
                 break;
         }
 
