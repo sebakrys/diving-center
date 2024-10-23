@@ -198,7 +198,13 @@ public class CourseMaterialService {
 
 
         for (MultipartFile file : files) {
-            String filename = date+"_"+UUID.randomUUID().toString();
+            String originalFilename = file.getOriginalFilename();
+            String extension = ""; // Domyślna wartość jeśli nie ma rozszerzenia
+            if (originalFilename != null && originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // Pobierz rozszerzenie
+            }
+
+            String filename = date+"_"+UUID.randomUUID().toString()+extension;
             Path filePath = Paths.get(fileDir, filename);
 
             try {
@@ -248,7 +254,13 @@ public class CourseMaterialService {
         List<String> thisTimeUploadedUrls = new ArrayList<>();
 
         for (MultipartFile file : files) {
-            String filename = date+"_"+UUID.randomUUID().toString();
+            String originalFilename = file.getOriginalFilename();
+            String extension = ""; // Domyślna wartość jeśli nie ma rozszerzenia
+            if (originalFilename != null && originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // Pobierz rozszerzenie
+            }
+
+            String filename = date+"_"+UUID.randomUUID().toString()+extension;
             Path filePath = Paths.get(fileDir, filename);
 
             try {
