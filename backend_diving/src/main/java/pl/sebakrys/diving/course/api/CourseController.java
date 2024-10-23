@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.sebakrys.diving.course.entity.Course;
 import pl.sebakrys.diving.course.service.CourseService;
+import pl.sebakrys.diving.users.dto.UserNamesAndIDDto;
 import pl.sebakrys.diving.users.entity.User;
 
 import java.util.List;
@@ -44,6 +45,12 @@ public class CourseController {
         return ResponseEntity.ok(userCourses);
     }
 
+    @GetMapping("/{courseId}/users")
+    public ResponseEntity<List<UserNamesAndIDDto>> getUsersForCourse(@PathVariable Long courseId) {
+        List<UserNamesAndIDDto> usersNamesAndIDDtos = courseService.getUsersForCourse(courseId);
+        return ResponseEntity.ok(usersNamesAndIDDtos);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Course> updateCourse(@PathVariable Long id, @RequestBody Course course) {
         Course updatedCourse = courseService.updateCourse(id, course);
@@ -57,9 +64,9 @@ public class CourseController {
     }
 
     @PostMapping("/{courseId}/users/{userId}")
-    public ResponseEntity<Set<User>> addUserToCourse(@PathVariable Long courseId, @PathVariable Long userId) {
-        Set<User> updatedUsers = courseService.addUserToCourse(courseId, userId);
-        return ResponseEntity.ok(updatedUsers);
+    public ResponseEntity<UserNamesAndIDDto> addUserToCourse(@PathVariable Long courseId, @PathVariable Long userId) {
+        UserNamesAndIDDto updatedUser = courseService.addUserToCourse(courseId, userId);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{courseId}/users/{userId}")

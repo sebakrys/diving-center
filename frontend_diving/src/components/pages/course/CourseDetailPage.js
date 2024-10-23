@@ -37,6 +37,9 @@ const CourseDetailPage = () => {
         axios.get(COURSE_REST_URL+`/courses/${id}/users`)
             .then(response => setUsers(response.data))
             .catch(error => console.error('Error fetching users:', error));
+
+
+
     }, [id]);  // 'id' jest teraz dynamicznym parametrem z URL
 
     // Funkcja wyszukująca użytkowników do zapisania na kurs
@@ -82,6 +85,22 @@ const CourseDetailPage = () => {
                 setMaterials(materials.filter(material => material.id !== id));
             })
             .catch(error => console.error('Error deleting material:', error));
+    };
+
+    const handleDeleteUser = (userId, courseId) => {
+        axios.delete(COURSE_REST_URL + `/courses/${courseId}/users/${userId}`)
+            .then(response => {
+                // Usuwamy materiał z listy materiałów w stanie
+                setUsers(users.filter(user => user.id !== userId));
+            })
+            .catch(error => console.error('Error deleting user:', error));
+    };
+
+    const handleAddUser = (userId, courseId) => {
+        console.log("userID "+userId+" courseId "+courseId)
+        axios.post(COURSE_REST_URL + `/courses/${courseId}/users/${userId}`)
+            .then(response => setUsers([...users, response.data]))
+            .catch(error => console.error('Error adding user:', error));
     };
 
 
@@ -194,7 +213,7 @@ const CourseDetailPage = () => {
                                 <option value="PDF">PDF</option>
                                 <option value="IMAGE">IMAGE</option>
                                 <option value="FILE">FILE</option>
-                                <option value="LINK">LINK</option>//TODO linki tez zapisywac w formie url, ale zamienić form od plików na pole textowe albo na liste
+                                <option value="LINK">LINK</option>
                             </Form.Select>
                         </Form.Group>
                         <Form.Group controlId="formMaterialTitle">
@@ -287,26 +306,58 @@ const CourseDetailPage = () => {
                         >Dodaj Materiał</Button>
                     </Form>
 
-                    <h2>Użytkownicy Zapisani na Kurs</h2>
-                    <ul>
+                    <h2 className="text-white">Użytkownicy Zapisani na Kurs</h2>
+                    <Table striped bordered hover>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Uzytkownik</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
                         {users.map(user => (
-                            <li key={user.id}>{user.firstName} {user.lastName} ({user.email})</li>
+                            <tr key={user.id}>
+                                <td>
+                                    {user.id}
+                                </td>
+                                <td>
+                                    {user.firstName} {user.lastName} ({user.email})
+                                </td>
+                                <td><Button variant="outline-danger"
+                                            onClick={() => handleDeleteUser(user.id, course.id)}>
+                                    Usuń
+                                </Button></td>
+                            </tr>
                         ))}
-                    </ul>
+                        </tbody>
+                    </Table>
 
-                    <h3>Wyszukaj Użytkownika</h3>
+
+
+                    <h3 className="text-white">Wyszukaj Użytkownika</h3>
                     <Form.Control
                         type="text"
                         placeholder="Wyszukaj po imieniu, nazwisku lub emailu"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    <Button onClick={searchUsers}>Wyszukaj</Button>
-                    <ul>
+
+                    <Table striped bordered hover>
+                        <tbody>
                         {availableUsers.map(user => (
-                            <li key={user.id}>{user.firstName} {user.lastName} ({user.email})</li>
+                            <tr key={user.id}>
+                                <td>
+                                    {user.firstName} {user.lastName} ({user.email})
+                                </td>
+                                <td><Button variant="outline-success"
+                                            onClick={() => handleAddUser(user.id, course.id)}>
+                                    Dodaj
+                                </Button></td>
+                            </tr>
                         ))}
-                    </ul>
+                        </tbody>
+                    </Table>
                 </>
             )}
         </Container>
