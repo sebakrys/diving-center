@@ -80,6 +80,8 @@ public class CourseMaterialService {
             material.setUrl(new ArrayList<>()); // Inicjalizujemy pustą listę
         }
 
+        System.out.println("material.getUrl(): "+material.getUrl().toString());
+
         // Sprawdzenie, czy materiał zawiera URL i czy typ nie jest "TEXT"
         if (!material.getUrl().isEmpty() && !material.getType().equals("TEXT")) {
             Optional<CourseMaterial> courseMaterialOptional = courseMaterialRepository.findByUrl(material.getUrl().get(0));
@@ -95,7 +97,6 @@ public class CourseMaterialService {
                 courseMaterial.setCourse(course);
 
                 System.out.println("courseMaterial.getUrl: "+courseMaterial.getUrl().toString());
-                System.out.println("material.getUrl(): "+material.getUrl().toString());
 
                 // Nadpisanie istniejącej listy URL-i nową listą
                 courseMaterial.setUrl(material.getUrl());

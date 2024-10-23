@@ -19,6 +19,7 @@ const CourseDetailPage = () => {
     const [isFileUploaded, setIsFileUploaded] = useState(false);
     const [previewImages, setPreviewImages] = useState([]);
     const [uploadedFilesUrls, setUploadedFilesUrls] = useState([]);
+    const [links, setLinks] = useState('');
 
 
     useEffect(() => {
@@ -45,14 +46,31 @@ const CourseDetailPage = () => {
             .catch(error => console.error('Error searching users:', error));
     };
 
+    useEffect(() => {
+        if (newMaterial.type === "LINK") {
+            console.log(JSON.stringify(links))
+            const separatedLinks = links.split("\n").filter(link => link.trim() !== ""); // Rozdziel linki na podstawie nowej linii i usuń puste
+            console.log(JSON.stringify(separatedLinks))
+            setNewMaterial(prevMaterial => ({
+                ...prevMaterial,
+                url: separatedLinks  // Zastąp istniejącą listę nową listą linków
+            }));
+        }
+    }, [links]);
+
     // Dodanie nowego materiału do kursu
     const handleAddMaterial = () => {
+
+        console.log(JSON.stringify(newMaterial))
+
+
         axios.post(COURSE_REST_URL+`/materials/${id}`, newMaterial)
             .then(response => setMaterials([...materials, response.data]))
             .catch(error => console.error('Error adding material:', error));
         setNewMaterial({ title: '', type: '', content: '', url: []})
         setIsFileUploaded(false)
         setPreviewImages([])
+        setLinks('')
 
     };
 
@@ -250,6 +268,19 @@ const CourseDetailPage = () => {
                             )}
                             </>
 
+                        }
+                        {(newMaterial.type === "LINK")
+                            &&
+                            <Form.Group controlId="formMaterialContent">
+                                <Form.Label className="text-white">Linki</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}  // Ustaw liczbę widocznych wierszy
+                                    placeholder="Podaj linki, każdy w nowej linii"
+                                    value={links}
+                                    onChange={(e) => setLinks(e.target.value)}
+                                />
+                            </Form.Group>
                         }
                         <Button onClick={handleAddMaterial}
                                 disabled={isUploading}
