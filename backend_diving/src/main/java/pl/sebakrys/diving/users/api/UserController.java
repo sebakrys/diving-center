@@ -92,9 +92,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<User>> searchUsers(@RequestParam String query) {
-        List<User> users = userService.searchUsersByRoleAndQuery(query, PageRequest.of(0, 10));//TODO dostosowywać z requestem
+    @GetMapping("/search/{courseId}")
+    public ResponseEntity<List<User>> searchUsersNotInCourse(@RequestParam String query, @PathVariable Long courseId) {
+        List<User> users = userService.searchUsersNotInCourseByRoleAndQuery(query, courseId, PageRequest.of(0, 10));//TODO dostosowywać z requestem PAGEABLE
         return ResponseEntity.ok(users);
     }
 

@@ -106,10 +106,16 @@ public class UserService {
         return userRepo.findAllByOrderByIdAsc();
     }
 
-    public List<User> searchUsersByRoleAndQuery(String query, Pageable pageable) {
-        return userRepo.findByRoleAndQuery("ROLE_CLIENT", "%" + query + "%",
+    public List<User> searchUsersNotInCourseByRoleAndQuery(String query, Long courseId, Pageable pageable) {
+        return userRepo.findByRoleAndQueryExcludingCourse(
+                "ROLE_CLIENT",
+                "%" + query + "%",
+                courseId,
                 pageable
         );
+        /*return userRepo.findByRoleAndQuery("ROLE_CLIENT", "%" + query + "%",
+                pageable
+        );*/
     }
 
     public UserNamesDto getUserNamesByAuthTokenRequest(HttpServletRequest request){

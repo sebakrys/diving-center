@@ -22,4 +22,17 @@ public interface UserRepo extends JpaRepository<User, Long> {
             "(upper(u.firstName) LIKE upper(%:query%) OR upper(u.lastName) LIKE upper(%:query%) OR upper(u.email) LIKE upper(%:query%))")
     List<User> findByRoleAndQuery(@Param("role") String role, @Param("query") String query, Pageable pageable);
 
+    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :role AND " +
+            "(upper(u.firstName) LIKE upper(CONCAT('%', :query, '%')) OR " +
+            "upper(u.lastName) LIKE upper(CONCAT('%', :query, '%')) OR " +
+            "upper(u.email) LIKE upper(CONCAT('%', :query, '%'))) AND " +
+            "u.id NOT IN (SELECT uc.id FROM Course c JOIN c.users uc WHERE c.id = :courseId)")
+    List<User> findByRoleAndQueryExcludingCourse(
+            @Param("role") String role,
+            @Param("query") String query,
+            @Param("courseId") Long courseId,
+            Pageable pageable);
+
+
+
 }

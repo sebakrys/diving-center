@@ -44,7 +44,7 @@ const CourseDetailPage = () => {
 
     // Funkcja wyszukująca użytkowników do zapisania na kurs
     const searchUsers = (phrase) => {
-        axios.get(COURSE_REST_URL+`/users/search?query=${phrase}`)
+        axios.get(COURSE_REST_URL+`/users/search/${id}?query=${phrase}`)
             .then(response => setAvailableUsers(response.data))
             .catch(error => console.error('Error searching users:', error));
     };
@@ -92,6 +92,7 @@ const CourseDetailPage = () => {
             .then(response => {
                 // Usuwamy materiał z listy materiałów w stanie
                 setUsers(users.filter(user => user.id !== userId));
+                searchUsers(searchQuery)
             })
             .catch(error => console.error('Error deleting user:', error));
     };
@@ -99,7 +100,10 @@ const CourseDetailPage = () => {
     const handleAddUser = (userId, courseId) => {
         console.log("userID "+userId+" courseId "+courseId)
         axios.post(COURSE_REST_URL + `/courses/${courseId}/users/${userId}`)
-            .then(response => setUsers([...users, response.data]))
+            .then(response => {
+                setUsers([...users, response.data]);
+                searchUsers(searchQuery)
+            })
             .catch(error => console.error('Error adding user:', error));
     };
 
