@@ -10,6 +10,7 @@ import Users from "./pages/users/Users";
 import Video from "./pages/Video";
 import CourseListPage from "./pages/course/CourseListPage";
 import CourseDetailPage from "./pages/course/CourseDetailPage";
+import UserCoursesListPage from "./pages/course/UserCoursesListPage";
 
 class Content extends React.Component {
     render() {
@@ -35,6 +36,7 @@ class Content extends React.Component {
                             <Route path="/home" element={<Home />} />
                             <Route path="/events" element={<Events />} />
                             <Route path="/blog" element={<Blog />} />
+                            <Route path="/my-courses" element={<UserCoursesListPage />} />
                             <Route path="/courses" element={<CourseListPage />} />
                             <Route path="/courses/:id" element={<CourseDetailPage />} />
                             <Route path="/users" element={<Users />} />

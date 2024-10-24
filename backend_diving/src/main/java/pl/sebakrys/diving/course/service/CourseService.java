@@ -1,6 +1,7 @@
 package pl.sebakrys.diving.course.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,9 @@ import pl.sebakrys.diving.course.repo.CourseRepo;
 import pl.sebakrys.diving.users.dto.UserDto;
 import pl.sebakrys.diving.users.dto.UserNamesAndIDDto;
 import pl.sebakrys.diving.users.entity.User;
+import pl.sebakrys.diving.users.repo.RoleRepo;
 import pl.sebakrys.diving.users.repo.UserRepo;
+import pl.sebakrys.diving.users.service.UserService;
 
 
 import java.util.List;
@@ -28,12 +31,40 @@ public class CourseService {
     @Autowired
     private UserRepo userRepository;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private RoleRepo roleRepo;
+
     public Course createCourse(Course course) {
         return courseRepository.save(course);
     }
 
-    public Optional<Course> getCourse(Long id) {
-        return courseRepository.findById(id);
+    public Optional<Course> getCourse(Long id, HttpServletRequest request) {
+        Long userId = userService.getUserIdByAuthTokenRequest(request);
+        User user = userRepository.findById(userId).orElseThrow();
+
+        System.out.println("user.getRoles().toString(): "+user.getRoles().toString());
+        System.out.println("user.hasRole(\"ROLE_ADMIN\"): "+user.hasRole("ROLE_ADMIN"));
+
+        Optional<Course> optionalCourse = courseRepository.findById(id);
+
+
+        if(
+                optionalCourse.isPresent()
+                        && (
+                                optionalCourse.get().getUsers().contains(user)
+                                        || user.hasRole("ROLE_EMPLOYEE")
+                                        || user.hasRole("ROLE_ADMIN")
+                )
+        ){
+            return optionalCourse;
+        }
+
+
+
+        return Optional.empty();
     }
 
     public List<Course> getAllCourses() {
@@ -58,6 +89,13 @@ public class CourseService {
                 .collect(Collectors.toList());
 
         return userDtos;
+    }
+
+    public List<Course> getCoursesForUserEmail(String userEmail) {
+        User user = userRepository.findByEmail(userEmail).orElseThrow();
+        return courseRepository.findAll().stream()
+                .filter(course -> course.getUsers().contains(user))
+                .collect(Collectors.toList());
     }
 
     public List<Course> getCoursesForUser(Long userId) {

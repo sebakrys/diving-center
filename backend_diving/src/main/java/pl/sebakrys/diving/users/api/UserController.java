@@ -139,6 +139,13 @@ public class UserController {
         return ResponseEntity.ok(userNamesDto);
     }
 
+    @GetMapping("/id/")
+    public ResponseEntity<Long> getUserIdByAuthToken(HttpServletRequest request) {
+        Long userId = userService.getUserIdByAuthTokenRequest(request);
+        if(userId==null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(userId);
+    }
+
     @GetMapping("/names/")
     public ResponseEntity<UserNamesDto> getUserNamesByAuthToken(HttpServletRequest request) {
         UserNamesDto userNamesDto = userService.getUserNamesByAuthTokenRequest(request);

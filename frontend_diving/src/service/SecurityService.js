@@ -150,6 +150,20 @@ class SecurityService {//TODO Przedłużanie tokena
         }
     }
 
+    async getCurrentUserIdByToken() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const response = await axios.get(SECURITY_REST_URL + '/users/id/');
+                return {success: true, userId: response.data};
+            } catch (error) {
+                let message = 'Wystąpił błąd podczas pobierania danych użytkownika(byToken).';
+                return {success: false, message};
+            }
+            return null;
+        }
+    }
+
         getRoles()
         {
             const roles = localStorage.getItem('roles');

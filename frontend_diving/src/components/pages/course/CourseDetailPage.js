@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import {Button, Col, Container, Form, Row, Spinner, Table} from 'react-bootstrap';
 import BlogService from "../../../service/BlogService";
 import CourseService from "../../../service/CourseService";
+import SecurityService from "../../../service/SecurityService";
 
 const COURSE_REST_URL = 'http://localhost:8080';
 
@@ -44,9 +45,14 @@ const CourseDetailPage = () => {
 
     // Funkcja wyszukująca użytkowników do zapisania na kurs
     const searchUsers = (phrase) => {
-        axios.get(COURSE_REST_URL+`/users/search/${id}?query=${phrase}`)
-            .then(response => setAvailableUsers(response.data))
-            .catch(error => console.error('Error searching users:', error));
+        if(phrase.length>0) {
+            axios.get(COURSE_REST_URL + `/users/search/${id}?query=${phrase}`)
+                .then(response => setAvailableUsers(response.data))
+                .catch(error => console.error('Error searching users:', error));
+        }else{
+            setAvailableUsers([])
+        }
+
     };
 
     useEffect(() => {
@@ -161,14 +167,23 @@ const CourseDetailPage = () => {
                 <>
                     <h3 className="text-white">Kurs:</h3>
                     <h1 className="text-white">{course.name}</h1>
-                    <p className="text-white">{course.description}</p>
+                    <h5 className="text-white">{course.description}</h5>
 
+
+
+
+
+
+
+
+
+                    {materials.length>0 &&(<>
                     <h2 className="text-white mt-5">Materiały Kursu(KLIENT/PRACOWNIK/ADMIN)</h2>
                     <Table striped bordered hover>
                         <thead>
                         <tr>
-                            <th>Tytuł</th>
                             <th>Typ</th>
+                            <th>Tytuł</th>
                             <th>Zawartość</th>
                             <th>URL</th>
                             <th></th>
@@ -178,139 +193,187 @@ const CourseDetailPage = () => {
                         {materials.map(material => (
                             <tr key={material.id}>
                                 <td>
-                                    {material.title}
+                                    {material.type}
                                 </td>
                                 <td>
-                                    {material.type}
+                                    {material.title}
                                 </td>
                                 <td>
                                     {material.content}
                                 </td>
                                 <td>
-                                    {material.url}
+                                    {
+                                        (material.url.length>0)
+                                            && (
+
+                                                material.type==="LINK" ? (
+
+
+                                    material.url.map((single_url) => (
+                                    <div >
+                                        <a href={single_url} target="_blank" rel="noopener noreferrer">
+                                            {single_url}
+                                        </a>
+                                    </div>
+                                    ))
+                                        ) : (
+
+                                                    material.url.map((single_url, index) => (
+                                                        <div >
+                                                            <a href={COURSE_REST_URL+single_url} target="_blank" rel="noopener noreferrer">
+                                                                {material.type+"_"+(index+1)}
+                                                            </a>
+                                                        </div>
+                                                    ))
+
+                                                )
+                                        )}
                                 </td>
-                                <td><Button variant="outline-danger"
-                                            onClick={() => handleDeleteMaterial(material.id)}>
-                                    Usuń
-                                </Button></td>
+                                <td>
+                                    {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) &&
+
+                                        <Button variant="outline-danger"
+                                                onClick={() => handleDeleteMaterial(material.id)}>
+                                            Usuń
+                                        </Button>
+                                    }
+
+                                </td>
                             </tr>
                         ))}
                         </tbody>
                         </Table>
+                    </>)}
 
 
 
-                    <h3 className="text-white">Dodaj Nowy Materiał(PRACOWNIK/ADMIN)</h3>
-                    <Form>
-                        <Form.Group controlId="formMaterialType">
-                            <Form.Label className="text-white">Typ Materiału</Form.Label>
-                            <Form.Select
-                                as="select"
-                                value={newMaterial.type}
-                                onChange={(e) => setNewMaterial({ ...newMaterial, type: e.target.value })}
-                                required
-                                disabled={isFileUploaded}
-                            >
-                                <option>Wybierz typ materiału</option>
-                                <option value="TEXT">TEXT</option>
-                                <option value="VIDEO">VIDEO</option>
-                                <option value="PDF">PDF</option>
-                                <option value="IMAGE">IMAGE</option>
-                                <option value="FILE">FILE</option>
-                                <option value="LINK">LINK</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <Form.Group controlId="formMaterialTitle">
-                            <Form.Label className="text-white">Tytuł</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Podaj tytuł materiału"
-                                value={newMaterial.title}
-                                onChange={(e) => setNewMaterial({ ...newMaterial, title: e.target.value })}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formMaterialContent">
-                            <Form.Label className="text-white">Zawartość</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Podaj zawartość lub link"
-                                value={newMaterial.content}
-                                onChange={(e) => setNewMaterial({ ...newMaterial, content: e.target.value })}
-                            />
-                        </Form.Group>
-                        {(newMaterial.type==="VIDEO" || newMaterial.type==="PDF" || newMaterial.type==="IMAGE" || newMaterial.type==="FILE")
-                            &&
-                            <>
-                            <Form.Group controlId="postImages" className="mb-3">
-                                <Form.Label className="mt-3 text-white h4">
-                                    Dodaj {newMaterial.type}
-                                </Form.Label>
+
+
+
+
+
+
+
+
+
+
+
+                    {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (<>
+
+                        <h3 className="text-white">Dodaj Nowy Materiał(PRACOWNIK/ADMIN)</h3>
+                        <Form>
+                            <Form.Group controlId="formMaterialType">
+                                <Form.Label className="text-white">Typ Materiału</Form.Label>
+                                <Form.Select
+                                    as="select"
+                                    value={newMaterial.type}
+                                    onChange={(e) => setNewMaterial({ ...newMaterial, type: e.target.value })}
+                                    required
+                                    disabled={isFileUploaded}
+                                >
+                                    <option>Wybierz typ materiału</option>
+                                    <option value="TEXT">TEXT</option>
+                                    <option value="VIDEO">VIDEO</option>
+                                    <option value="PDF">PDF</option>
+                                    <option value="IMAGE">IMAGE</option>
+                                    <option value="FILE">FILE</option>
+                                    <option value="LINK">LINK</option>
+                                </Form.Select>
+                            </Form.Group>
+                            <Form.Group controlId="formMaterialTitle">
+                                <Form.Label className="text-white">Tytuł</Form.Label>
                                 <Form.Control
-                                    type="file"
-                                    accept="*"
-                                    multiple
-                                    onChange={(event) => handleFileUpload(event, newMaterial.type)}
-                                    disabled={isUploading} // Zablokuj, gdy obrazy są przesyłane
+                                    type="text"
+                                    placeholder="Podaj tytuł materiału"
+                                    value={newMaterial.title}
+                                    onChange={(e) => setNewMaterial({ ...newMaterial, title: e.target.value })}
                                 />
                             </Form.Group>
-                                {isUploading && <Spinner animation="border" role="status"><span className="sr-only text-white h4"></span></Spinner>}
-
-
-                        {/* Podgląd obrazów */}
-                        {previewImages.length > 0 && (
-                            <Row className="mb-3">
-                            <Col>
-                            <h5>Podgląd zdjęć</h5>
-                            <div className="d-flex flex-wrap">
-                        {previewImages.map((src, index) => (
-                            <div key={index} style={{ position: 'relative', marginRight: '10px', marginBottom: '10px' }}>
-                            <img
-                            src={src}
-                            alt={`preview_${index}`}
-                            style={{
-                            width: "100px",
-                            height: "100px",
-                            objectFit: "cover",
-                        }}
-                            />
-                        {!isUploading &&
-                            <Button
-                            variant="danger"
-                            size="sm"
-                            style={{ position: 'absolute', top: '0', right: '0' }}
-                            onClick={() => handleRemoveImage(index)}
-                            >
-                            &times;
-                            </Button>
-                        }
-                            </div>
-                            ))}
-                            </div>
-                            </Col>
-                            </Row>
-                            )}
-                            </>
-
-                        }
-                        {(newMaterial.type === "LINK")
-                            &&
                             <Form.Group controlId="formMaterialContent">
-                                <Form.Label className="text-white">Linki</Form.Label>
+                                <Form.Label className="text-white">Zawartość</Form.Label>
                                 <Form.Control
-                                    as="textarea"
-                                    rows={3}  // Ustaw liczbę widocznych wierszy
-                                    placeholder="Podaj linki, każdy w nowej linii"
-                                    value={links}
-                                    onChange={(e) => setLinks(e.target.value)}
+                                    type="text"
+                                    placeholder="Podaj zawartość lub link"
+                                    value={newMaterial.content}
+                                    onChange={(e) => setNewMaterial({ ...newMaterial, content: e.target.value })}
                                 />
                             </Form.Group>
-                        }
-                        <Button onClick={handleAddMaterial}
-                                disabled={isUploading}
-                        >Dodaj Materiał</Button>
-                    </Form>
+                            {(newMaterial.type==="VIDEO" || newMaterial.type==="PDF" || newMaterial.type==="IMAGE" || newMaterial.type==="FILE")
+                                &&
+                                <>
+                                <Form.Group controlId="postImages" className="mb-3">
+                                    <Form.Label className="mt-3 text-white h4">
+                                        Dodaj {newMaterial.type}
+                                    </Form.Label>
+                                    <Form.Control
+                                        type="file"
+                                        accept="*"
+                                        multiple
+                                        onChange={(event) => handleFileUpload(event, newMaterial.type)}
+                                        disabled={isUploading} // Zablokuj, gdy obrazy są przesyłane
+                                    />
+                                </Form.Group>
+                                    {isUploading && <Spinner animation="border" role="status"><span className="sr-only text-white h4"></span></Spinner>}
 
-                    <h2 className="text-white">Użytkownicy Zapisani na Kurs</h2>
+
+                            {/* Podgląd obrazów */}
+                            {previewImages.length > 0 && (
+                                <Row className="mb-3">
+                                <Col>
+                                <h5>Podgląd zdjęć</h5>
+                                <div className="d-flex flex-wrap">
+                            {previewImages.map((src, index) => (
+                                <div key={index} style={{ position: 'relative', marginRight: '10px', marginBottom: '10px' }}>
+                                <img
+                                src={src}
+                                alt={`preview_${index}`}
+                                style={{
+                                width: "100px",
+                                height: "100px",
+                                objectFit: "cover",
+                            }}
+                                />
+                            {!isUploading &&
+                                <Button
+                                variant="danger"
+                                size="sm"
+                                style={{ position: 'absolute', top: '0', right: '0' }}
+                                onClick={() => handleRemoveImage(index)}
+                                >
+                                &times;
+                                </Button>
+                            }
+                                </div>
+                                ))}
+                                </div>
+                                </Col>
+                                </Row>
+                                )}
+                                </>
+
+                            }
+                            {(newMaterial.type === "LINK")
+                                &&
+                                <Form.Group controlId="formMaterialContent">
+                                    <Form.Label className="text-white">Linki</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={3}  // Ustaw liczbę widocznych wierszy
+                                        placeholder="Podaj linki, każdy w nowej linii"
+                                        value={links}
+                                        onChange={(e) => setLinks(e.target.value)}
+                                    />
+                                </Form.Group>
+                            }
+                            <Button onClick={handleAddMaterial}
+                                    disabled={isUploading}
+                            >Dodaj Materiał</Button>
+                        </Form>
+
+                    </>)}
+
+                    {(SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && users.length>0) && (<>
+                    <h2 className="text-white">Klienci Zapisani na Kurs</h2>
                     <Table striped bordered hover>
                         <thead>
                         <tr>
@@ -336,10 +399,11 @@ const CourseDetailPage = () => {
                         ))}
                         </tbody>
                     </Table>
+                    </>)}
 
 
-
-                    <h3 className="text-white">Wyszukaj Użytkownika</h3>
+                    {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (<>
+                    <h3 className="text-white">Zapisz Klienta na kurs</h3>
                     <Form.Control
                         type="text"
                         placeholder="Wyszukaj po imieniu, nazwisku lub emailu"
@@ -362,6 +426,7 @@ const CourseDetailPage = () => {
                         ))}
                         </tbody>
                     </Table>
+                    </>)}
                 </>
             )}
         </Container>

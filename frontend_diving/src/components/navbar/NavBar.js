@@ -31,11 +31,16 @@ function NavBar() {
                         <Nav.Link href="#/home">Wstęp</Nav.Link>
                         <Nav.Link href="#/events">Kalendarz</Nav.Link>
                         <Nav.Link href="#/blog">Blog</Nav.Link>
-                        <Nav.Link href="#/courses">Kursy</Nav.Link>
+                        {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) &&
+                            <Nav.Link href="#/courses">Kursy</Nav.Link>
+                        }
+                        {SecurityService.isUserInRole(["ROLE_CLIENT"]) &&
+                            <Nav.Link href="#/my-courses">Moje Kursy</Nav.Link>
+                        }
                         {SecurityService.isUserInRole(["ROLE_ADMIN"]) &&
                             <>
                                 <Nav.Link href="#/users" >Użytkownicy</Nav.Link>
-                                <Nav.Link href="#/video" className="danger">Video</Nav.Link>
+                                <Nav.Link href="#/video" className="danger">Demo Video</Nav.Link>
                             </>
                         }
                         {/*

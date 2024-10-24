@@ -13,4 +13,5 @@ public interface CourseRepo extends JpaRepository<Course, Long> {
     @EntityGraph(attributePaths = "users")
     Optional<Course> findWithUsersById(Long id);
 
+
 }

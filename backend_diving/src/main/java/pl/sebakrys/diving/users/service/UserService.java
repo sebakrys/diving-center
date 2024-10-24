@@ -134,6 +134,22 @@ public class UserService {
         return null;
     }
 
+    public Long getUserIdByAuthTokenRequest(HttpServletRequest request){
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String oldToken = authHeader.substring(7);
+            // Wyodrębnij nazwę użytkownika z tokena
+            String email = jwtUtil.extractUsername(oldToken);
+            Optional<User> userOptional = userRepo.findByEmail(email);
+            if(userOptional.isPresent()){
+                User user = userOptional.get();
+                Long userId = user.getId();
+                return userId;
+            }
+        }
+        return null;
+    }
+
     // Aktualizacja użytkownika
     public Optional<User> updateUser(Long userId, User userDetails) {
         return userRepo.findById(userId)

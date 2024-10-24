@@ -31,7 +31,7 @@ public class Course {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "users_courses",
+            name = "courses_users",
             joinColumns = @JoinColumn(name = "course_id"),  // Odnosi się do encji Course
             inverseJoinColumns = @JoinColumn(name = "user_id")  // Odnosi się do encji User
     )
