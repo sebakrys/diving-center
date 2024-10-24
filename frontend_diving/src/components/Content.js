@@ -11,6 +11,7 @@ import Video from "./pages/Video";
 import CourseListPage from "./pages/course/CourseListPage";
 import CourseDetailPage from "./pages/course/CourseDetailPage";
 import UserCoursesListPage from "./pages/course/UserCoursesListPage";
+import CourseVideo from "./pages/course/CourseVideo";
 
 class Content extends React.Component {
     render() {
@@ -39,6 +40,7 @@ class Content extends React.Component {
                             <Route path="/my-courses" element={<UserCoursesListPage />} />
                             <Route path="/courses" element={<CourseListPage />} />
                             <Route path="/courses/:id" element={<CourseDetailPage />} />
+                            <Route path="/course-video/:materialId" element={<CourseVideo />} />
                             <Route path="/users" element={<Users />} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/login" element={<Login />} />

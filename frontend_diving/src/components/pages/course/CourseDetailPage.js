@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {Button, Col, Container, Form, Row, Spinner, Table} from 'react-bootstrap';
 import BlogService from "../../../service/BlogService";
 import CourseService from "../../../service/CourseService";
@@ -21,6 +21,8 @@ const CourseDetailPage = () => {
     const [previewImages, setPreviewImages] = useState([]);
     const [uploadedFilesUrls, setUploadedFilesUrls] = useState([]);
     const [links, setLinks] = useState('');
+
+    const navigate = useNavigate(); // Hook do nawigacji
 
 
     useEffect(() => {
@@ -218,13 +220,27 @@ const CourseDetailPage = () => {
                                     ))
                                         ) : (
 
+                                                    material.type==="VIDEO" ? (
+
                                                     material.url.map((single_url, index) => (
                                                         <div >
-                                                            <a href={COURSE_REST_URL+single_url} target="_blank" rel="noopener noreferrer">
-                                                                {material.type+"_"+(index+1)}
-                                                            </a>
+                                                            <Button variant="outline-info" onClick={() => navigate(`/course-video/${material.id}`)}>
+                                                                VIDEO
+                                                            </Button>
                                                         </div>
                                                     ))
+                                                    )
+                                                        :
+
+                                                        (
+                                                            material.url.map((single_url, index) => (
+                                                                <div >
+                                                                    <a href={COURSE_REST_URL+single_url} target="_blank" rel="noopener noreferrer">
+                                                                        {material.type+"_"+(index+1)}
+                                                                    </a>
+                                                                </div>
+                                                            ))
+                                                        )
 
                                                 )
                                         )}

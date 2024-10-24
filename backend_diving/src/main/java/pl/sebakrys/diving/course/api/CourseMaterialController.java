@@ -53,7 +53,6 @@ public class CourseMaterialController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
     public ResponseEntity<CourseMaterial> getMaterialById(@PathVariable Long id, HttpServletRequest request) {
         Optional<CourseMaterial> material = courseMaterialService.getMaterialById(id, request);
         return material
