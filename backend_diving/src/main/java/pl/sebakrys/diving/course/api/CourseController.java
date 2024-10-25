@@ -30,7 +30,7 @@ public class CourseController {
         return ResponseEntity.ok(createdCourse);
     }
 
-    @GetMapping("/{id}")//TODO jesli user nalezy do kursu
+    @GetMapping("/{id}")
     public ResponseEntity<Course> getCourse(@PathVariable Long id, HttpServletRequest request) {
         Optional<Course> course = courseService.getCourse(id, request);
         return course.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());

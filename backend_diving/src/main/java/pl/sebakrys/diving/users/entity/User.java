@@ -19,7 +19,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long id;
+    private Long id;//TODO dodać uuid i na podstawie niego uzyskiwac dostęp
 
     private String firstName;
     private String lastName;

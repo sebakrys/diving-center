@@ -11,7 +11,7 @@ import * as Icon from 'react-bootstrap-icons';
 
 const COURSE_REST_URL = 'http://localhost:8080';
 
-function CourseVideo() {
+function CourseVideo() {// TODO przy dużym ekranie nuie ma ani znaku wodnego ani nic działającego(chyba), jedna z opcji to zablokowanie dużego ekranu
     const { materialId } = useParams();  // Hook do pobierania parametru 'id' z URL
     const [sessionId, setSessionId] =  useState("ABC123"); // Przykładowy unikalny identyfikator sesji
     const [videoUrl, setVideoUrl] =  useState(null);

@@ -3,7 +3,7 @@ import {jwtDecode} from "jwt-decode";
 
 const SECURITY_REST_URL = 'http://localhost:8080';
 
-class SecurityService {//TODO Przedłużanie tokena
+class SecurityService {
 
     initialize() {
         const token = localStorage.getItem('token');
@@ -136,7 +136,7 @@ class SecurityService {//TODO Przedłużanie tokena
         }
     }
 
-    async getCurrentUserNamesByToken() {
+    async getCurrentUserNamesByToken() {// To juz dziął bezpiecznie, na pdoatsiwe tokena wysłanego na serwer pobierany email usera
         const token = localStorage.getItem('token');
         if (token) {
             try {
@@ -150,7 +150,7 @@ class SecurityService {//TODO Przedłużanie tokena
         }
     }
 
-    async getCurrentUserIdByToken() {
+    async getCurrentUserIdByToken() {// To juz dziął bezpiecznie, na pdoatsiwe tokena wysłanego na serwer pobierany ID usera // TODO zamiast id bedzie uuid
         const token = localStorage.getItem('token');
         if (token) {
             try {
@@ -172,7 +172,8 @@ class SecurityService {//TODO Przedłużanie tokena
 
 // Metoda, która akceptuje tablicę ról
         isUserInRole(rolesToCheck)
-        {
+        {//TODO nie trzymać ról w tokenie, to nie jest dobry pomysł, może zamienić na pobieranie
+//TODO wysyłasz token JWT i w odpowiedzi dostajesz role jakie user posiada
             const userRoles = this.getRoles(); // Pobieramy role użytkownika z localStorage
 
             // Sprawdzamy, czy którakolwiek z ról użytkownika znajduje się w liście 'rolesToCheck'

@@ -49,8 +49,8 @@ public class AuthenticationController {
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("jwt", newJwt);
-                    response.put("roles", user.getRoles());
-
+                    response.put("roles", user.getRoles());//TODO  trzymanie ról w tokenie to nie jest dobry pomysł, może zamienić na pobieranie
+//TODO wysyłasz token JWT i w odpowiedzi dostajesz role jakie user posiada
                     return ResponseEntity.ok(response);
                 } else {
                     return ResponseEntity.status(401).body("Nieprawidłowy lub wygasły token");

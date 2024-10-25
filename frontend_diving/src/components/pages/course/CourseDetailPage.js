@@ -43,7 +43,7 @@ const CourseDetailPage = () => {
 
 
 
-    }, [id]);  // 'id' jest teraz dynamicznym parametrem z URL
+    }, [id]);  // 'id' jest  dynamicznym parametrem z URL
 
     // Funkcja wyszukująca użytkowników do zapisania na kurs
     const searchUsers = (phrase) => {
@@ -289,10 +289,10 @@ const CourseDetailPage = () => {
                                 >
                                     <option>Wybierz typ materiału</option>
                                     <option value="TEXT">TEXT</option>
-                                    <option value="VIDEO">VIDEO</option>
-                                    <option value="PDF">PDF</option>
-                                    <option value="IMAGE">IMAGE</option>
-                                    <option value="FILE">FILE</option>
+                                    <option value="VIDEO">VIDEO</option>//TODO sprawdzać czy wybrane sa pliki sa .m3u8 i .ts
+                                    <option value="PDF">PDF</option>//TODO sprawdzić czy przesyłamy na pewno pdf
+                                    <option value="IMAGE">IMAGE</option>//TODO sprawdzić czy przesłane pliki to na pewno obrazy i w dobrym formacie //TODO przetestować rożne formaty obrazów
+                                    <option value="FILE">FILE</option>//TODO sprawdzić czy działa przesyłanie wielu plików
                                     <option value="LINK">LINK</option>
                                 </Form.Select>
                             </Form.Group>

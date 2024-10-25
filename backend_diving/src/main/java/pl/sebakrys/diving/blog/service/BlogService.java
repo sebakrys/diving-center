@@ -79,7 +79,7 @@ public class BlogService {
                 // Tworzenie miniaturki za pomocą Thumbnailator
                 Thumbnails.of(image.getInputStream())
                         .size(150, 150)  // Ustal rozmiar miniaturki
-                        .toFile(thumbnailPath.toFile());
+                        .toFile(thumbnailPath.toFile());//TODO sprawdzić dla jakich formatów zdjęć nie działa (może w dokumentacji) i dostosowac frontend
 
                 // Zapisz oryginalny plik i miniaturkę w bazie danych
                 BlogPostImage blogPostImage = new BlogPostImage();
@@ -102,7 +102,7 @@ public class BlogService {
     }
 
     @Transactional
-    public void removeOldImages() {
+    public void removeOldImages() {//TODO usuwac rownież dysku, dodać sprawdzanie usuwania rownież w przypadku plików z kursów
         LocalDateTime twentyFourHoursAgo = LocalDateTime.now().minusHours(24);
         blogPostImageRepository.deleteByPostIsNullAndCreatedAtBefore(twentyFourHoursAgo);
     }

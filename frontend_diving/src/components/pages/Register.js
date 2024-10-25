@@ -79,6 +79,8 @@ function Register() {
                             />
                         </Form.Group>
 
+                        //TODO dodac capcha
+
                         <Button variant="primary" type="submit" className="mt-4">
                             Zarejestruj się
                         </Button>
