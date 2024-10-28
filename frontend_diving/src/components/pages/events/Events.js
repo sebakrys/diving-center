@@ -26,6 +26,7 @@ class Events extends React.Component {
             showEditForm: false,
             showEventRegistrations: false,
             events: [],
+            roles: [],
         };
     }
 
@@ -40,6 +41,7 @@ class Events extends React.Component {
                     title: event.name,
                     start: new Date(event.startDate),
                     end: new Date(event.endDate),
+                    roles:[],
                 }))
             });
         }
@@ -123,7 +125,7 @@ class Events extends React.Component {
             <Container style={{
                 height: "100vh",
             }}>
-                <div style={{ height: 500 }}>
+                <div style={{height: 500}}>
                     <Calendar
                         localizer={localizer}
                         events={this.state.events}
@@ -132,7 +134,7 @@ class Events extends React.Component {
                         onSelectEvent={this.handleSelected}
                         eventPropGetter={this.eventStyleGetter}
                         culture='pl'
-                        style={{ height: '100%', margin: '5%' }}
+                        style={{height: '100%', margin: '5%'}}
                         onRangeChange={this.handleRangeChange}
                         messages={{
                             next: "Nast.",
@@ -199,21 +201,21 @@ class Events extends React.Component {
                     </Modal>
                     {(!SecurityService.isUserInRole(["ROLE_CLIENT"]) && this.state.selectedEvent) && (
 
-                            <DisplayBasicEventInformations
-                                event={this.state.selectedEvent}
-                            />
+                        <DisplayBasicEventInformations
+                            event={this.state.selectedEvent}
+                        />
 
                     )}
 
                     {(SecurityService.isUserInRole(["ROLE_CLIENT"]) && this.state.selectedEvent) && (
                         <RegisterForm
                             event={this.state.selectedEvent}
-                            onCancel={() => this.setState({ selectedEvent: null })}
+                            onCancel={() => this.setState({selectedEvent: null})}
                         />
                     )}
 
                     {(SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && this.state.selectedEvent) && (
-                        <div className="p-2" style={{ flex: '1 0 600px', maxWidth: '1200px' }}>
+                        <div className="p-2" style={{flex: '1 0 600px', maxWidth: '1200px'}}>
                             <EventRegistrationTable
                                 selectedEvent={this.state.selectedEvent}
                             />

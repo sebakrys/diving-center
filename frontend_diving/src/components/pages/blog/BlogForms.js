@@ -295,8 +295,8 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
                                 </Card.Subtitle>
                             </div>
                             {/* Tytuł na środku */}
-                            <div style={{ flex: 1, textAlign: 'center' }}>
-                                <Card.Title style={{ fontSize: "1.8rem", marginBottom: 0 }}>
+                            <div style={{flex: 1, textAlign: 'center'}}>
+                                <Card.Title style={{fontSize: "1.8rem", marginBottom: 0}}>
                                     {post.title}
                                 </Card.Title>
                             </div>

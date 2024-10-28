@@ -38,6 +38,12 @@ function App() {
 
   useEffect(() => {
     SecurityService.initialize();
+
+    async function fetchRoles() {
+      await SecurityService.loadRoles();
+    }
+    fetchRoles();
+
   }, []);
 
 

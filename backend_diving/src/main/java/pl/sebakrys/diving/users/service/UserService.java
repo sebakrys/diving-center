@@ -168,6 +168,28 @@ public class UserService {
         return null;
     }
 
+    public List<String> getUserRolesByAuthTokenRequest(HttpServletRequest request){
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String oldToken = authHeader.substring(7);
+            // Wyodrębnij nazwę użytkownika z tokena
+            String email = jwtUtil.extractUsername(oldToken);
+            Optional<User> userOptional = userRepo.findByEmail(email);
+            if(userOptional.isPresent()){
+                User user = userOptional.get();
+                List<Role> roleList = new ArrayList<>(user.getRoles());
+                List<String> roles = new ArrayList<>();
+                for (Role role:
+                        roleList) {
+                    roles.add(role.getName());
+                }
+
+                return roles;
+            }
+        }
+        return new ArrayList<>();
+    }
+
     // Aktualizacja użytkownika
     public Optional<User> updateUser(UUID userUUId, User userDetails) {
         return userRepo.findByUuid(userUUId)

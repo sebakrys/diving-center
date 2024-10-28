@@ -17,7 +17,8 @@ class Blog extends React.Component {
             posts: [{"title":"Lorem Ipsum","content":"a","publishDate":"2024-10-16T20:32:31.944846","author":{"id":123,"firstName":"","lastName":"","email":"","active":true}},
                 {"title":"Lorem Ipsum","content":"a","publishDate":"2024-10-16T20:32:31.944846","author":{"id":123,"firstName":"","lastName":"","email":"","active":true}},
                 {"title":"Lorem Ipsum","content":"a","publishDate":"2024-10-16T20:32:31.944846","author":{"id":123,"firstName":"","lastName":"","email":"","active":true}},
-                {"title":"Lorem Ipsum","content":"a","publishDate":"2024-10-16T20:32:31.944846","author":{"id":123,"firstName":"","lastName":"","email":"","active":true}}]
+                {"title":"Lorem Ipsum","content":"a","publishDate":"2024-10-16T20:32:31.944846","author":{"id":123,"firstName":"","lastName":"","email":"","active":true}}],
+            roles: []
         };
     }
 
@@ -26,6 +27,7 @@ class Blog extends React.Component {
         const year = moment().year();
 
         this.fetchPosts();
+
     }
 
 

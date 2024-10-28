@@ -7,8 +7,18 @@ import './navbarStyles.css';
 import {UserContext} from "../../service/UserContext";
 
 function NavBar() {
-    const { isLoggedIn, setIsLoggedIn, userNames } = useContext(UserContext); // Pobierz wartości z kontekstu
+    const {isLoggedIn, setIsLoggedIn, userNames} = useContext(UserContext); // Pobierz wartości z kontekstu
     const navigate = useNavigate();
+    const [rolesLoaded, setRolesLoaded] = useState(false);
+
+    useEffect(() => {
+        async function fetchRoles() {
+            await SecurityService.reloadRoles();
+            setRolesLoaded(true);
+        }
+        fetchRoles();
+    }, []);
+
 
 
     const handleLogout = () => {
@@ -18,13 +28,13 @@ function NavBar() {
     };
 
     return (
-        <Navbar id="navbar" expand="lg" className="bg-dark sticky-top" data-bs-theme="dark" style={{ opacity: "90%" }}>
-            <Container style={{ opacity: "100%" }}>
+        <Navbar id="navbar" expand="lg" className="bg-dark sticky-top" data-bs-theme="dark" style={{opacity: "90%"}}>
+            <Container style={{opacity: "100%"}}>
                 <Navbar.Brand href="#home">
-                    <img src="/assets/img/logo.png" alt="Logo" />
+                    <img src="/assets/img/logo.png" alt="Logo"/>
                     True Divers
                 </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
                     {/* Główna nawigacja */}
                     <Nav className="me-auto">
@@ -39,7 +49,7 @@ function NavBar() {
                         }
                         {SecurityService.isUserInRole(["ROLE_ADMIN"]) &&
                             <>
-                                <Nav.Link href="#/users" >Użytkownicy</Nav.Link>
+                                <Nav.Link href="#/users">Użytkownicy</Nav.Link>
                                 <Nav.Link href="#/video" className="danger">Demo Video</Nav.Link>
                             </>
                         }
@@ -93,8 +103,9 @@ function NavBar() {
                             <>
                                 <Nav.Link className="me-2" onClick={handleLogout}>Wyloguj</Nav.Link>
                                 {userNames &&
-                                    <span className="navbar-text text-light text-wrap me-2" style={{ whiteSpace: "normal", textAlign: "right" }}>
-                                        {userNames.firstName}<br />{userNames.lastName}
+                                    <span className="navbar-text text-light text-wrap me-2"
+                                          style={{whiteSpace: "normal", textAlign: "right"}}>
+                                        {userNames.firstName}<br/>{userNames.lastName}
                                     </span>
                                 }
                             </>

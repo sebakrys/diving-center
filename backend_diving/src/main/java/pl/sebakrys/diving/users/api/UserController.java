@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.sebakrys.diving.users.dto.UserDto;
 import pl.sebakrys.diving.users.dto.UserNamesDto;
+import pl.sebakrys.diving.users.entity.Role;
 import pl.sebakrys.diving.users.entity.User;
 import pl.sebakrys.diving.users.service.UserService;
 
@@ -148,6 +149,12 @@ public class UserController {
         if(userId==null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(userId);
     }*/
+
+    @GetMapping("/roles/")
+    public ResponseEntity<List<String>> getUserRolesByAuthToken(HttpServletRequest request) {
+        List<String> roleList = userService.getUserRolesByAuthTokenRequest(request);
+        return ResponseEntity.ok(roleList);
+    }
 
     @GetMapping("/uuid/")
     public ResponseEntity<UUID> getUserUUIdByAuthToken(HttpServletRequest request) {

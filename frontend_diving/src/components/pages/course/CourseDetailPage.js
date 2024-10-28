@@ -24,6 +24,8 @@ const CourseDetailPage = () => {
     const [links, setLinks] = useState('');
     const [showModalEditCourse, setShowModalEditCourse] = useState(false);
     const [editingCourse, setEditingCourse] = useState({ id:'', name: '', description: '' });
+    const [roles, setRoles] = useState([]);
+
 
     const navigate = useNavigate(); // Hook do nawigacji
 
@@ -191,6 +193,7 @@ const CourseDetailPage = () => {
                     <h1 className="text-white">{course.name}</h1>
                     <h5 className="text-white">{course.description}</h5>
 
+                    {SecurityService.isUserInRole(["ROLE_EMPLOYEE", "ROLE_ADMIN"]) && (
                     <Button variant="outline-info"
                             onClick={() => {
                                 setEditingCourse({
@@ -204,6 +207,7 @@ const CourseDetailPage = () => {
                         <Icon.Pen/>
                         Edytuj
                     </Button>
+                    )}
 
 
 

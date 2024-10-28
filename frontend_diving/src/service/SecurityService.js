@@ -5,6 +5,10 @@ const SECURITY_REST_URL = 'http://localhost:8080';
 
 class SecurityService {
 
+    constructor() {
+        this.cachedRoles = null;
+    }
+
     initialize() {
         const token = localStorage.getItem('token');
         if (token) {
@@ -40,6 +44,7 @@ class SecurityService {
             const token = response.data.jwt;
             const roles = response.data.roles;
 
+
             localStorage.setItem('token', token);
             localStorage.setItem('roles', JSON.stringify(roles)); // Przechowaj role w LocalStorage
 
@@ -47,7 +52,7 @@ class SecurityService {
             // Ustawienie nagłówka Authorization dla wszystkich przyszłych żądań
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-
+            await this.reloadRoles();
             return { success: true };
         } catch (error) {
             let message = 'Wystąpił błąd. Spróbuj ponownie.';
@@ -58,13 +63,15 @@ class SecurityService {
                     message = error.response.data;
                 }
             }
+            await this.reloadRoles();
             return { success: false, message };
         }
     }
 
-    logoutUser() {
+    async logoutUser() {
         localStorage.removeItem('token');
         localStorage.removeItem('roles');
+        await this.reloadRoles();
         delete axios.defaults.headers.common['Authorization'];
     }
 
@@ -164,21 +171,75 @@ class SecurityService {
         }
     }
 
-        getRoles()
-        {
-            const roles = localStorage.getItem('roles');
-            return roles ? JSON.parse(roles) : [];
+
+    async reloadRoles() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const response = await axios.get(SECURITY_REST_URL + '/users/roles/');
+                const roles = response.data;
+
+                console.log("Otrzymane role:", roles);
+                this.cachedRoles = roles || []; // Buforuj role
+                return this.cachedRoles;
+            } catch (error) {
+                console.error('Wystąpił błąd podczas pobierania danych użytkownika(byToken):', error);
+                this.cachedRoles = [];
+                return this.cachedRoles;
+            }
+        }
+        this.cachedRoles = [];
+        return this.cachedRoles;
+    }
+
+    async getRoles() {
+        // Jeśli role są już zbuforowane, zwróć je
+        if (this.cachedRoles) {
+            return this.cachedRoles;
         }
 
-// Metoda, która akceptuje tablicę ról
-        isUserInRole(rolesToCheck)
-        {//TODO nie trzymać ról w tokenie, to nie jest dobry pomysł, może zamienić na pobieranie
-//TODO wysyłasz token JWT i w odpowiedzi dostajesz role jakie user posiada
-            const userRoles = this.getRoles(); // Pobieramy role użytkownika z localStorage
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const response = await axios.get(SECURITY_REST_URL + '/users/roles/');
+                const roles = response.data;
 
-            // Sprawdzamy, czy którakolwiek z ról użytkownika znajduje się w liście 'rolesToCheck'
-            return userRoles.some(userRole => rolesToCheck.includes(userRole.name));
+                console.log("Otrzymane role:", roles);
+                this.cachedRoles = roles || []; // Buforuj role
+                return this.cachedRoles;
+            } catch (error) {
+                console.error('Wystąpił błąd podczas pobierania danych użytkownika(byToken):', error);
+                this.cachedRoles = [];
+                return this.cachedRoles;
+            }
         }
+        this.cachedRoles = [];
+        return this.cachedRoles;
+    }
+
+    // Synchroniczna metoda pobierająca role z bufora
+    getCachedRoles() {
+        return this.cachedRoles || [];
+    }
+
+    // Synchroniczna metoda sprawdzająca role
+    isUserInRole(rolesToCheck) {
+        const userRoles = this.getCachedRoles();
+
+        console.log("Role użytkownika:", userRoles);
+        console.log("Sprawdzane role:", rolesToCheck);
+
+        // Sprawdzamy, czy którakolwiek z ról użytkownika znajduje się w liście 'rolesToCheck'
+        const result = userRoles.some(userRole => rolesToCheck.includes(userRole));
+        console.log("Czy użytkownik ma przynajmniej jedną z ról?", result);
+
+        return result;
+    }
+
+    // Metoda ładująca role (wywołaj ją raz podczas inicjalizacji aplikacji)
+    async loadRoles() {
+        await this.getRoles();
+    }
     }
 
 export default new SecurityService();

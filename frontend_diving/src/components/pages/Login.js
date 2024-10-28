@@ -21,6 +21,8 @@ function Login() {
 
         if (result.success) {
             setIsLoggedIn(true); // Ustawiamy stan zalogowania na true
+
+
             navigate('/');
         } else {
             setError(result.message);
