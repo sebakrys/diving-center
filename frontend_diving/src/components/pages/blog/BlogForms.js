@@ -109,8 +109,8 @@ export const CreateBlogPostForm = ({ fetchPosts }) => {
                         multiple
                         onChange={handleFileUpload}
                         disabled={isUploading} // Zablokuj, gdy obrazy są przesyłane
-                    />//TODO wiem że dla niektórych formatów nie zadziała przesyłanie, możliwe że problem po stronie backendu, może z przetwarzaniem na miniaturkę
-                </Form.Group>//TODO sprawdzić dla jakich formatów zdjęć nie działa
+                    />{/*TODO wiem że dla niektórych formatów nie zadziała przesyłanie, możliwe że problem po stronie backendu, może z przetwarzaniem na miniaturkę*/}
+                </Form.Group>{/*TODO sprawdzić dla jakich formatów zdjęć nie działa*/}
 
                 {isUploading && <Spinner animation="border" role="status"><span className="sr-only text-white h4"></span></Spinner>}
 

@@ -5,6 +5,7 @@ const SECURITY_REST_URL = 'http://localhost:8080';
 
 class SecurityService {
 
+
     constructor() {
         this.cachedRoles = null;
     }
@@ -192,7 +193,7 @@ class SecurityService {
         return this.cachedRoles;
     }
 
-    async getRoles() {
+    async loadRoles() {
         // Jeśli role są już zbuforowane, zwróć je
         if (this.cachedRoles) {
             return this.cachedRoles;
@@ -226,20 +227,16 @@ class SecurityService {
     isUserInRole(rolesToCheck) {
         const userRoles = this.getCachedRoles();
 
-        console.log("Role użytkownika:", userRoles);
-        console.log("Sprawdzane role:", rolesToCheck);
+        //console.log("Role użytkownika:", userRoles);
+        //console.log("Sprawdzane role:", rolesToCheck);
 
         // Sprawdzamy, czy którakolwiek z ról użytkownika znajduje się w liście 'rolesToCheck'
         const result = userRoles.some(userRole => rolesToCheck.includes(userRole));
-        console.log("Czy użytkownik ma przynajmniej jedną z ról?", result);
+        //console.log("Czy użytkownik ma przynajmniej jedną z ról?", result);
 
         return result;
     }
 
-    // Metoda ładująca role (wywołaj ją raz podczas inicjalizacji aplikacji)
-    async loadRoles() {
-        await this.getRoles();
-    }
     }
 
 export default new SecurityService();

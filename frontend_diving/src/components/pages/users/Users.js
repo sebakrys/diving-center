@@ -25,6 +25,8 @@ function Users() {
 
     const fetchUsers = async () => {
         //setAllUsers([])
+        await SecurityService.loadRoles();
+
         if (SecurityService.isUserInRole("ROLE_ADMIN")) {
             try {
                 const result = await UsersService.getAllUsers();
@@ -74,17 +76,18 @@ function Users() {
 
 
 
-    const handleRoleChange = async (userId, roleName) => {
-        const user = allUsers.find(u => u.id === userId);
+    const handleRoleChange = async (userUUId, roleName) => {
+        const user = allUsers.find(u => u.uuid === userUUId);
+
         const hasRole = user.roles.some(role => role.name === roleName);
 
         try {
             if (hasRole) {
                 // Usuń rolę z użytkownika
-                await UsersService.removeRoleFromUser(userId, roleName);
+                await UsersService.removeRoleFromUser(userUUId, roleName);
                 // Aktualizuj stan
                 const updatedUsers = allUsers.map(u => {
-                    if (u.id === userId) {
+                    if (u.uuid === userUUId) {
                         return {
                             ...u,
                             roles: u.roles.filter(role => role.name !== roleName),
@@ -95,10 +98,10 @@ function Users() {
                 setAllUsers(updatedUsers);
             } else {
                 // Dodaj rolę do użytkownika
-                await UsersService.assignRoleToUser(userId, roleName);
+                await UsersService.assignRoleToUser(userUUId, roleName);
                 // Aktualizuj stan
                 const updatedUsers = allUsers.map(u => {
-                    if (u.id === userId) {
+                    if (u.uuid === userUUId) {
                         return {
                             ...u,
                             roles: [...u.roles, allRoles.find(role => role.name === roleName)],
