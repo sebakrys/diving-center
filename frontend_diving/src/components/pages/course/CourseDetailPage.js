@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {useNavigate, useParams} from 'react-router-dom';
-import {Button, Col, Container, Form, Row, Spinner, Table} from 'react-bootstrap';
+import {Button, Col, Container, Form, Modal, Row, Spinner, Table} from 'react-bootstrap';
 import BlogService from "../../../service/BlogService";
 import CourseService from "../../../service/CourseService";
 import SecurityService from "../../../service/SecurityService";
+import * as Icon from 'react-bootstrap-icons';
 
 const COURSE_REST_URL = 'http://localhost:8080';
 
@@ -21,8 +22,24 @@ const CourseDetailPage = () => {
     const [previewImages, setPreviewImages] = useState([]);
     const [uploadedFilesUrls, setUploadedFilesUrls] = useState([]);
     const [links, setLinks] = useState('');
+    const [showModalEditCourse, setShowModalEditCourse] = useState(false);
+    const [editingCourse, setEditingCourse] = useState({ id:'', name: '', description: '' });
 
     const navigate = useNavigate(); // Hook do nawigacji
+
+
+    const toggleModalEditCourse = () => setShowModalEditCourse(!showModalEditCourse);
+
+    const handleEditCourse = () => {
+        axios.put(COURSE_REST_URL+'/courses/'+editingCourse.id, editingCourse)
+            .then(response => {
+                setCourse(
+                    { ...course, name: editingCourse.name, description: editingCourse.description}
+                );
+                toggleModalEditCourse();
+            })
+            .catch(error => console.error('Error editing course:', error));
+    };
 
 
     useEffect(() => {
@@ -172,8 +189,21 @@ const CourseDetailPage = () => {
                 <>
                     <h3 className="text-white">Kurs:</h3>
                     <h1 className="text-white">{course.name}</h1>
-                    <h5 className="text-white">{course.description}</h5>//TODO dodać edytowanie (nazwa + opis)
+                    <h5 className="text-white">{course.description}</h5>
 
+                    <Button variant="outline-info"
+                            onClick={() => {
+                                setEditingCourse({
+                                    id: course.id,
+                                    name: course.name,
+                                    description: course.description
+                                })
+                                toggleModalEditCourse(course.id, course.name, course.description)
+
+                            }}>
+                        <Icon.Pen/>
+                        Edytuj
+                    </Button>
 
 
 
@@ -449,6 +479,45 @@ const CourseDetailPage = () => {
                     </>)}
                 </>
             )}
+
+
+
+
+
+            <Modal show={showModalEditCourse} onHide={toggleModalEditCourse}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Edytuj Kurs</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group controlId="formCourseName">
+                            <Form.Label>Nazwa Kursu</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Podaj nazwę kursu"
+                                value={editingCourse.name}
+                                onChange={(e) => setEditingCourse({ ...editingCourse, name: e.target.value })}
+                                maxLength={255}
+                            />
+                        </Form.Group>
+                        <Form.Group controlId="formCourseDescription">
+                            <Form.Label>Opis Kursu</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                placeholder="Podaj opis kursu"
+                                value={editingCourse.description}
+                                onChange={(e) => setEditingCourse({ ...editingCourse, description: e.target.value })}
+                                maxLength={255}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={toggleModalEditCourse}>Zamknij</Button>
+                    <Button variant="primary" onClick={handleEditCourse}>Edytuj Kurs</Button>
+                </Modal.Footer>
+            </Modal>
+
         </Container>
     );
 };

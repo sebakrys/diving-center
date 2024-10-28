@@ -26,9 +26,8 @@ const CourseListPage = () => {
     // Funkcja otwierająca/zamykająca modal
     const toggleModalAddCourse = () => setShowModalAddCourse(!showModalAddCourse);
 
-    const toggleModalEditCourse = () =>{
-        setShowModalEditCourse(!showModalEditCourse);
-    }
+    const toggleModalEditCourse = () => setShowModalEditCourse(!showModalEditCourse);
+
 
     // Funkcja obsługująca tworzenie nowego kursu
     const handleCreateCourse = () => {
