@@ -12,6 +12,7 @@ import pl.sebakrys.diving.users.repo.UserRepo;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class EventRegistrationService {
@@ -70,8 +71,8 @@ public class EventRegistrationService {
         return Optional.of(eventRegistrationRepo.save(eventRegistration));
     }
 
-    public Optional<EventRegistration> acceptEventRegistration(Long userId, Long eventId, boolean accepted) {
-        return eventRegistrationRepo.getEventRegistrationsByUser_IdAndEvent_Id(userId, eventId)
+    public Optional<EventRegistration> acceptEventRegistration(UUID userUUId, Long eventId, boolean accepted) {
+        return eventRegistrationRepo.getEventRegistrationsByUser_UuidAndEvent_Id(userUUId, eventId)
                 .map(eventRegistration -> {
                     eventRegistration.setAccepted(accepted);
                     return eventRegistrationRepo.save(eventRegistration);
@@ -86,8 +87,8 @@ public class EventRegistrationService {
                 });
     }
 
-    public List<EventRegistration> removeEventRegistrationFromEvent(Long userId, Long eventId) {
-        eventRegistrationRepo.getEventRegistrationsByUser_IdAndEvent_Id(userId, eventId)
+    public List<EventRegistration> removeEventRegistrationFromEvent(UUID userUUId, Long eventId) {
+        eventRegistrationRepo.getEventRegistrationsByUser_UuidAndEvent_Id(userUUId, eventId)
                 .ifPresent(eventRegistrationRepo::delete);
         return eventRegistrationRepo.getEventRegistrationsByEvent_Id(eventId);
     }

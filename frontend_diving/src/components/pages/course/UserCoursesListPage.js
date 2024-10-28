@@ -17,7 +17,7 @@ const UserCoursesListPage = () => {
 
     useEffect(() => {
 
-        SecurityService.getCurrentUserIdByToken()
+        SecurityService.getCurrentUserUUIdByToken()
             .then(response => {
                 const userId = response.userId;
                 //console.log("userID:"+userId)

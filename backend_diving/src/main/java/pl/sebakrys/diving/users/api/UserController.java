@@ -13,6 +13,7 @@ import pl.sebakrys.diving.users.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -38,23 +39,23 @@ public class UserController {
     }
 
     // Endpoint do dodawania roli do użytkownika
-    @PutMapping("/{userId}/roles/{roleName}")
+    @PutMapping("/{userUUId}/roles/{roleName}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<User> addRoleToUser(
-            @PathVariable Long userId,
+            @PathVariable UUID userUUId,
             @PathVariable String roleName) {
-        return userService.addRoleToUser(userId, roleName)
+        return userService.addRoleToUser(userUUId, roleName)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // Endpoint do usuwania roli od użytkownika
-    @DeleteMapping("/{userId}/roles/{roleName}")
+    @DeleteMapping("/{userUUId}/roles/{roleName}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<User> removeRoleFromUser(
-            @PathVariable Long userId,
+            @PathVariable UUID userUUId,
             @PathVariable String roleName) {
-        return userService.removeRoleFromUser(userId, roleName)
+        return userService.removeRoleFromUser(userUUId, roleName)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -77,6 +78,7 @@ public class UserController {
         List<UserDto> userDtos = users.stream()
                 .map(user -> new UserDto(
                         user.getId(),
+                        user.getUuid(),
                         user.getFirstName(),
                         user.getLastName(),
                         user.getEmail(),
@@ -98,35 +100,35 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @PutMapping("/{userId}/activ/{activ}")
+    @PutMapping("/{userUUId}/activ/{activ}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<User> setActivateUser(
-            @PathVariable Long userId,
+            @PathVariable UUID userUUId,
             @PathVariable boolean activ) {
-        return userService.setActiveUser(userId, activ)
+        return userService.setActiveUser(userUUId, activ)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{userId}/nonblock/{nonblock}")
+    @PutMapping("/{userUUId}/nonblock/{nonblock}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<User> setNonBlockUser(
-            @PathVariable Long userId,
+            @PathVariable UUID userUUId,
             @PathVariable boolean nonblock) {
-        return userService.setNonBlockedUser(userId, nonblock)
+        return userService.setNonBlockedUser(userUUId, nonblock)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
-        return userService.getUserById(userId)
+    @GetMapping("/{userUUId}")
+    public ResponseEntity<User> getUserByUUId(@PathVariable UUID userUUId) {
+        return userService.getUserByUUId(userUUId)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> getUserById(@PathVariable String email) {
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
         return userService.getUserByEmail(email)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -139,11 +141,19 @@ public class UserController {
         return ResponseEntity.ok(userNamesDto);
     }
 
+    /*
     @GetMapping("/id/")
     public ResponseEntity<Long> getUserIdByAuthToken(HttpServletRequest request) {
         Long userId = userService.getUserIdByAuthTokenRequest(request);
         if(userId==null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(userId);
+    }*/
+
+    @GetMapping("/uuid/")
+    public ResponseEntity<UUID> getUserUUIdByAuthToken(HttpServletRequest request) {
+        UUID userUUId = userService.getUserUUIdByAuthTokenRequest(request);
+        if(userUUId==null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(userUUId);
     }
 
     @GetMapping("/names/")
@@ -153,16 +163,16 @@ public class UserController {
         return ResponseEntity.ok(userNamesDto);
     }
 
-    @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User userDetails) {
-        return userService.updateUser(userId, userDetails)
+    @PutMapping("/{userUUId}")
+    public ResponseEntity<User> updateUser(@PathVariable UUID userUUId, @RequestBody User userDetails) {
+        return userService.updateUser(userUUId, userDetails)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
-        userService.deleteUser(userId);
+    @DeleteMapping("/{userUUId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID userUUId) {
+        userService.deleteUser(userUUId);
         return ResponseEntity.ok().build();
     }
 }

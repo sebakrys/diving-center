@@ -15,6 +15,7 @@ import pl.sebakrys.diving.users.service.UserService;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/courses")
@@ -50,9 +51,9 @@ public class CourseController {
         return ResponseEntity.ok(userCourses);
     }
 
-    @GetMapping("/user/{userID}")
-    public ResponseEntity<List<Course>> getCoursesForUserId(@PathVariable Long userID) {
-        List<Course> userCourses = courseService.getCoursesForUser(userID);
+    @GetMapping("/user/{userUUID}")
+    public ResponseEntity<List<Course>> getCoursesForUserUUId(@PathVariable UUID userUUID) {
+        List<Course> userCourses = courseService.getCoursesForUser(userUUID);
         return ResponseEntity.ok(userCourses);
     }
 
@@ -78,17 +79,17 @@ public class CourseController {
         return ResponseEntity.ok(deletedCourse);
     }
 
-    @PostMapping("/{courseId}/users/{userId}")
+    @PostMapping("/{courseId}/users/{userUUId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
-    public ResponseEntity<UserNamesAndIDDto> addUserToCourse(@PathVariable Long courseId, @PathVariable Long userId) {
-        UserNamesAndIDDto updatedUser = courseService.addUserToCourse(courseId, userId);
+    public ResponseEntity<UserNamesAndIDDto> addUserToCourse(@PathVariable Long courseId, @PathVariable UUID userUUId) {
+        UserNamesAndIDDto updatedUser = courseService.addUserToCourse(courseId, userUUId);
         return ResponseEntity.ok(updatedUser);
     }
 
-    @DeleteMapping("/{courseId}/users/{userId}")
+    @DeleteMapping("/{courseId}/users/{userUUId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
-    public ResponseEntity<Set<User>> removeUserFromCourse(@PathVariable Long courseId, @PathVariable Long userId) {
-        Set<User> updatedUsers = courseService.removeUserFromCourse(courseId, userId);
+    public ResponseEntity<Set<User>> removeUserFromCourse(@PathVariable Long courseId, @PathVariable UUID userUUId) {
+        Set<User> updatedUsers = courseService.removeUserFromCourse(courseId, userUUId);
         return ResponseEntity.ok(updatedUsers);
     }
 }

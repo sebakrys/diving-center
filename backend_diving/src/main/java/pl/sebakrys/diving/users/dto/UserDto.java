@@ -5,11 +5,13 @@ import lombok.Data;
 import pl.sebakrys.diving.users.entity.Role;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 public class UserDto {
     private Long id;
+    private UUID uuid;
     private String firstName;
     private String lastName;
     private String email;

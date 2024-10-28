@@ -23,6 +23,7 @@ import pl.sebakrys.diving.users.service.UserService;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,7 +88,7 @@ public class CourseService {
         // Uzyskanie użytkowników (Lazy loading działa tutaj, ponieważ jesteśmy w transakcji)
         List<UserNamesAndIDDto> userDtos = course.getUsers().stream()
                 .map(user -> new UserNamesAndIDDto(
-                        user.getId(),
+                        user.getUuid(),
                         user.getFirstName(),
                         user.getLastName(),
                         user.getEmail()
@@ -104,8 +105,8 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    public List<Course> getCoursesForUser(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
+    public List<Course> getCoursesForUser(UUID userUUId) {
+        User user = userRepository.findByUuid(userUUId).orElseThrow();
         return courseRepository.findAll().stream()
                 .filter(course -> course.getUsers().contains(user))
                 .collect(Collectors.toList());
@@ -135,16 +136,16 @@ public class CourseService {
     private static final Logger logger = LoggerFactory.getLogger(CourseService.class);
 
     @Transactional
-    public UserNamesAndIDDto addUserToCourse(Long courseId, Long userId) {
-        logger.info("Dodawanie użytkownika o ID {} do kursu o ID {}", userId, courseId);
+    public UserNamesAndIDDto addUserToCourse(Long courseId, UUID userUUId) {
+        logger.info("Dodawanie użytkownika o ID {} do kursu o ID {}", userUUId, courseId);
 
         // Pobranie kursu z bazy danych
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("Kurs nie znaleziony o ID: " + courseId));
 
         // Pobranie użytkownika z bazy danych
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Użytkownik nie znaleziony o ID: " + userId));
+        User user = userRepository.findByUuid(userUUId)
+                .orElseThrow(() -> new EntityNotFoundException("Użytkownik nie znaleziony o ID: " + userUUId));
 
         logger.debug("Znaleziony użytkownik: {}", user);
 
@@ -161,12 +162,12 @@ public class CourseService {
 
             logger.info("Użytkownik dodany do kursu");
         } else {
-            logger.warn("Użytkownik o ID {} jest już zapisany na kurs o ID {}", userId, courseId);
+            logger.warn("Użytkownik o ID {} jest już zapisany na kurs o ID {}", userUUId, courseId);
             throw new IllegalArgumentException("Użytkownik jest już zapisany na kurs");
         }
 
         return new UserNamesAndIDDto(
-                user.getId(),
+                user.getUuid(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail()
@@ -174,9 +175,9 @@ public class CourseService {
     }
 
 
-    public Set<User> removeUserFromCourse(Long courseId, Long userId) {
+    public Set<User> removeUserFromCourse(Long courseId, UUID userUUId) {
         Course course = courseRepository.findById(courseId).orElseThrow();
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findByUuid(userUUId).orElseThrow();
         course.getUsers().remove(user);
         courseRepository.save(course);
         return course.getUsers();

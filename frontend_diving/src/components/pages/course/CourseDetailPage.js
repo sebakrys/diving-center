@@ -119,7 +119,7 @@ const CourseDetailPage = () => {
         axios.delete(COURSE_REST_URL + `/courses/${courseId}/users/${userId}`)
             .then(response => {
                 // Usuwamy materiał z listy materiałów w stanie
-                setUsers(users.filter(user => user.id !== userId));
+                setUsers(users.filter(user => user.uuid !== userId));
                 searchUsers(searchQuery)
             })
             .catch(error => console.error('Error deleting user:', error));
@@ -326,7 +326,7 @@ const CourseDetailPage = () => {
                                     <option value="VIDEO">VIDEO</option>//TODO sprawdzać czy wybrane sa pliki sa .m3u8 i .ts
                                     <option value="PDF">PDF</option>//TODO sprawdzić czy przesyłamy na pewno pdf
                                     <option value="IMAGE">IMAGE</option>//TODO sprawdzić czy przesłane pliki to na pewno obrazy i w dobrym formacie //TODO przetestować rożne formaty obrazów
-                                    <option value="FILE">FILE</option>//TODO sprawdzić czy działa przesyłanie wielu plików
+                                    <option value="FILE">FILE</option>
                                     <option value="LINK">LINK</option>
                                 </Form.Select>
                             </Form.Group>
@@ -427,22 +427,22 @@ const CourseDetailPage = () => {
                     <Table striped bordered hover>
                         <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>UUID</th>
                             <th>Uzytkownik</th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
                         {users.map(user => (
-                            <tr key={user.id}>
-                                <td>
-                                    {user.id}
+                            <tr key={user.uuid}>
+                                <td style={{ wordWrap: "break-word", whiteSpace: "normal", maxWidth: "50px" }}>
+                                    {user.uuid}
                                 </td>
                                 <td>
                                     {user.firstName} {user.lastName} ({user.email})
                                 </td>
                                 <td><Button variant="outline-danger"
-                                            onClick={() => handleDeleteUser(user.id, course.id)}>
+                                            onClick={() => handleDeleteUser(user.uuid, course.id)}>
                                     Usuń
                                 </Button></td>
                             </tr>
@@ -469,7 +469,7 @@ const CourseDetailPage = () => {
                                     {user.firstName} {user.lastName} ({user.email})
                                 </td>
                                 <td><Button variant="outline-success"
-                                            onClick={() => handleAddUser(user.id, course.id)}>
+                                            onClick={() => handleAddUser(user.uuid, course.id)}>
                                     Dodaj
                                 </Button></td>
                             </tr>

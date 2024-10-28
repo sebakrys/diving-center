@@ -17,10 +17,7 @@ import pl.sebakrys.diving.users.entity.User;
 import pl.sebakrys.diving.users.repo.RoleRepo;
 import pl.sebakrys.diving.users.repo.UserRepo;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -81,6 +78,10 @@ public class UserService {
     // Pobranie użytkownika po ID
     public Optional<User> getUserById(Long userId) {
         return userRepo.findById(userId);
+    }
+
+    public Optional<User> getUserByUUId(UUID userUUId) {
+        return userRepo.findByUuid(userUUId);
     }
 
     // Pobranie użytkownika po ID
@@ -150,9 +151,26 @@ public class UserService {
         return null;
     }
 
+
+    public UUID getUserUUIdByAuthTokenRequest(HttpServletRequest request){
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String oldToken = authHeader.substring(7);
+            // Wyodrębnij nazwę użytkownika z tokena
+            String email = jwtUtil.extractUsername(oldToken);
+            Optional<User> userOptional = userRepo.findByEmail(email);
+            if(userOptional.isPresent()){
+                User user = userOptional.get();
+                UUID userUUId = user.getUuid();
+                return userUUId;
+            }
+        }
+        return null;
+    }
+
     // Aktualizacja użytkownika
-    public Optional<User> updateUser(Long userId, User userDetails) {
-        return userRepo.findById(userId)
+    public Optional<User> updateUser(UUID userUUId, User userDetails) {
+        return userRepo.findByUuid(userUUId)
                 .map(user -> {
                     user.setFirstName(userDetails.getFirstName());
                     user.setLastName(userDetails.getLastName());
@@ -166,8 +184,8 @@ public class UserService {
                 });
     }
 
-    public Optional<User> setNonBlockedUser(Long userId, boolean nonBlocked) {
-        Optional<User> userOptional = userRepo.findById(userId);
+    public Optional<User> setNonBlockedUser(UUID userUUId, boolean nonBlocked) {
+        Optional<User> userOptional = userRepo.findByUuid(userUUId);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -178,8 +196,8 @@ public class UserService {
 
         return Optional.empty();
     }
-    public Optional<User> setActiveUser(Long userId, boolean active) {
-        Optional<User> userOptional = userRepo.findById(userId);
+    public Optional<User> setActiveUser(UUID userUUId, boolean active) {
+        Optional<User> userOptional = userRepo.findByUuid(userUUId);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -191,8 +209,8 @@ public class UserService {
         return Optional.empty();
     }
 
-    public Optional<User> addRoleToUser(Long userId, String roleName) {
-        Optional<User> userOptional = userRepo.findById(userId);
+    public Optional<User> addRoleToUser(UUID userUUId, String roleName) {
+        Optional<User> userOptional = userRepo.findByUuid(userUUId);
         Optional<Role> roleOptional = roleRepo.findByName(roleName);
 
         if (userOptional.isPresent() && roleOptional.isPresent()) {
@@ -206,8 +224,8 @@ public class UserService {
         return Optional.empty();
     }
 
-    public Optional<User> removeRoleFromUser(Long userId, String roleName) {
-        Optional<User> userOptional = userRepo.findById(userId);
+    public Optional<User> removeRoleFromUser(UUID userUUId, String roleName) {
+        Optional<User> userOptional = userRepo.findByUuid(userUUId);
         Optional<Role> roleOptional = roleRepo.findByName(roleName);
 
         if (userOptional.isPresent() && roleOptional.isPresent()) {
@@ -224,7 +242,7 @@ public class UserService {
 
 
     // Usunięcie użytkownika
-    public void deleteUser(Long userId) {
-        userRepo.deleteById(userId);
+    public void deleteUser(UUID userUUId) {
+        userRepo.deleteByUuid(userUUId);
     }
 }

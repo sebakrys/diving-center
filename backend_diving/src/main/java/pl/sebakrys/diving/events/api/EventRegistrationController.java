@@ -11,6 +11,7 @@ import pl.sebakrys.diving.events.service.EventRegistrationService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @CrossOrigin // for React and API
 @RestController
@@ -43,12 +44,12 @@ public class EventRegistrationController {
     }
 
 
-    @PutMapping("/{userId}/{eventId}")
+    @PutMapping("/{userUUId}/{eventId}")
     public ResponseEntity<EventRegistration> acceptEventRegistration(
-            @PathVariable Long userId,
+            @PathVariable UUID userUUId,
             @PathVariable Long eventId,
             @RequestParam boolean accepted) {
-        return eventRegistrationService.acceptEventRegistration(userId, eventId, accepted)
+        return eventRegistrationService.acceptEventRegistration(userUUId, eventId, accepted)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -94,12 +95,12 @@ public class EventRegistrationController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{userId}/{eventId}")
+    @DeleteMapping("/{userUUId}/{eventId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
     public ResponseEntity<List<EventRegistration>> removeEventRegistrationFromEvent(
-            @PathVariable Long userId,
+            @PathVariable UUID userUUId,
             @PathVariable Long eventId) {
-        List<EventRegistration> remainingRegistrations = eventRegistrationService.removeEventRegistrationFromEvent(userId, eventId);
+        List<EventRegistration> remainingRegistrations = eventRegistrationService.removeEventRegistrationFromEvent(userUUId, eventId);
         if (remainingRegistrations != null && !remainingRegistrations.isEmpty()) {
             return ResponseEntity.ok(remainingRegistrations);
         } else {

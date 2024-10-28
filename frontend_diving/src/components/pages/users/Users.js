@@ -62,8 +62,8 @@ function Users() {
             const initialNonBlockedSwitchStates = {};
 
             allUsers.forEach((user) => {
-                initialActiveSwitchStates[user.id] = user.active;
-                initialNonBlockedSwitchStates[user.id] = user.nonBlocked;
+                initialActiveSwitchStates[user.uuid] = user.active;
+                initialNonBlockedSwitchStates[user.uuid] = user.nonBlocked;
             });
 
             setSwitchActiveStates(initialActiveSwitchStates); // Ustawiamy stan przełączników
@@ -159,7 +159,8 @@ function Users() {
                     <th>Role</th>
                     <th>Aktywowany</th>
                     <th>Zablokowany</th>
-                    <th></th>
+                    <th>UUID</th>
+                    <th>{/*TODO usuwanie użytkowników*/}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -176,11 +177,11 @@ function Users() {
                                     {/* Wyświetlanie ról jako checkboxów */}
                                     {allRoles.map(role => (
                                         <Form.Check
-                                            key={`${user.id}-${role.id}`}
+                                            key={`${user.uuid}-${role.id}`}
                                             type="checkbox"
                                             label={role.name}
                                             checked={user.roles.some(userRole => userRole.id === role.id)}
-                                            onChange={() => handleRoleChange(user.id, role.name)}
+                                            onChange={() => handleRoleChange(user.uuid, role.name)}
                                         ></Form.Check>
                                     ))}
 
@@ -188,19 +189,20 @@ function Users() {
                                 <td>
                                     <Form.Check
                                         type="switch"
-                                        id={`active-switch-${user.id}`}
-                                        checked={switchActiveStates[user.id]}
-                                        onChange={() => handleActiveSwitchChange(user.id)}
+                                        id={`active-switch-${user.uuid}`}
+                                        checked={switchActiveStates[user.uuid]}
+                                        onChange={() => handleActiveSwitchChange(user.uuid)}
                                     />
                                 </td>
                                 <td>
                                     <Form.Check className="danger"
                                         type="switch"
-                                        id={`nonblock-switch-${user.id}`}
-                                        checked={!switchNonBlockedStates[user.id]}
-                                        onChange={() => handleNonBlockedSwitchChange(user.id)}
+                                        id={`nonblock-switch-${user.uuid}`}
+                                        checked={!switchNonBlockedStates[user.uuid]}
+                                        onChange={() => handleNonBlockedSwitchChange(user.uuid)}
                                     />
                                 </td>
+                                <td>{user.uuid}</td>
                                 <td>
                                 </td>
                             </tr>

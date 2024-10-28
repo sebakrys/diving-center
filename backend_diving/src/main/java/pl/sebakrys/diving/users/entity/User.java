@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -19,7 +20,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
+    @JsonIgnore
     private Long id;//TODO dodać uuid i na podstawie niego uzyskiwac dostęp
+
+    @Column(unique = true, nullable = false, updatable = false)
+    @EqualsAndHashCode.Include
+    private UUID uuid = UUID.randomUUID();
 
     private String firstName;
     private String lastName;

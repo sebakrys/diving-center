@@ -150,11 +150,11 @@ class SecurityService {
         }
     }
 
-    async getCurrentUserIdByToken() {// To juz dziął bezpiecznie, na pdoatsiwe tokena wysłanego na serwer pobierany ID usera // TODO zamiast id bedzie uuid
+    async getCurrentUserUUIdByToken() {// To juz dziął bezpiecznie, na pdoatsiwe tokena wysłanego na serwer pobierany uuID usera
         const token = localStorage.getItem('token');
         if (token) {
             try {
-                const response = await axios.get(SECURITY_REST_URL + '/users/id/');
+                const response = await axios.get(SECURITY_REST_URL + '/users/uuid/');
                 return {success: true, userId: response.data};
             } catch (error) {
                 let message = 'Wystąpił błąd podczas pobierania danych użytkownika(byToken).';

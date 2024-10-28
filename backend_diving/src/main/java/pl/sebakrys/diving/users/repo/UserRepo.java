@@ -10,12 +10,16 @@ import pl.sebakrys.diving.users.entity.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
 
+    void deleteByUuid(UUID uuid);
     List<User> findAllByOrderByIdAsc();
     Optional<User> findByEmail(String email);
+
+    Optional<User> findByUuid(UUID uuid);
 
 
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :role AND " +
