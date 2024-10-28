@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pl.sebakrys.diving.course.dto.CourseDTO;
 import pl.sebakrys.diving.course.entity.Course;
 import pl.sebakrys.diving.course.service.CourseService;
 import pl.sebakrys.diving.users.dto.UserNamesAndIDDto;
@@ -71,9 +72,10 @@ public class CourseController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
-    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
-        courseService.deleteCourse(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CourseDTO> deleteCourse(@PathVariable Long id) {
+        CourseDTO deletedCourse = courseService.deleteCourse(id);
+        if(deletedCourse==null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(deletedCourse);
     }
 
     @PostMapping("/{courseId}/users/{userId}")

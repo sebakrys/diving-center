@@ -87,12 +87,15 @@ const CourseDetailPage = () => {
 
     // Usuwanie  materiału do kursu
     const handleDeleteMaterial = (id) => {
-        axios.delete(COURSE_REST_URL + `/materials/${id}`)
-            .then(response => {
-                // Usuwamy materiał z listy materiałów w stanie
-                setMaterials(materials.filter(material => material.id !== id));
-            })
-            .catch(error => console.error('Error deleting material:', error));
+        const confirmed = window.confirm("Czy na pewno chcesz usunąć ten materiał?");
+        if(confirmed){
+            axios.delete(COURSE_REST_URL + `/materials/${id}`)
+                .then(response => {
+                    // Usuwamy materiał z listy materiałów w stanie
+                    setMaterials(materials.filter(material => material.id !== id));
+                })
+                .catch(error => console.error('Error deleting material:', error));
+        }
     };
 
     const handleDeleteUser = (userId, courseId) => {
@@ -169,7 +172,8 @@ const CourseDetailPage = () => {
                 <>
                     <h3 className="text-white">Kurs:</h3>
                     <h1 className="text-white">{course.name}</h1>
-                    <h5 className="text-white">{course.description}</h5>
+                    <h5 className="text-white">{course.description}</h5>//TODO dodać edytowanie (nazwa + opis)
+
 
 
 

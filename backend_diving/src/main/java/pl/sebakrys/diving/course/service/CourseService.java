@@ -7,7 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.sebakrys.diving.course.dto.CourseDTO;
 import pl.sebakrys.diving.course.entity.Course;
+import pl.sebakrys.diving.course.entity.CourseMaterial;
+import pl.sebakrys.diving.course.repo.CourseMaterialRepo;
 import pl.sebakrys.diving.course.repo.CourseRepo;
 import pl.sebakrys.diving.users.dto.UserDto;
 import pl.sebakrys.diving.users.dto.UserNamesAndIDDto;
@@ -27,6 +30,9 @@ public class CourseService {
 
     @Autowired
     private CourseRepo courseRepository;
+
+    @Autowired
+    private CourseMaterialRepo courseMaterialRepository;
 
     @Autowired
     private UserRepo userRepository;
@@ -112,8 +118,17 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
-    public void deleteCourse(Long id) {
+    @Transactional
+    public CourseDTO deleteCourse(Long id) {
+        Optional<Course> courseToDeleteOptional = courseRepository.findById(id);
+        if (courseToDeleteOptional.isEmpty()) return null;
+        Course course = courseToDeleteOptional.get();
+
+        List<CourseMaterial> courseMaterials = courseMaterialRepository.findByCourseId(id);
+        courseMaterialRepository.deleteAll(courseMaterials);
+
         courseRepository.deleteById(id);
+        return new CourseDTO(course);
     }
 
 
