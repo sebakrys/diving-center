@@ -32,18 +32,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         final String authorizationHeader = request.getHeader("Authorization");
 
-        String username = null;
+        String userUuid = null;
         String jwt = null;
 
         // Pobierz token z nagłówka
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
-            username = jwtUtil.extractUsername(jwt);//TODO jak bedzie dodane do użytkownika uuid to zapisywac w tokenie uuid
+            userUuid = jwtUtil.extractSubject(jwt);
         }
 
         // Walidacja tokenu
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userSecurityService.loadUserByUsername(username);
+        if (userUuid  != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userSecurityService.loadUserByUuid(userUuid);
 
             if (jwtUtil.validateToken(jwt, userDetails)) {
 

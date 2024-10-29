@@ -40,7 +40,7 @@ function App() {
     SecurityService.initialize();
 
     async function fetchRoles() {
-      await SecurityService.loadRoles();
+      await SecurityService.reloadRoles();
     }
     fetchRoles();
 

@@ -12,7 +12,7 @@ export const UserProvider = ({ children }) => {
         const fetchUserNames = async () => {
             if (isLoggedIn) {
                 try {
-                    const result = await SecurityService.getCurrentUserNames();
+                    const result = await SecurityService.getCurrentUserNamesByToken()
                     if (result.success) {
                         setUserNames(result.userNames);
                     } else {

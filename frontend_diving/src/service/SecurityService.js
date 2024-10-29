@@ -180,7 +180,7 @@ class SecurityService {
                 const response = await axios.get(SECURITY_REST_URL + '/users/roles/');
                 const roles = response.data;
 
-                console.log("Otrzymane role:", roles);
+                //console.log("Otrzymane role:", roles);
                 this.cachedRoles = roles || []; // Buforuj role
                 return this.cachedRoles;
             } catch (error) {
@@ -205,7 +205,7 @@ class SecurityService {
                 const response = await axios.get(SECURITY_REST_URL + '/users/roles/');
                 const roles = response.data;
 
-                console.log("Otrzymane role:", roles);
+                //console.log("Otrzymane role:", roles);
                 this.cachedRoles = roles || []; // Buforuj role
                 return this.cachedRoles;
             } catch (error) {
@@ -225,7 +225,18 @@ class SecurityService {
 
     // Synchroniczna metoda sprawdzająca role
     isUserInRole(rolesToCheck) {
-        const userRoles = this.getCachedRoles();
+
+        let userRoles = this.getCachedRoles()
+
+        this.reloadRoles().then(() => {
+
+            userRoles = this.getCachedRoles()
+        }).catch((error) => {
+            console.error('Wystąpił błąd podczas sprawdzania ról użytkownika:', error);
+            userRoles = this.getCachedRoles()
+        });
+
+
 
         //console.log("Role użytkownika:", userRoles);
         //console.log("Sprawdzane role:", rolesToCheck);

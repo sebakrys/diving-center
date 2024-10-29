@@ -9,6 +9,7 @@ import pl.sebakrys.diving.users.entity.User;
 import pl.sebakrys.diving.users.repo.UserRepo;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserSecurityService implements UserDetailsService {
@@ -26,7 +27,7 @@ public class UserSecurityService implements UserDetailsService {
         User user = userOptional.get();
 
         return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
+                user.getUuid().toString(),
                 user.getPassword(),
                 user.isActive(),
                 true, true,
@@ -34,4 +35,23 @@ public class UserSecurityService implements UserDetailsService {
                 user.getRoles()
         );
     }
+
+    public UserDetails loadUserByUuid(String uuid) throws UsernameNotFoundException {
+        Optional<User> userOptional = userRepo.findByUuid(UUID.fromString(uuid)); // *** Nowa metoda ***
+        if (userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Nie znaleziono użytkownika o UUID: " + uuid);
+        }
+
+        User user = userOptional.get();
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getUuid().toString(),
+                user.getPassword(),
+                user.isActive(),
+                true, true,
+                user.isNonBlocked(),
+                user.getRoles()
+        );
+    }
+
 }

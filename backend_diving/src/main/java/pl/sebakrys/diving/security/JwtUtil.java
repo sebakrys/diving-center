@@ -19,7 +19,8 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
-    public String extractUsername(String token) {
+
+    public String extractSubject(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -37,8 +38,8 @@ public class JwtUtil {
 
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", user.getRoles());
-        return createToken(claims, user.getEmail());
+
+        return createToken(claims, user.getUuid().toString());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
@@ -52,8 +53,8 @@ public class JwtUtil {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        final String userUuid = extractSubject(token);
+        return (userUuid.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     private Boolean isTokenExpired(String token) {

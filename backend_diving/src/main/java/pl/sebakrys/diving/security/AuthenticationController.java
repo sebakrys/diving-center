@@ -11,6 +11,7 @@ import pl.sebakrys.diving.users.repo.UserRepo;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 
 @RestController
@@ -36,21 +37,22 @@ public class AuthenticationController {
             String oldToken = authHeader.substring(7);
             try {
                 // Wyodrębnij nazwę użytkownika z tokena
-                String username = jwtUtil.extractUsername(oldToken);
+                String userUuid = jwtUtil.extractSubject(oldToken);
                 // Załaduj UserDetails na podstawie nazwy użytkownika
-                UserDetails userDetails = userSecurityService.loadUserByUsername(username);
+                UserDetails userDetails = userSecurityService.loadUserByUuid(userUuid);
 
                 // Walidacja tokena
                 if (jwtUtil.validateToken(oldToken, userDetails)) {
-                    User user = userRepo.findByEmail(username).orElseThrow();
+                    User user = userRepo.findByUuid(UUID.fromString(userUuid)).orElseThrow();
 
                     // Generowanie nowego tokena
                     String newJwt = jwtUtil.generateToken(user);
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("jwt", newJwt);
-                    response.put("roles", user.getRoles());//TODO  trzymanie ról w tokenie to nie jest dobry pomysł, może zamienić na pobieranie
-//TODO wysyłasz token JWT i w odpowiedzi dostajesz role jakie user posiada
+
+
+
                     return ResponseEntity.ok(response);
                 } else {
                     return ResponseEntity.status(401).body("Nieprawidłowy lub wygasły token");
@@ -83,7 +85,6 @@ public class AuthenticationController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("jwt", jwt);
-        response.put("roles", user.getRoles());
 
         return ResponseEntity.ok(response);
     }

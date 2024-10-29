@@ -123,9 +123,10 @@ public class UserService {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String oldToken = authHeader.substring(7);
-            // Wyodrębnij nazwę użytkownika z tokena
-            String email = jwtUtil.extractUsername(oldToken);
-            Optional<User> userOptional = userRepo.findByEmail(email);
+            // Wyodrębnij uuid z tokena
+            String UuidString = jwtUtil.extractSubject(oldToken);
+            Optional<User> userOptional = userRepo.findByUuid(UUID.fromString(UuidString));
+
             if(userOptional.isPresent()){
                 User user = userOptional.get();
                 UserNamesDto userNamesDto = new UserNamesDto(user.getFirstName(), user.getLastName(), user.getEmail());
@@ -139,9 +140,10 @@ public class UserService {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String oldToken = authHeader.substring(7);
-            // Wyodrębnij nazwę użytkownika z tokena
-            String email = jwtUtil.extractUsername(oldToken);
-            Optional<User> userOptional = userRepo.findByEmail(email);
+            // Wyodrębnij uuid z tokena
+            String UuidString = jwtUtil.extractSubject(oldToken);
+            Optional<User> userOptional = userRepo.findByUuid(UUID.fromString(UuidString));
+
             if(userOptional.isPresent()){
                 User user = userOptional.get();
                 Long userId = user.getId();
@@ -156,9 +158,10 @@ public class UserService {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String oldToken = authHeader.substring(7);
-            // Wyodrębnij nazwę użytkownika z tokena
-            String email = jwtUtil.extractUsername(oldToken);
-            Optional<User> userOptional = userRepo.findByEmail(email);
+            // Wyodrębnij uuid z tokena
+            String UuidString = jwtUtil.extractSubject(oldToken);
+            Optional<User> userOptional = userRepo.findByUuid(UUID.fromString(UuidString));
+
             if(userOptional.isPresent()){
                 User user = userOptional.get();
                 UUID userUUId = user.getUuid();
@@ -173,8 +176,9 @@ public class UserService {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String oldToken = authHeader.substring(7);
             // Wyodrębnij nazwę użytkownika z tokena
-            String email = jwtUtil.extractUsername(oldToken);
-            Optional<User> userOptional = userRepo.findByEmail(email);
+            String UuidString = jwtUtil.extractSubject(oldToken);
+            Optional<User> userOptional = userRepo.findByUuid(UUID.fromString(UuidString));
+
             if(userOptional.isPresent()){
                 User user = userOptional.get();
                 List<Role> roleList = new ArrayList<>(user.getRoles());

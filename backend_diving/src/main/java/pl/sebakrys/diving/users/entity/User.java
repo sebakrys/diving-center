@@ -21,7 +21,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     @JsonIgnore
-    private Long id;//TODO dodać uuid i na podstawie niego uzyskiwac dostęp
+    private Long id;
 
     @Column(unique = true, nullable = false, updatable = false)
     @EqualsAndHashCode.Include

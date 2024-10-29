@@ -24,8 +24,7 @@ function Users() {
     const [switchNonBlockedStates, setSwitchNonBlockedStates] = useState({});
 
     const fetchUsers = async () => {
-        //setAllUsers([])
-        await SecurityService.loadRoles();
+
 
         if (SecurityService.isUserInRole("ROLE_ADMIN")) {
             try {
@@ -38,6 +37,7 @@ function Users() {
                 console.error('Błąd podczas pobierania użytkowników:', error);
             }
         }
+
     };
 
     useEffect(() => {
