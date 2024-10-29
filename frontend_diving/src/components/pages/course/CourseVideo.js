@@ -190,6 +190,21 @@ function CourseVideo() {// TODO przy dużym ekranie nuie ma ani znaku wodnego an
         // Inicjalizacja Shaka Player
         playerRef.current = new shaka.Player(videoRef.current);
 
+        // Dodanie filtru żądań sieciowych
+        playerRef.current.getNetworkingEngine().registerRequestFilter((type, request) => {
+            // Sprawdź, czy żądanie dotyczy segmentów wideo lub manifestu
+            if (type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
+                type === shaka.net.NetworkingEngine.RequestType.SEGMENT) {
+
+                // Pobierz token JWT
+                const token = localStorage.getItem('token');
+                if (token) {
+                    // Dodaj nagłówek Authorization
+                    request.headers['Authorization'] = 'Bearer ' + token;
+                }
+            }
+        });
+
         // Obsługa błędów
         playerRef.current.addEventListener('error', onErrorEvent);
 

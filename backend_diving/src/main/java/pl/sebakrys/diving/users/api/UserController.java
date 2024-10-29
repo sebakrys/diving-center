@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pl.sebakrys.diving.security.UserSecurityService;
 import pl.sebakrys.diving.users.dto.UserDto;
 import pl.sebakrys.diving.users.dto.UserNamesDto;
 import pl.sebakrys.diving.users.entity.Role;
@@ -24,9 +25,12 @@ public class UserController {
 
     private final UserService userService;
 
+    private final UserSecurityService userSecurityService;
+
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserSecurityService userSecurityService) {
         this.userService = userService;
+        this.userSecurityService = userSecurityService;
     }
 
     @PostMapping("/")
@@ -152,20 +156,20 @@ public class UserController {
 
     @GetMapping("/roles/")
     public ResponseEntity<List<String>> getUserRolesByAuthToken(HttpServletRequest request) {
-        List<String> roleList = userService.getUserRolesByAuthTokenRequest(request);
+        List<String> roleList = userSecurityService.getUserRolesByAuthTokenRequest(request);
         return ResponseEntity.ok(roleList);
     }
 
     @GetMapping("/uuid/")
     public ResponseEntity<UUID> getUserUUIdByAuthToken(HttpServletRequest request) {
-        UUID userUUId = userService.getUserUUIdByAuthTokenRequest(request);
+        UUID userUUId = userSecurityService.getUserUUIdByAuthTokenRequest(request);
         if(userUUId==null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(userUUId);
     }
 
     @GetMapping("/names/")
     public ResponseEntity<UserNamesDto> getUserNamesByAuthToken(HttpServletRequest request) {
-        UserNamesDto userNamesDto = userService.getUserNamesByAuthTokenRequest(request);
+        UserNamesDto userNamesDto = userSecurityService.getUserNamesByAuthTokenRequest(request);
         if(userNamesDto==null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(userNamesDto);
     }

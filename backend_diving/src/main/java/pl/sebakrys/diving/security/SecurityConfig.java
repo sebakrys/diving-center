@@ -45,8 +45,8 @@ public class SecurityConfig {
                         .requestMatchers("/authenticate", "/refresh-token", "/users/", "/event/{month}/{year}").permitAll()
                         .requestMatchers(BLOG_IMAGES_ACCES_DIRECTORY+"*").permitAll()
                         .requestMatchers("/video/**").permitAll()//TODO zmienić później - do usuniecia
-                        .requestMatchers("/courses/**", "/materials/**").permitAll()//TODO zmienić poźniej
-                        .requestMatchers("/course_materials/**").permitAll()//TODO zmienić poźniej
+                        .requestMatchers("/courses/**", "/materials/**").permitAll()
+                        .requestMatchers("/course_materials/**").permitAll()
                         .requestMatchers("/blog/post").permitAll()
                         .requestMatchers("/roles/").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()

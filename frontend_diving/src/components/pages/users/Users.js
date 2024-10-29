@@ -25,19 +25,23 @@ function Users() {
 
     const fetchUsers = async () => {
 
-
-        if (SecurityService.isUserInRole("ROLE_ADMIN")) {
-            try {
-                const result = await UsersService.getAllUsers();
-                if (result.success) {
-                    console.log(JSON.stringify(result.users))
-                    setAllUsers(result.users)
+        SecurityService.reloadRoles().then(async () => {
+            if (SecurityService.isUserInRole("ROLE_ADMIN")) {
+                try {
+                    const result = await UsersService.getAllUsers();
+                    if (result.success) {
+                        console.log(JSON.stringify(result.users))
+                        setAllUsers(result.users)
+                    }
+                } catch (error) {
+                    console.error('Błąd podczas pobierania użytkowników:', error);
                 }
-            } catch (error) {
-                console.error('Błąd podczas pobierania użytkowników:', error);
             }
-        }
 
+        }).catch((error) => {
+            console.error('Wystąpił błąd podczas sprawdzania ról użytkownika:', error);
+            return false;
+        });
     };
 
     useEffect(() => {

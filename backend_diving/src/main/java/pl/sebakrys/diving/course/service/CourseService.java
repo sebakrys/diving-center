@@ -12,6 +12,7 @@ import pl.sebakrys.diving.course.entity.Course;
 import pl.sebakrys.diving.course.entity.CourseMaterial;
 import pl.sebakrys.diving.course.repo.CourseMaterialRepo;
 import pl.sebakrys.diving.course.repo.CourseRepo;
+import pl.sebakrys.diving.security.UserSecurityService;
 import pl.sebakrys.diving.users.dto.UserDto;
 import pl.sebakrys.diving.users.dto.UserNamesAndIDDto;
 import pl.sebakrys.diving.users.entity.User;
@@ -39,7 +40,7 @@ public class CourseService {
     private UserRepo userRepository;
 
     @Autowired
-    private UserService userService;
+    private UserSecurityService userSecurityService;
 
     @Autowired
     private RoleRepo roleRepo;
@@ -49,7 +50,7 @@ public class CourseService {
     }
 
     public Optional<Course> getCourse(Long id, HttpServletRequest request) {
-        Long userId = userService.getUserIdByAuthTokenRequest(request);
+        Long userId = userSecurityService.getUserIdByAuthTokenRequest(request);
         User user = userRepository.findById(userId).orElseThrow();
 
         System.out.println("user.getRoles().toString(): "+user.getRoles().toString());

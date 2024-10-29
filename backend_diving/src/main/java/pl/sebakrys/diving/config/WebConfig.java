@@ -26,7 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/video/"+"**")
                 .addResourceLocations("file:"+absoluteUploadPath+"/video/"); // Ścieżka do katalogu na video (DEMO)
         registry.addResourceHandler("/course_materials/"+"**")
-                .addResourceLocations("file:"+absoluteUploadPath+"/course_materials/"); // Ścieżka do katalogu na pliki z kursów //TODO dodac w security dostep na podstawie dostepnosci do kursu
+                .addResourceLocations("file:"+absoluteUploadPath+"/course_materials/"); // Ścieżka do katalogu na pliki z kursów
     }
 }
 

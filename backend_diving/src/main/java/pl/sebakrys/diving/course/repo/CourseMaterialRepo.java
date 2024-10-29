@@ -17,6 +17,9 @@ public interface CourseMaterialRepo extends JpaRepository<CourseMaterial, Long> 
     @Query("SELECT cm FROM CourseMaterial cm WHERE :url MEMBER OF cm.url")
     Optional<CourseMaterial> findByUrl(@Param("url") String url);
 
+    @Query("SELECT cm FROM CourseMaterial cm JOIN cm.url u WHERE u LIKE CONCAT('%', :url, '%')")
+    List<CourseMaterial> findByPartialUrl(@Param("url") String url);
+
     @Query("SELECT DISTINCT cm FROM CourseMaterial cm JOIN cm.url urls WHERE urls IN :urls")
     List<CourseMaterial> findByUrls(@Param("urls") List<String> urls);
 

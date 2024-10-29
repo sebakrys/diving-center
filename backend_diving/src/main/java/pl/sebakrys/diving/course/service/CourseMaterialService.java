@@ -11,12 +11,14 @@ import pl.sebakrys.diving.course.entity.Course;
 import pl.sebakrys.diving.course.entity.CourseMaterial;
 import pl.sebakrys.diving.course.repo.CourseMaterialRepo;
 import pl.sebakrys.diving.course.repo.CourseRepo;
+import pl.sebakrys.diving.security.UserSecurityService;
 import pl.sebakrys.diving.users.entity.User;
 import pl.sebakrys.diving.users.repo.RoleRepo;
 import pl.sebakrys.diving.users.repo.UserRepo;
 import pl.sebakrys.diving.users.service.UserService;
 
 
+import java.io.Console;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,20 +46,26 @@ public class CourseMaterialService {
 
 
 
-    @Autowired
+
     private CourseMaterialRepo courseMaterialRepository;
 
-    @Autowired
     private CourseRepo courseRepository;
 
-    @Autowired
     private UserRepo userRepository;
 
-    @Autowired
-    private UserService userService;
+    private UserSecurityService userSecurityService;
 
     @Autowired
-    private RoleRepo roleRepo;
+    public CourseMaterialService(CourseMaterialRepo courseMaterialRepository, CourseRepo courseRepository, UserRepo userRepository, UserSecurityService userSecurityService) {
+        this.courseMaterialRepository = courseMaterialRepository;
+        this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
+        this.userSecurityService = userSecurityService;
+    }
+
+
+
+
 
 
     @PostConstruct
@@ -136,7 +144,7 @@ public class CourseMaterialService {
 
 
     public List<CourseMaterial> getMaterialsForCourse(Long courseId, HttpServletRequest request) {
-        Long userId = userService.getUserIdByAuthTokenRequest(request);
+        Long userId = userSecurityService.getUserIdByAuthTokenRequest(request);
         User user = userRepository.findById(userId).orElseThrow();
 
         Optional<Course> optionalCourse = courseRepository.findById(courseId);
@@ -157,8 +165,9 @@ public class CourseMaterialService {
         return new ArrayList<>();
     }
 
+
     public Optional<CourseMaterial> getMaterialById(Long id, HttpServletRequest request) {
-        Long userId = userService.getUserIdByAuthTokenRequest(request);
+        Long userId = userSecurityService.getUserIdByAuthTokenRequest(request);
         User user = userRepository.findById(userId).orElseThrow();
 
         Optional<CourseMaterial> courseMaterialOptional =  courseMaterialRepository.findById(id);
@@ -178,14 +187,7 @@ public class CourseMaterialService {
             }
         }
 
-
-
-
-
-
         return Optional.empty();
-
-
     }
 
     public CourseMaterial updateMaterial(Long id, CourseMaterial materialDetails) {

@@ -26,6 +26,64 @@ const CourseDetailPage = () => {
     const [editingCourse, setEditingCourse] = useState({ id:'', name: '', description: '' });
     const [roles, setRoles] = useState([]);
 
+    const handleFileOpenInNewTab = (url) => {
+        console.log("url: "+url);
+        const token = localStorage.getItem('token');
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Błąd podczas pobierania pliku');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const fileUrl = window.URL.createObjectURL(blob);
+                window.open(fileUrl, '_blank');
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+            });
+    }
+
+    const handleFileDownload = (fileUrl, fileName, materialType) => {
+        const token = localStorage.getItem('token');
+        fetch(COURSE_REST_URL + fileUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Błąd podczas pobierania pliku');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const downloadUrl = window.URL.createObjectURL(blob);
+                if (materialType === "PDF" || materialType === "IMAGE") {
+                    // Otwórz w nowej karcie
+                    window.open(downloadUrl, '_blank');
+                } else {
+                    // Rozpocznij pobieranie
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = fileName || 'plik';
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                }
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+            });
+    };
+
 
     const navigate = useNavigate(); // Hook do nawigacji
 
@@ -273,7 +331,10 @@ const CourseDetailPage = () => {
                                                         (
                                                             material.url.map((single_url, index) => (
                                                                 <div >
-                                                                    <a href={COURSE_REST_URL+single_url} target="_blank" rel="noopener noreferrer">
+                                                                    <a class="link-success"
+
+                                                                       onClick={() => handleFileOpenInNewTab(COURSE_REST_URL+single_url)}
+                                                                    >
                                                                         {material.type+"_"+(index+1)}
                                                                     </a>
                                                                 </div>

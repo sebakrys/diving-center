@@ -26,11 +26,7 @@ public class UserService {
     private final RoleRepo roleRepo;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private JwtUtil jwtUtil;
 
-    @Autowired
-    private UserSecurityService userSecurityService;
 
     @Autowired
     public UserService(UserRepo userRepo, RoleRepo roleRepo, PasswordEncoder passwordEncoder) {
@@ -119,80 +115,6 @@ public class UserService {
         );*/
     }
 
-    public UserNamesDto getUserNamesByAuthTokenRequest(HttpServletRequest request){
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String oldToken = authHeader.substring(7);
-            // Wyodrębnij uuid z tokena
-            String UuidString = jwtUtil.extractSubject(oldToken);
-            Optional<User> userOptional = userRepo.findByUuid(UUID.fromString(UuidString));
-
-            if(userOptional.isPresent()){
-                User user = userOptional.get();
-                UserNamesDto userNamesDto = new UserNamesDto(user.getFirstName(), user.getLastName(), user.getEmail());
-                return userNamesDto;
-            }
-        }
-        return null;
-    }
-
-    public Long getUserIdByAuthTokenRequest(HttpServletRequest request){
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String oldToken = authHeader.substring(7);
-            // Wyodrębnij uuid z tokena
-            String UuidString = jwtUtil.extractSubject(oldToken);
-            Optional<User> userOptional = userRepo.findByUuid(UUID.fromString(UuidString));
-
-            if(userOptional.isPresent()){
-                User user = userOptional.get();
-                Long userId = user.getId();
-                return userId;
-            }
-        }
-        return null;
-    }
-
-
-    public UUID getUserUUIdByAuthTokenRequest(HttpServletRequest request){
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String oldToken = authHeader.substring(7);
-            // Wyodrębnij uuid z tokena
-            String UuidString = jwtUtil.extractSubject(oldToken);
-            Optional<User> userOptional = userRepo.findByUuid(UUID.fromString(UuidString));
-
-            if(userOptional.isPresent()){
-                User user = userOptional.get();
-                UUID userUUId = user.getUuid();
-                return userUUId;
-            }
-        }
-        return null;
-    }
-
-    public List<String> getUserRolesByAuthTokenRequest(HttpServletRequest request){
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String oldToken = authHeader.substring(7);
-            // Wyodrębnij nazwę użytkownika z tokena
-            String UuidString = jwtUtil.extractSubject(oldToken);
-            Optional<User> userOptional = userRepo.findByUuid(UUID.fromString(UuidString));
-
-            if(userOptional.isPresent()){
-                User user = userOptional.get();
-                List<Role> roleList = new ArrayList<>(user.getRoles());
-                List<String> roles = new ArrayList<>();
-                for (Role role:
-                        roleList) {
-                    roles.add(role.getName());
-                }
-
-                return roles;
-            }
-        }
-        return new ArrayList<>();
-    }
 
     // Aktualizacja użytkownika
     public Optional<User> updateUser(UUID userUUId, User userDetails) {
