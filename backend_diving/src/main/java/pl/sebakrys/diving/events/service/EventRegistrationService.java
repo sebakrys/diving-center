@@ -28,16 +28,16 @@ public class EventRegistrationService {
         this.userRepo = userRepo;
     }
 
-    public Optional<EventRegistration> addEventRegistration(String email, Long eventId, String message) {
+    public Optional<EventRegistration> addEventRegistration(UUID uuid, Long eventId, String message) {
         Optional<Event> event = eventRepo.findById(eventId);
-        Optional<User> user = userRepo.findByEmail(email);
+        Optional<User> user = userRepo.findByUuid(uuid);
 
         if (event.isEmpty() || user.isEmpty()) {
             return Optional.empty();
         }
 
         // Ensure uniqueness of user-event combination
-        if (eventRegistrationRepo.getEventRegistrationsByUser_EmailAndEvent_Id(email, eventId).isPresent()) {
+        if (eventRegistrationRepo.getEventRegistrationsByUser_UuidAndEvent_Id(uuid, eventId).isPresent()) {
             return Optional.empty();
         }
 
@@ -50,15 +50,15 @@ public class EventRegistrationService {
         return Optional.of(eventRegistrationRepo.save(eventRegistration));
     }
 
-    public Optional<EventRegistration> editEventRegistration(String email, Long eventId, String message) {
+    public Optional<EventRegistration> editEventRegistration(UUID uuid, Long eventId, String message) {
         Optional<Event> event = eventRepo.findById(eventId);
-        Optional<User> user = userRepo.findByEmail(email);
+        Optional<User> user = userRepo.findByUuid(uuid);
 
         if (event.isEmpty() || user.isEmpty()) {
             return Optional.empty();
         }
 
-        Optional<EventRegistration> oldEventRegistrationOptional = eventRegistrationRepo.getEventRegistrationsByUser_EmailAndEvent_Id(email, eventId);
+        Optional<EventRegistration> oldEventRegistrationOptional = eventRegistrationRepo.getEventRegistrationsByUser_UuidAndEvent_Id(uuid, eventId);
 
         // Check if exists
         if (oldEventRegistrationOptional.isEmpty()) {
@@ -111,7 +111,7 @@ public class EventRegistrationService {
         return eventRegistrationRepo.findById(registrationId);
     }
 
-    public Optional<EventRegistration> getEventRegistrationByUserEmailAndEventId(String userEmail, Long eventId) {
-        return eventRegistrationRepo.getEventRegistrationsByUser_EmailAndEvent_Id(userEmail, eventId);
+    public Optional<EventRegistration> getEventRegistrationByUserEmailAndEventId(UUID userUUID, Long eventId) {
+        return eventRegistrationRepo.getEventRegistrationsByUser_UuidAndEvent_Id(userUUID, eventId);
     }
 }

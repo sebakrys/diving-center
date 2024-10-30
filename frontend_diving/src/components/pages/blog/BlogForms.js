@@ -49,7 +49,7 @@ export const CreateBlogPostForm = ({ fetchPosts }) => {
         // Tworzenie obiektu form-data do przesyłania danych wraz z URL-ami obrazów
         const formData = {
             title: postTitle,
-            email: SecurityService.getCurrentUserEmail(),
+            userUUID: SecurityService.getCurrentUserUUID(),
             content: postContent,
             images: uploadedImagesUrls, // Adresy URL przesłanych obrazów
         };
@@ -253,7 +253,7 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
 
         const updatedPost = {
             title: editedTitle,
-            email: SecurityService.getCurrentUserEmail(),
+            userUUID: SecurityService.getCurrentUserUUID(),
             content: editedContent,
             images: editedImages.map(image => image.url), // Adresy URL przesłanych obrazów
         };

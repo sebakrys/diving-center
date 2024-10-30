@@ -157,7 +157,7 @@ function CourseVideo() {// TODO przy dużym ekranie nuie ma ani znaku wodnego an
     useEffect( () => {
 
 
-        const fetchUserNames = async () => {
+        const fetchUserNames = async () => {//TODO zmienić z nazwy usera na uuid i timestamp
             try {
                 const result = await SecurityService.getCurrentUserNamesByToken();
                 if (result.success) {

@@ -126,6 +126,15 @@ class SecurityService {
         return null;
     }
 
+    getCurrentUserUUID() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            const decodedToken = jwtDecode(token);
+            return decodedToken.sub; // Zakładamy, że ID użytkownika jest zapisane w polu 'sub' tokena
+        }
+        return null;
+    }
+
     async getCurrentUserNames() {
         const token = localStorage.getItem('token');
         if (token) {

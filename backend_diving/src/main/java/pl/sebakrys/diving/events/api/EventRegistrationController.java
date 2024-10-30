@@ -29,7 +29,7 @@ public class EventRegistrationController {
     public ResponseEntity<EventRegistration> addEventRegistration(
             @RequestBody EventRegistrationRequest request) {
         return eventRegistrationService
-                .addEventRegistration(request.getUserEmail(), request.getEventId(), request.getMessage())
+                .addEventRegistration(request.getUserUUID(), request.getEventId(), request.getMessage())
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
@@ -38,7 +38,7 @@ public class EventRegistrationController {
     public ResponseEntity<EventRegistration> editEventRegistration(
             @RequestBody EventRegistrationRequest request) {
         return eventRegistrationService
-                .editEventRegistration(request.getUserEmail(), request.getEventId(), request.getMessage())
+                .editEventRegistration(request.getUserUUID(), request.getEventId(), request.getMessage())
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
@@ -87,10 +87,10 @@ public class EventRegistrationController {
 
     @GetMapping("/user-registration/{eventId}")
     @PreAuthorize("hasAnyRole('ROLE_CLIENT')")
-    public ResponseEntity<EventRegistration> getEventRegistrationByUserEmailAndEventId(
+    public ResponseEntity<EventRegistration> getEventRegistrationByUserUUIDAndEventId(
             @PathVariable Long eventId,
-            @RequestParam String userEmail) {
-        return eventRegistrationService.getEventRegistrationByUserEmailAndEventId(userEmail, eventId)
+            @RequestParam UUID userUUID) {
+        return eventRegistrationService.getEventRegistrationByUserEmailAndEventId(userUUID, eventId)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

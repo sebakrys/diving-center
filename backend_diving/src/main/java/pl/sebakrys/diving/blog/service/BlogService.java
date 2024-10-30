@@ -124,8 +124,8 @@ public class BlogService {
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
 
-        User author = userRepo.findByEmail(
-                postDto.getEmail())
+        User author = userRepo.findByUuid(
+                postDto.getUserUUID())
                 .orElse(null);
         post.setAuthor(author);
 
@@ -170,8 +170,8 @@ public class BlogService {
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
 
-        User author = userRepo.findByEmail(
-                        postDto.getEmail())
+        User author = userRepo.findByUuid(
+                        postDto.getUserUUID())
                 .orElse(null);
         post.setAuthor(author);
 

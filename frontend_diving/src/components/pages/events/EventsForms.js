@@ -248,9 +248,9 @@ export const RegisterForm = ({ event, onCancel }) => {
         const fetchUserReservation = async () => {
             if (event) {
                 try {
-                    const userEmail = SecurityService.getCurrentUserEmail(); // Pobieramy email użytkownika
+                    const userUUID = SecurityService.getCurrentUserUUID(); // Pobieramy email użytkownika
                     const eventId = event.eventId; // Pobieramy ID wydarzenia
-                    const response = await EventsService.getEventRegistrationForUserAndEvent(userEmail, eventId); // Wywołujemy API
+                    const response = await EventsService.getEventRegistrationForUserAndEvent(userUUID, eventId); // Wywołujemy API
                     if(response.success){
                         setUserReservation(response.event_registration); // Ustawiamy stan z odpowiedzią
                         setMessage(response.event_registration.message);
@@ -275,14 +275,14 @@ export const RegisterForm = ({ event, onCancel }) => {
         console.log("RegisterForm")
 
         try {
-            const userEmail = SecurityService.getCurrentUserEmail();
+            const userUUID = SecurityService.getCurrentUserUUID();
             const eventId = event.eventId;
             let response;
 
             if(userReservation){
-                response = await EventsService.editRegisterForEventMessage(userEmail, eventId, message);
+                response = await EventsService.editRegisterForEventMessage(userUUID, eventId, message);
             }else{
-                response = await EventsService.registerForEvent(userEmail, eventId, message);
+                response = await EventsService.registerForEvent(userUUID, eventId, message);
             }
 
             if (response.success) {

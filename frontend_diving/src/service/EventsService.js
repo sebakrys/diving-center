@@ -49,9 +49,9 @@ class EventsService {
 
     }
 
-    async getEventRegistrationForUserAndEvent(userEmail, eventId) {
+    async getEventRegistrationForUserAndEvent(userUUID, eventId) {
         try {
-            const response = await axios.get(`${EVENTS_REST_URL}/event-registration/user-registration/${eventId}?userEmail=${userEmail}`);
+            const response = await axios.get(`${EVENTS_REST_URL}/event-registration/user-registration/${eventId}?userUUID=${userUUID}`);
             return { success: true, event_registration: response.data };
         } catch (error) {
             let message = 'Wystąpił błąd podczas pobierania rezerwacji wydarzeń. Spróbuj ponownie.';
@@ -59,12 +59,12 @@ class EventsService {
         }
     }
 
-    async registerForEvent(userEmail, eventId, message) {
-        console.log("getCurrentUserId: "+SecurityService.getCurrentUserEmail())
-        console.log(userEmail, eventId, message)
+    async registerForEvent(userUUID, eventId, message) {
+        console.log("getCurrentUserId: "+SecurityService.getCurrentUserUUID())
+        console.log(userUUID, eventId, message)
         try {
             const response = await axios.post(`${EVENTS_REST_URL}/event-registration/`, {
-                userEmail,
+                userUUID,
                 eventId,
                 message
             });
@@ -75,12 +75,12 @@ class EventsService {
         }
     }
 
-    async editRegisterForEventMessage(userEmail, eventId, message) {
-        console.log("getCurrentUserId: "+SecurityService.getCurrentUserEmail())
-        console.log(userEmail, eventId, message)
+    async editRegisterForEventMessage(userUUID, eventId, message) {
+        console.log("getCurrentUserId: "+SecurityService.getCurrentUserUUID())
+        console.log(userUUID, eventId, message)
         try {
             const response = await axios.put(`${EVENTS_REST_URL}/event-registration/`, {
-                userEmail,
+                userUUID,
                 eventId,
                 message
             });

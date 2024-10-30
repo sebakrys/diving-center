@@ -2,9 +2,11 @@ package pl.sebakrys.diving.events.dto;
 
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class EventRegistrationRequest {
-    private String userEmail;
+    private UUID userUUID;
     private Long eventId;
     private String message;
 }
