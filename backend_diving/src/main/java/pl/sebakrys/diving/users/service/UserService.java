@@ -43,27 +43,19 @@ public class UserService {
             throw new IllegalArgumentException("Email already in use");
         }
 
-        System.out.println("Szyfrowanie hasła: " + user.getPassword());
         // Szyfrowanie hasła
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        System.out.println("Ustawienie domyślnej roli, jeśli nie podano");
 
-        // Ustawienie domyślnej roli, jeśli nie podano
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            Role userRole = roleRepo.findByName("ROLE_CLIENT")
-                    .orElseGet(() -> {
-                        // Jeśli rola nie istnieje, utwórz ją i zapisz
-                        Role newRole = new Role();
-                        newRole.setName("ROLE_CLIENT");
-                        roleRepo.save(newRole);
-                        return newRole;
-                    });
-
-            Set<Role> roles = new HashSet<>();
-            roles.add(userRole);
-            user.setRoles(roles);
+        Set<Role> roles = new HashSet<>();
+        if (userRepo.count() == 0) {
+            roles.addAll(roleRepo.findAll()); // Pierwszy użytkownik otrzymuje wszystkie role
+        } else {
+            Role clientRole = roleRepo.findByName("ROLE_CLIENT")
+                    .orElseThrow(() -> new RuntimeException("ROLE_CLIENT not found"));
+            roles.add(clientRole);
         }
 
+        user.setRoles(roles);
         user.setActive(true);
         user.setNonBlocked(true);
 

@@ -1,0 +1,8 @@
+.custom-modal .modal-dialog {
+    max-width: 800px;
+    width: 800px;
+}
+
+.custom-modal .modal-body {
+    height: 600px;
+}
