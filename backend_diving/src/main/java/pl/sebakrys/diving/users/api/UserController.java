@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "http://localhost:3000") // Konfiguracja CORS dla wszystkich metod w tym kontrolerze // For React and API
+@CrossOrigin // Konfiguracja CORS dla wszystkich metod w tym kontrolerze // For React and API
 public class UserController {
 
     private final UserService userService;

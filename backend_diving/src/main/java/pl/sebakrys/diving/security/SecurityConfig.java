@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new CorsConfiguration();
                     corsConfig.addAllowedOrigin("http://localhost:3000");
+                    corsConfig.addAllowedOrigin("https://frontend-diving1-66787313904.europe-west4.run.app");
                     corsConfig.addAllowedMethod("*");
                     corsConfig.addAllowedHeader("*");
                     return corsConfig;
