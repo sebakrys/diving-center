@@ -1,6 +1,8 @@
 import axios from "axios";
+import CONFIG from "../config";
 
-const USERS_REST_URL = 'http://localhost:8080';
+const USERS_REST_URL = CONFIG.REST_URL;
+//const USERS_REST_URL = 'http://localhost:8080';
 
 class UsersService {
 

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {Modal, Button, Form, Table, Container} from 'react-bootstrap';
 import {useNavigate} from "react-router-dom";
+import CONFIG from "../../../config";
 
-const COURSE_REST_URL = 'http://localhost:8080';
+const COURSE_REST_URL = CONFIG.REST_URL;
+//const COURSE_REST_URL = 'http://localhost:8080';
 
 const CourseListPage = () => {
     const [courses, setCourses] = useState([]);

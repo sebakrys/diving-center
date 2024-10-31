@@ -1,7 +1,9 @@
 import axios from 'axios';
 import {jwtDecode} from "jwt-decode";
+import CONFIG from "../config";
 
-const SECURITY_REST_URL = 'http://localhost:8080';
+const SECURITY_REST_URL = CONFIG.REST_URL;
+//const SECURITY_REST_URL = 'http://localhost:8080';
 
 class SecurityService {
 

@@ -7,9 +7,10 @@ import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {Button} from "react-bootstrap";
 import * as Icon from 'react-bootstrap-icons';
+import CONFIG from "../../../config";
 
-
-const COURSE_REST_URL = 'http://localhost:8080';
+const COURSE_REST_URL = CONFIG.REST_URL;
+//const COURSE_REST_URL = 'http://localhost:8080';
 
 function CourseVideo() {// TODO przy dużym ekranie nuie ma ani znaku wodnego ani nic działającego(chyba), jedna z opcji to zablokowanie dużego ekranu
     const { materialId } = useParams();  // Hook do pobierania parametru 'id' z URL

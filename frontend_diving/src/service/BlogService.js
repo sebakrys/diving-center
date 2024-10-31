@@ -1,7 +1,9 @@
 import axios from "axios";
 import SecurityService from "./SecurityService";
+import CONFIG from "../config";
 
-const BLOG_REST_URL = 'http://localhost:8080';
+const BLOG_REST_URL = CONFIG.REST_URL;
+//const BLOG_REST_URL = 'http://localhost:8080';
 
 //const BLOG_REST_URL = 'http://10.0.2.2:8080'//Android emulator
 

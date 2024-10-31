@@ -3,6 +3,7 @@ import {Button, Container, Form, Row, Col, Spinner, Card} from "react-bootstrap"
 import { Modal, Carousel } from 'react-bootstrap';
 import BlogService from "../../../service/BlogService";
 import SecurityService from "../../../service/SecurityService";
+import CONFIG from "../../../config";
 
 export const CreateBlogPostForm = ({ fetchPosts }) => {
     const [postTitle, setPostTitle] = useState("");
@@ -157,9 +158,10 @@ export const CreateBlogPostForm = ({ fetchPosts }) => {
     );
 };
 
-//TODO (MODAL) ustal jedną wspolną wysokośc zdjec aby nie skakało podaczas przewijania jesli proporcje sa rozne
 
-const IMAGE_REST_URL = 'http://localhost:8080';
+
+const IMAGE_REST_URL = CONFIG.REST_URL;
+//const IMAGE_REST_URL = 'http://localhost:8080';
 
 export const BlogPostsList = ({ posts, fetchPosts }) => {
     const [showCarousel, setShowCarousel] = useState(false);
@@ -375,7 +377,7 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
                 </Card>
             ))}
 
-            {/* Modal z karuzelą */}
+            {/* Modal z karuzelą */}{/*//TODO (MODAL) ustal jedną wspolną wysokośc zdjec aby nie skakało podaczas przewijania jesli proporcje sa rozne*/}
             <Modal
                 show={showCarousel}
                 onHide={handleCloseCarousel}

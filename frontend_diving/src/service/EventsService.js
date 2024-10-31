@@ -1,8 +1,10 @@
 import axios from 'axios';
 import {jwtDecode} from "jwt-decode";
 import SecurityService from "./SecurityService";
+import CONFIG from "../config";
 
-const EVENTS_REST_URL = 'http://localhost:8080';
+const EVENTS_REST_URL = CONFIG.REST_URL;
+//const EVENTS_REST_URL = 'http://localhost:8080';
 
 class EventsService {
 

@@ -6,8 +6,10 @@ import BlogService from "../../../service/BlogService";
 import CourseService from "../../../service/CourseService";
 import SecurityService from "../../../service/SecurityService";
 import * as Icon from 'react-bootstrap-icons';
+import CONFIG from "../../../config";
 
-const COURSE_REST_URL = 'http://localhost:8080';
+const COURSE_REST_URL = CONFIG.REST_URL;
+//const COURSE_REST_URL = 'http://localhost:8080';
 
 const CourseDetailPage = () => {
     const { id } = useParams();  // Hook do pobierania parametru 'id' z URL
