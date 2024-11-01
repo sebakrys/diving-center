@@ -324,11 +324,25 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
 
                         {/* Treść posta */}
                         <Card.Text className="mt-3">
-                            {(post.content.length > 200 && !showMoreStates[post.id]) ? (
-                                <span dangerouslySetInnerHTML={{ __html: `${post.content.substring(0, 200).replaceAll("\n", "<br>")}...` }} />
-                            ) : (
-                                <span dangerouslySetInnerHTML={{ __html: post.content.replaceAll("\n", "<br>") }} />
-                            )}
+                            {(post.content.length > 200 && !showMoreStates[post.id])
+                                ? (
+                                    <>
+                                        {post.content.substring(0, 200).split("\n").map((line, index) => (
+                                            <React.Fragment key={index}>
+                                                {line}
+                                                <br />
+                                            </React.Fragment>
+                                        ))}
+                                        ...
+                                    </>
+                                ) : (
+                                    post.content.split("\n").map((line, index) => (
+                                        <React.Fragment key={index}>
+                                            {line}
+                                            <br />
+                                        </React.Fragment>
+                                    ))
+                                )}
                         </Card.Text>
                         {/* Przycisk "Czytaj więcej" */}
                         {(post.content.length > 200 && !showMoreStates[post.id]) && (
