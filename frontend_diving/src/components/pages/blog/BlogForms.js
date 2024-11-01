@@ -324,9 +324,11 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
 
                         {/* Treść posta */}
                         <Card.Text className="mt-3">
-                            {(post.content.length > 200 && !showMoreStates[post.id])
-                                ? `${post.content.substring(0, 200)}...`
-                                : post.content}
+                            {(post.content.length > 200 && !showMoreStates[post.id]) ? (
+                                <span dangerouslySetInnerHTML={{ __html: `${post.content.substring(0, 200).replaceAll("\n", "<br>")}...` }} />
+                            ) : (
+                                <span dangerouslySetInnerHTML={{ __html: post.content.replaceAll("\n", "<br>") }} />
+                            )}
                         </Card.Text>
                         {/* Przycisk "Czytaj więcej" */}
                         {(post.content.length > 200 && !showMoreStates[post.id]) && (
