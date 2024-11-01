@@ -3,7 +3,7 @@
 ## To run docker app locally???:
 
 ### `docker build -t your-image-name .`
-### `docker run -p 8080:8080 -e PORT=8080 your-image-name`
+### `docker run -p 8080:8080 -e PORT=8080 -v backend_uploads:/app/upload_directory your-image-name`
 
 
 ## Aby zrobic deploy na chmurę googla:

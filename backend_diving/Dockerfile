@@ -20,9 +20,11 @@ WORKDIR /app
 # Kopiujemy zbudowany plik JAR z poprzedniego etapu
 COPY --from=build /app/target/diving-0.0.1-SNAPSHOT.jar .
 
+# Definiujemy wolumen dla katalogu upload_directory
+VOLUME ["/app/upload_directory"]
+
 # Otwieramy port 8080
 EXPOSE 8080
 
 # Uruchamiamy aplikację
 ENTRYPOINT ["java", "-jar", "diving-0.0.1-SNAPSHOT.jar"]
-

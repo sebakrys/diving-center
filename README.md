@@ -10,9 +10,12 @@
 
 ### `docker build -t europe-central2-docker.pkg.dev/truedivers/truedivers-repository/backend_diving1 ./backend_diving/`
 
-### `docker push europe-central2-docker.pkg.dev/truedivers/truedivers-repository/frontend_diving1`
+### `docker build -t europe-central2-docker.pkg.dev/truedivers/truedivers-repository/frontend_diving1 ./frontend_diving/`
+
+
 
 
 ## `docker push europe-central2-docker.pkg.dev/truedivers/truedivers-repository/backend_diving1`
+
 ## `docker push europe-central2-docker.pkg.dev/truedivers/truedivers-repository/frontend_diving1`
 _________ OLD________________
