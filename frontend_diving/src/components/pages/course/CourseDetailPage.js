@@ -28,7 +28,7 @@ const CourseDetailPage = () => {
     const [editingCourse, setEditingCourse] = useState({ id:'', name: '', description: '' });
     const [roles, setRoles] = useState([]);
 
-    const handleFileOpenInNewTab = (url) => {
+    const handleFileOpenInNewTab = (url) => {//TODO zmienić tak że będziemy mieę niepodpisane url, wysyłamy request na serwer żeby sprawdzić czy mamy dostęp i podpisac, a nastepnie otwieramy nową kartę z plikiem, może dodać jeszcze żeby plik był jednorazowy
         console.log("url: "+url);
         const token = localStorage.getItem('token');
         fetch(url, {
@@ -54,7 +54,7 @@ const CourseDetailPage = () => {
 
     const handleFileDownload = (fileUrl, fileName, materialType) => {
         const token = localStorage.getItem('token');
-        fetch(COURSE_REST_URL + fileUrl, {
+        fetch(fileUrl, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + token,
@@ -333,9 +333,9 @@ const CourseDetailPage = () => {
                                                         (
                                                             material.url.map((single_url, index) => (
                                                                 <div >
-                                                                    <a class="link-success"
+                                                                    <a class="link-success" target="_blank" href={single_url}
 
-                                                                       onClick={() => handleFileOpenInNewTab(COURSE_REST_URL+single_url)}
+                                                                        /*onClick={() => handleFileOpenInNewTab(single_url)}*/
                                                                     >
                                                                         {material.type+"_"+(index+1)}
                                                                     </a>

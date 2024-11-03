@@ -38,7 +38,7 @@ public class BlogController {
 
     @PostMapping("/")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
-    public ResponseEntity<BlogPost> createPost(@RequestBody BlogPostDto postDto) {
+    public ResponseEntity<BlogPost> createPost(@RequestBody BlogPostDto postDto) {//fixme przy gcs zapisywany jest tylko 1 obraz, zamiast wszytskich
         BlogPost createdPost = blogService.createPost(postDto);
         return ResponseEntity.ok(createdPost);
     }

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: io.opentelemetry:opentelemetry-api-incubator:1.42.1-alpha">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.m2/repository/io/opentelemetry/opentelemetry-api-incubator/1.42.1-alpha/opentelemetry-api-incubator-1.42.1-alpha.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.m2/repository/io/opentelemetry/opentelemetry-api-incubator/1.42.1-alpha/opentelemetry-api-incubator-1.42.1-alpha-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.m2/repository/io/opentelemetry/opentelemetry-api-incubator/1.42.1-alpha/opentelemetry-api-incubator-1.42.1-alpha-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.google.cloud:google-cloud-storage:2.44.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.m2/repository/com/google/cloud/google-cloud-storage/2.44.1/google-cloud-storage-2.44.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.m2/repository/com/google/cloud/google-cloud-storage/2.44.1/google-cloud-storage-2.44.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.m2/repository/com/google/cloud/google-cloud-storage/2.44.1/google-cloud-storage-2.44.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

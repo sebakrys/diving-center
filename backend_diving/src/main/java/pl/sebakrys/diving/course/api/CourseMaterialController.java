@@ -45,9 +45,11 @@ public class CourseMaterialController {
         return ResponseEntity.ok(response);
     }
 
+    //fixme dodać metode do zwracania plików wideo (fragmentów)
+
     @PostMapping("/{courseId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
-    public ResponseEntity<CourseMaterial> addMaterial(@PathVariable Long courseId, @RequestBody CourseMaterial material) {
+    public ResponseEntity<CourseMaterial> addMaterial(@PathVariable Long courseId, @RequestBody CourseMaterial material) {//fixme przy gcs i dodawaniu zwracane są niepodpisane linki (bez autoryzacji)
         CourseMaterial createdMaterial = courseMaterialService.addMaterial(courseId, material);
         return ResponseEntity.ok(createdMaterial);
     }

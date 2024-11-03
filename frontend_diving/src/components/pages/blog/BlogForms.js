@@ -213,7 +213,7 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
         setEditedTitle(post.title);
         setEditedContent(post.content);
         setEditedImages(post.images || []);
-        setPreviewImages(post.images.map((image) => `${IMAGE_REST_URL}${image.thumbnail_url}`));
+        setPreviewImages(post.images.map((image) => `${image.thumbnail_url}`));
         setShowEditModal(true);
     };
 
@@ -361,7 +361,7 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
                                 post.images.map((image, index) => (
                                     <img
                                         key={index}
-                                        src={`${IMAGE_REST_URL}${image.thumbnail_url}`}
+                                        src={`${image.thumbnail_url}`}
                                         alt={`thumb_${index}`}
                                         style={{
                                             width: '100px',
@@ -423,7 +423,7 @@ export const BlogPostsList = ({ posts, fetchPosts }) => {
                             <Carousel.Item key={index}>
                                 <img
                                     className="d-block w-100"
-                                    src={`${IMAGE_REST_URL}${image.url}`}
+                                    src={`${image.url}`}
                                     alt={`image_${index}`}
                                     style={{ maxHeight: '80vh', objectFit: 'contain' }}
                                 />
