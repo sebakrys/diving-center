@@ -475,6 +475,6 @@ export const EventRegistrationTable = ({ selectedEvent}) => {
             </Container>
         );
     }else{
-        return ;
+        return null;
     }
 };

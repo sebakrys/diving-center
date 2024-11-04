@@ -12,6 +12,8 @@ import CourseListPage from "./pages/course/CourseListPage";
 import CourseDetailPage from "./pages/course/CourseDetailPage";
 import UserCoursesListPage from "./pages/course/UserCoursesListPage";
 import CourseVideo from "./pages/course/CourseVideo";
+import Home2 from "./pages/home/Home2";
+import Home3 from "./pages/home/Home3";
 
 class Content extends React.Component {
     render() {
@@ -35,6 +37,8 @@ class Content extends React.Component {
                         <Routes>
                             <Route path="/" element={<Home />} />
                             <Route path="/home" element={<Home />} />
+                            <Route path="/home2" element={<Home2 />} />
+                            <Route path="/home3" element={<Home3 />} />
                             <Route path="/events" element={<Events />} />
                             <Route path="/blog" element={<Blog />} />
                             <Route path="/my-courses" element={<UserCoursesListPage />} />
