@@ -47,6 +47,7 @@ function App() {
 
     async function fetchRoles() {
       await SecurityService.reloadRoles();
+      //console.log("App fetchRoles")
     }
     fetchRoles();
 

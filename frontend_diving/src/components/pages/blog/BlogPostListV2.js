@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, {useState, useMemo, useEffect} from "react";
 import { Button, Container, Card, Form } from "react-bootstrap";
 import BlogService from "../../../service/BlogService";
 import SecurityService from "../../../service/SecurityService";
@@ -25,6 +25,7 @@ const BLOG_REST_URL = CONFIG.REST_URL;
 
 export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
     const [editingPosts, setEditingPosts] = useState({});
+    const [cellPluginsMap, setCellPluginsMap] = useState({});
 
     // Function to handle image upload with access to post-specific state
     const createImageUploadHandler = (postId) => (file, reportProgress) => {
@@ -183,24 +184,37 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
         html5Video,
     ];
 
+
+    // Przygotowanie `cellPlugins` dla każdego `postId` przy pierwszym renderze lub aktualizacji `posts`
+    useEffect(() => {
+        const newCellPluginsMap = posts.reduce((acc, post) => {
+            acc[post.id] = [
+                ...baseCellPlugins,
+                imagePlugin({
+                    imageUpload: createImageUploadHandler(post.id),
+                }),
+                background({
+                    imageUpload: createImageUploadHandler(post.id),
+                    enabledModes:
+                        ModeEnum.COLOR_MODE_FLAG |
+                        ModeEnum.IMAGE_MODE_FLAG |
+                        ModeEnum.GRADIENT_MODE_FLAG,
+                }),
+            ];
+            return acc;
+        }, {});
+
+        setCellPluginsMap(newCellPluginsMap);
+    }, [posts]);
+
+
     return (
         <Container className="mt-1">
             {posts.map((post) => {
                 const isEditing = editingPosts.hasOwnProperty(post.id);
                 const editingData = editingPosts[post.id];
-                const postCellPlugins = [
-                    ...baseCellPlugins,
-                    imagePlugin({
-                        imageUpload: createImageUploadHandler(post.id),
-                    }),
-                    background({
-                        imageUpload: createImageUploadHandler(post.id),
-                        enabledModes:
-                            ModeEnum.COLOR_MODE_FLAG |
-                            ModeEnum.IMAGE_MODE_FLAG |
-                            ModeEnum.GRADIENT_MODE_FLAG,
-                    }),
-                ];
+
+                const postCellPlugins = cellPluginsMap[post.id] || baseCellPlugins;
 
                 let content;
                 if (isEditing) {
@@ -294,7 +308,7 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
                                     </Card.Subtitle>
                                 </div>
                             </div>
-                            {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
+                            {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE", "ROLE_POSTLIST"]) && (
                                 <div className="d-flex justify-content-between mt-3">
                                     {!isEditing && (
                                         <Button

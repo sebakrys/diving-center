@@ -24,6 +24,7 @@ function Users() {
     const [switchNonBlockedStates, setSwitchNonBlockedStates] = useState({});
 
     const fetchUsers = async () => {
+        //console.log("Users fetchRoles")
 
         SecurityService.reloadRoles().then(async () => {
             if (SecurityService.isUserInRole("ROLE_ADMIN")) {

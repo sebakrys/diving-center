@@ -13,6 +13,7 @@ function NavBar() {
 
     useEffect(() => {
         async function fetchRoles() {
+            //console.log("navbar fetchRoles")
             await SecurityService.reloadRoles();
             setRolesLoaded(true);
         }
