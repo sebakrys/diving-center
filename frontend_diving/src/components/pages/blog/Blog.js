@@ -7,6 +7,8 @@ import {Button} from "react-bootstrap";
 import SecurityService from "../../../service/SecurityService";
 import {BlogPostsList, CreateBlogPostForm} from "./BlogForms";
 import BlogService from "../../../service/BlogService";
+import {BlogPostsListV2} from "./BlogPostListV2";
+import {CreateBlogPostFormV2} from "./CreateBlogPostFormV2";
 
 const localizer = momentLocalizer(moment);
 
@@ -14,10 +16,10 @@ class Blog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            posts: [{"title":"Lorem Ipsum","content":"a","publishDate":"2024-10-16T20:32:31.944846","author":{"id":123,"firstName":"","lastName":"","email":"","active":true}},
-                {"title":"Lorem Ipsum","content":"a","publishDate":"2024-10-16T20:32:31.944846","author":{"id":123,"firstName":"","lastName":"","email":"","active":true}},
-                {"title":"Lorem Ipsum","content":"a","publishDate":"2024-10-16T20:32:31.944846","author":{"id":123,"firstName":"","lastName":"","email":"","active":true}},
-                {"title":"Lorem Ipsum","content":"a","publishDate":"2024-10-16T20:32:31.944846","author":{"id":123,"firstName":"","lastName":"","email":"","active":true}}],
+            posts: [{"title":"Lorem Ipsum","content":"{}","publishDate":"2024-10-16T20:32:31.944846","author":{"id":123,"firstName":"","lastName":"","email":"","active":true}},
+                {"title":"Lorem Ipsum","content":"{}","publishDate":"2024-10-16T20:32:31.944846","author":{"id":123,"firstName":"","lastName":"","email":"","active":true}},
+                {"title":"Lorem Ipsum","content":"{}","publishDate":"2024-10-16T20:32:31.944846","author":{"id":123,"firstName":"","lastName":"","email":"","active":true}},
+                {"title":"Lorem Ipsum","content":"{}","publishDate":"2024-10-16T20:32:31.944846","author":{"id":123,"firstName":"","lastName":"","email":"","active":true}}],
             roles: []
         };
     }
@@ -44,12 +46,12 @@ class Blog extends React.Component {
                 {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
                     <div>
                         <div>
-                            <CreateBlogPostForm fetchPosts={this.fetchPosts}/>
+                            <CreateBlogPostFormV2 fetchPosts={this.fetchPosts}/>
                         </div>
                         <h2 className="text-white mt-5 mb-4">Lista postów na blogu</h2>
                     </div>
                 )}
-                <BlogPostsList posts={this.state.posts} fetchPosts={this.fetchPosts}/>
+                <BlogPostsListV2 posts={this.state.posts} fetchPosts={this.fetchPosts}/>
             </div>
         );
     }

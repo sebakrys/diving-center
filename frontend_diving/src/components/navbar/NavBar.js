@@ -13,6 +13,7 @@ function NavBar() {
 
     useEffect(() => {
         async function fetchRoles() {
+            //console.log("navbar fetchRoles")
             await SecurityService.reloadRoles();
             setRolesLoaded(true);
         }
@@ -50,7 +51,13 @@ function NavBar() {
                         {SecurityService.isUserInRole(["ROLE_ADMIN"]) &&
                             <>
                                 <Nav.Link href="#/users">Użytkownicy</Nav.Link>
-                                <Nav.Link href="#/video" className="danger">Demo Video</Nav.Link>
+                                <NavDropdown title="Demo" id="basic-nav-dropdown">
+                                    <NavDropdown.Item href="#/video">Demo video</NavDropdown.Item>
+                                    <NavDropdown.Item href="#/home2">Demo GrapesJS</NavDropdown.Item>
+                                    <NavDropdown.Item href="#/home3">
+                                        Demo react-page
+                                    </NavDropdown.Item>
+                                </NavDropdown>
                             </>
                         }
                         {/*

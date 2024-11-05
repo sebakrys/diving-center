@@ -55,6 +55,7 @@ class SecurityService {
             // Ustawienie nagłówka Authorization dla wszystkich przyszłych żądań
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
+            //console.log("loginUser")
             await this.reloadRoles();
             return { success: true };
         } catch (error) {
@@ -66,6 +67,7 @@ class SecurityService {
                     message = error.response.data;
                 }
             }
+            console.log("loginUser")
             await this.reloadRoles();
             return { success: false, message };
         }
@@ -74,6 +76,7 @@ class SecurityService {
     async logoutUser() {
         localStorage.removeItem('token');
         localStorage.removeItem('roles');
+        console.log("logoutUser")
         await this.reloadRoles();
         delete axios.defaults.headers.common['Authorization'];
     }
@@ -185,6 +188,7 @@ class SecurityService {
 
 
     async reloadRoles() {
+        console.log("reloadRoles()")
         const token = localStorage.getItem('token');
         if (token) {
             try {
@@ -238,6 +242,7 @@ class SecurityService {
     isUserInRole(rolesToCheck) {
 
         let userRoles = this.getCachedRoles()
+        console.log("isUserInRole?"+rolesToCheck)
 
         this.reloadRoles().then(() => {
 

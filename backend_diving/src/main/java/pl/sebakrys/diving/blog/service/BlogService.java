@@ -163,7 +163,7 @@ public class BlogService {
             throw new IllegalArgumentException("Title is too long, it must be less than 255 characters.");
         }
 
-        if (postDto.getContent().length() >3500) {
+        if (postDto.getContent().length() >65534) {
             throw new IllegalArgumentException("Content is too long, it must be less than 3500 characters.");
         }
 
