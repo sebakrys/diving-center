@@ -10,6 +10,12 @@ import {Button} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SecurityService from "./service/SecurityService";
 import {UserProvider} from "./service/UserContext";
+import { StylesProvider, createGenerateClassName } from '@mui/styles';
+
+const generateClassName = createGenerateClassName({
+  disableGlobal: true,
+  seed: 'mui-jss',
+});
 
 
 const theme = createTheme({
@@ -135,8 +141,9 @@ function App() {
         />
         <div id="AppContainer">
           <UserProvider>
-
+            <StylesProvider generateClassName={generateClassName}>
             <Content/>
+            </StylesProvider>
           </UserProvider>
         </div>
       </div>

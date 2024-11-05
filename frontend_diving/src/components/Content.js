@@ -13,7 +13,7 @@ import CourseDetailPage from "./pages/course/CourseDetailPage";
 import UserCoursesListPage from "./pages/course/UserCoursesListPage";
 import CourseVideo from "./pages/course/CourseVideo";
 import Home2 from "./pages/home/Home2";
-import Home3 from "./pages/home/Home3";
+import Home3 from "./pages/react_page/Home3";
 
 class Content extends React.Component {
     render() {
