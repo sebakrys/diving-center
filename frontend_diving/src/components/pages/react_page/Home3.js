@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import slate, { pluginFactories } from '@react-page/plugins-slate';
-import { ColorPickerField } from '@react-page/editor';
-import image from '@react-page/plugins-image';
+import Editor from '@react-page/editor';
+import background, { ModeEnum } from '@react-page/plugins-background';
+import divider from '@react-page/plugins-divider';
+import html5Video from '@react-page/plugins-html5-video';
+import { imagePlugin, ImageUploadType } from '@react-page/plugins-image';
 import spacer from '@react-page/plugins-spacer';
 import video from '@react-page/plugins-video';
-import html5Video from '@react-page/plugins-html5-video';
-import background from '@react-page/plugins-background';
-import divider from '@react-page/plugins-divider';
-import Editor from '@react-page/editor';
+import slate, { pluginFactories } from '@react-page/plugins-slate';
+import { ColorPickerField } from '@react-page/editor';
 
 import '@react-page/plugins-slate/lib/index.css';
 import '@react-page/plugins-image/lib/index.css';
@@ -66,31 +66,48 @@ const slatePlugin = slate((config) => ({
     },
 }));
 
-// Inicjalizacja innych wtyczek
-const backgroundPlugin = background({ defaultPlugin: slatePlugin });
-spacer.allowResizeInEditMode = true;
+// Fake image upload service
+const fakeImageUploadService: (url: string) => ImageUploadType = (defaultUrl) => (file, reportProgress) => {
+    return new Promise((resolve) => {
+        let counter = 0;
+        const interval = setInterval(() => {
+            counter++;
+            reportProgress(counter * 10);
+            if (counter > 9) {
+                clearInterval(interval);
+                alert('Image has not actually been uploaded to a server. This is a demo function.');
+                resolve({ url: URL.createObjectURL(file) });
+            }
+        }, 100);
+    });
+};
 
-// Definicja cellPlugins
+// Konfiguracja wtyczek
 const cellPlugins = [
     slatePlugin,
-    image,
     spacer,
+    imagePlugin({ imageUpload: fakeImageUploadService('/images/react.png') }),
     video,
-    html5Video,
     divider,
-    backgroundPlugin,
+    html5Video,
+    background({
+        imageUpload: fakeImageUploadService('/images/sea-bg.jpg'),
+        enabledModes: ModeEnum.COLOR_MODE_FLAG | ModeEnum.IMAGE_MODE_FLAG | ModeEnum.GRADIENT_MODE_FLAG,
+    }),
 ];
+
+// Główna funkcja komponentu
 //TODO dodać zapisywanie
 function Home3() {//TODO dodać przesyłanie obrazów
     const [value, setValue] = useState({});
 
     return (
-        <div style={{ background: 'rgba(255, 255, 230, 0.1)', color: 'white' }} className={"pt-5 ms-2 me-2"}>
+        <div style={{ background: 'rgba(255, 255, 240, 0.1)', color: 'white' }} className="pt-5 ms-2 me-2">
             <Editor
                 cellPlugins={cellPlugins}
                 onChange={setValue}
                 value={value}
-                style={{ color: 'white' }} // Ustawienie białego tekstu w edytorze
+                style={{ color: 'white' }}
             />
         </div>
     );

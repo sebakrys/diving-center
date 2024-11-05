@@ -28,7 +28,7 @@ public class BlogPost {
     @Column(length = 255)
     private String title;
 
-    @Column(length = 3500)
+    @Column(length = 65534)
     private String content;
 
     private LocalDateTime publishDate;
