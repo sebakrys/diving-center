@@ -54,6 +54,7 @@ function NavBar() {
                                 <NavDropdown title="Demo" id="basic-nav-dropdown">
                                     <NavDropdown.Item href="#/video">Demo video</NavDropdown.Item>
                                     <NavDropdown.Item href="#/home2">Demo GrapesJS</NavDropdown.Item>
+                                    <NavDropdown.Item href="#/grapesjs-demo">Demo GrapesJS STUDIO</NavDropdown.Item>
                                     <NavDropdown.Item href="#/home3">
                                         Demo react-page
                                     </NavDropdown.Item>

@@ -14,6 +14,7 @@ import UserCoursesListPage from "./pages/course/UserCoursesListPage";
 import CourseVideo from "./pages/course/CourseVideo";
 import Home2 from "./pages/home/Home2";
 import Home3 from "./pages/react_page/Home3";
+import GrapesJs_Demo from "./pages/grapesjs_demo/GrapesJs_Demo";
 
 class Content extends React.Component {
     render() {
@@ -39,6 +40,7 @@ class Content extends React.Component {
                             <Route path="/home" element={<Home />} />
                             <Route path="/home2" element={<Home2 />} />
                             <Route path="/home3" element={<Home3 />} />
+                            <Route path="/grapesjs-demo" element={<GrapesJs_Demo />} />
                             <Route path="/events" element={<Events />} />
                             <Route path="/blog" element={<Blog />} />
                             <Route path="/my-courses" element={<UserCoursesListPage />} />

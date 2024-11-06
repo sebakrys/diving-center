@@ -38,7 +38,7 @@ function Home() {
             <iframe
                 ref={iframeRef}
                 title="Static HTML"
-                src="/aboutUs.html"
+                src="/index_home.html"
                 style={{
                     width: "100%",
                     height: "calc(100vh - 60px)",
