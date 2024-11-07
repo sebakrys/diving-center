@@ -16,6 +16,7 @@ import Home2 from "./pages/home/Home2";
 import Home3 from "./pages/react_page/Home3";
 import GrapesJs_Demo from "./pages/grapesjs_demo/GrapesJs_Demo";
 import FilesPage from "./pages/admin/FilesPage";
+import PrivateRoute from "../service/PrivateRoute";
 
 class Content extends React.Component {
     render() {
@@ -39,20 +40,20 @@ class Content extends React.Component {
                         <Routes>
                             <Route path="/" element={<Home />} />
                             <Route path="/home" element={<Home />} />
-                            <Route path="/home2" element={<Home2 />} />
-                            <Route path="/home3" element={<Home3 />} />
-                            <Route path="/grapesjs-demo" element={<GrapesJs_Demo />} />
+                            <Route path="/home2" element={<PrivateRoute><Home2 /></PrivateRoute>} />
+                            <Route path="/home3" element={<PrivateRoute><Home3 /></PrivateRoute>} />
+                                <Route path="/grapesjs-demo" element={<PrivateRoute><GrapesJs_Demo /></PrivateRoute>} />
                             <Route path="/events" element={<Events />} />
                             <Route path="/blog" element={<Blog />} />
-                            <Route path="/my-courses" element={<UserCoursesListPage />} />
-                            <Route path="/courses" element={<CourseListPage />} />
-                            <Route path="/courses/:id" element={<CourseDetailPage />} />
-                            <Route path="/course-video/:materialId" element={<CourseVideo />} />
-                            <Route path="/users" element={<Users />} />
-                            <Route path="/admin-files" element={<FilesPage />} />
+                                <Route path="/my-courses" element={<PrivateRoute><UserCoursesListPage /></PrivateRoute>} />
+                                <Route path="/courses" element={<PrivateRoute><CourseListPage /></PrivateRoute>} />
+                                <Route path="/courses/:id" element={<PrivateRoute><CourseDetailPage /></PrivateRoute>} />
+                                <Route path="/course-video/:materialId" element={<PrivateRoute><CourseVideo /></PrivateRoute>} />
+                                <Route path="/users" element={<PrivateRoute><Users /></PrivateRoute>} />
+                                <Route path="/admin-files" element={<PrivateRoute><FilesPage /></PrivateRoute>} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/login" element={<Login />} />
-                            <Route path="/video" element={<Video />} />
+                                <Route path="/video" element={<PrivateRoute><Video /></PrivateRoute>} />
                         </Routes>
                     </div>
                 </div>

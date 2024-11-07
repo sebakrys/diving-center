@@ -48,7 +48,7 @@ function Home() {
                     border: "none",
                     margin: "0",
                     padding: "0",
-                    pointerEvents: scrollBlocked ? "none" : "auto",
+                    //pointerEvents: scrollBlocked ? "none" : "auto",
                 }}
             />
         </div>
