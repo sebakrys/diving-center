@@ -6,7 +6,7 @@ import Events from "./pages/events/Events";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Blog from "./pages/blog/Blog";
-import Users from "./pages/users/Users";
+import Users from "./pages/admin/users/Users";
 import Video from "./pages/Video";
 import CourseListPage from "./pages/course/CourseListPage";
 import CourseDetailPage from "./pages/course/CourseDetailPage";
@@ -15,6 +15,7 @@ import CourseVideo from "./pages/course/CourseVideo";
 import Home2 from "./pages/home/Home2";
 import Home3 from "./pages/react_page/Home3";
 import GrapesJs_Demo from "./pages/grapesjs_demo/GrapesJs_Demo";
+import FilesPage from "./pages/admin/FilesPage";
 
 class Content extends React.Component {
     render() {
@@ -48,6 +49,7 @@ class Content extends React.Component {
                             <Route path="/courses/:id" element={<CourseDetailPage />} />
                             <Route path="/course-video/:materialId" element={<CourseVideo />} />
                             <Route path="/users" element={<Users />} />
+                            <Route path="/admin-files" element={<FilesPage />} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/video" element={<Video />} />

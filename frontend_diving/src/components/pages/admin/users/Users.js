@@ -1,8 +1,8 @@
 import {Button, Container, Form, Table} from "react-bootstrap";
 import React, { useState, useEffect } from "react";
-import SecurityService from "../../../service/SecurityService";
-import UsersService from "../../../service/UsersService";
-import EventsService from "../../../service/EventsService";
+import SecurityService from "../../../../service/SecurityService";
+import UsersService from "../../../../service/UsersService";
+import EventsService from "../../../../service/EventsService";
 
 
 function Users() {

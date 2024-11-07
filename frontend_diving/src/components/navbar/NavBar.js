@@ -50,7 +50,13 @@ function NavBar() {
                         }
                         {SecurityService.isUserInRole(["ROLE_ADMIN"]) &&
                             <>
-                                <Nav.Link href="#/users">Użytkownicy</Nav.Link>
+
+                                <NavDropdown title="Admin" id="basic-nav-dropdown">
+                                    <NavDropdown.Item href="#/users">Użytkownicy</NavDropdown.Item>
+                                    <NavDropdown.Item href="#/admin-files">Pliki Strony</NavDropdown.Item>
+                                </NavDropdown>
+
+
                                 <NavDropdown title="Demo" id="basic-nav-dropdown">
                                     <NavDropdown.Item href="#/video">Demo video</NavDropdown.Item>
                                     <NavDropdown.Item href="#/home2">Demo GrapesJS</NavDropdown.Item>

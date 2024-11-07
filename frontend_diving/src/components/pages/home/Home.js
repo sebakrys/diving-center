@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { withTranslation } from 'react-i18next';
+import CONFIG from "../../../config";
+const FILES_REST_URL = CONFIG.REST_URL;
+
 
 function Home() {
     const [scrollBlocked, setScrollBlocked] = useState(true);
@@ -38,7 +41,7 @@ function Home() {
             <iframe
                 ref={iframeRef}
                 title="Static HTML"
-                src="/index_home.html"
+                src={`${FILES_REST_URL}/pages/home.html`}
                 style={{
                     width: "100%",
                     height: "calc(100vh - 60px)",

@@ -18,7 +18,7 @@ function GrapesJs_Demo() {
             height: "100vh"
         }}
             options={{
-                licenseKey: 'c4aa58fb071243c78f6d2227c7c680916be4d0463bb8450b9ff23fa0da3bf466',
+                licenseKey: process.env.REACT_APP_GRAPESJS_LICENSE_KEY,  // użycie zmiennej środowiskowej
                 theme: 'dark',
                 project: {
                     type: 'web',

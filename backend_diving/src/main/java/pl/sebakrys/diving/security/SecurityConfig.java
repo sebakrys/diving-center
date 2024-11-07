@@ -18,6 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 
 import static pl.sebakrys.diving.blog.service.BlogService.BLOG_IMAGES_ACCES_DIRECTORY;
+import static pl.sebakrys.diving.page_content.service.FilesService.IMAGES_ACCES_DIRECTORY;
+import static pl.sebakrys.diving.page_content.service.FilesService.PAGES_ACCES_DIRECTORY;
 
 @Configuration
 @EnableWebSecurity
@@ -41,10 +43,17 @@ public class SecurityConfig {
                     corsConfig.addAllowedHeader("*");
                     return corsConfig;
                 }))
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("frame-ancestors 'self' http://localhost:3000 http://localhost:8080 https://frontend-diving1-66787313904.europe-west4.run.app")
+                        )
+                )
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/authenticate", "/refresh-token", "/users/", "/event/{month}/{year}").permitAll()
                         .requestMatchers(BLOG_IMAGES_ACCES_DIRECTORY+"*").permitAll()
+                        .requestMatchers(IMAGES_ACCES_DIRECTORY+"**").permitAll()
+                        .requestMatchers(PAGES_ACCES_DIRECTORY+"**").permitAll()
                         .requestMatchers("/video/**").permitAll()//TODO zmienić później - do usuniecia
                         .requestMatchers("/courses/**", "/materials/**").permitAll()
                         .requestMatchers("/course_materials/**").permitAll()
