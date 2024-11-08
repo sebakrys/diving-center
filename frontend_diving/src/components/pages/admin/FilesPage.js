@@ -66,7 +66,7 @@ const FilesPage = () => {
     };
 
     return (
-        <Container data-bs-theme="dark">
+        <Container data-bs-theme="dark" className="text-white">
             <h2>Wszystkie pliki</h2>
             <Row>
                 {/* Kolumna dla obrazów */}
@@ -109,7 +109,12 @@ const FilesPage = () => {
                                     <Card key={index} className="m-2" style={{ width: '18rem' }}>
                                         <Card.Img variant="top" src={FILES_REST_URL+image} />
                                         <Card.Body>
-                                            <Card.Text>Obraz nr {index + 1}</Card.Text>
+                                            <Card.Text>Obraz nr {index + 1}
+                                                <br/>
+                                                <a href={FILES_REST_URL+image}>
+                                                    {FILES_REST_URL+image}
+                                                </a>
+                                            </Card.Text>
                                         </Card.Body>
                                     </Card>
                                 ))}
@@ -154,15 +159,15 @@ const FilesPage = () => {
                         </Form>
                     </div>
                     <div>
-                        <h5>Przesłane strony</h5>
+                        <h5>Przesłane pliki strony</h5>
                         {pages.length > 0 ? (
                             <div className="d-flex flex-wrap">
                                 {pages.map((page, index) => (
                                     <Card key={index} className="m-2" style={{ width: '18rem' }}>
                                         <Card.Body>
-                                            <Card.Text>Strona nr {index + 1}</Card.Text>
-                                            <a href={FILES_REST_URL+page} target="_blank" rel="noopener noreferrer">
-                                                Otwórz stronę
+                                            <Card.Text>Plik strony nr {index + 1}</Card.Text>
+                                            <a href={FILES_REST_URL+page} className={"link"} target="_blank" rel="noopener noreferrer">
+                                                {FILES_REST_URL+page}
                                             </a>
                                         </Card.Body>
                                     </Card>
