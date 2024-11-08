@@ -63,6 +63,9 @@ function Login() {
                             Zaloguj się
                         </Button>
                     </Form>
+                    <div className="mt-3 mb-5">
+                        <p className="mt-5 text-white d-inline">Nie masz konta? </p><a href={"/#/register"}>Zarejestruj się</a>
+                    </div>
                 </Col>
             </Row>
             {error && <Alert variant="danger">{error}</Alert>}

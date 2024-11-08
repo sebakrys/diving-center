@@ -79,12 +79,15 @@ function Register() {
                             />
                         </Form.Group>
 
-                        //TODO dodac capcha
+                        {/*TODO dodac capcha*/}
 
                         <Button variant="primary" type="submit" className="mt-4">
                             Zarejestruj się
                         </Button>
                     </Form>
+                    <div className="mt-3 mb-5">
+                        <p className="text-white d-inline">Masz juz konto? </p><a href={"/#/register"}>Zaloguj się</a>
+                    </div>
                 </Col>
             </Row>
             {error && <Alert variant="danger">{error}</Alert>}

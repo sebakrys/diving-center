@@ -108,7 +108,10 @@ const CourseDetailPage = () => {
         // Pobranie szczegółów kursu
         axios.get(COURSE_REST_URL+`/courses/${id}`)
             .then(response => setCourse(response.data))
-            .catch(error => console.error('Error fetching course details:', error));
+            .catch(error => {
+                console.error('Error fetching course details:', error);
+                navigate("/my-courses");
+            });
 
         // Pobranie materiałów kursu
         axios.get(COURSE_REST_URL+`/materials/course/${id}`)
