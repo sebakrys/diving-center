@@ -91,7 +91,16 @@ const CourseListPage = () => {
                         </td>
                         <td
                             onClick={() => navigate(`/courses/${course.id}`)}
-                        >{course.description}</td>
+                        >
+                            {
+                                course.description.split("\n").map((line, index) => (
+                                    <React.Fragment key={index}>
+                                        {line}
+                                        <br />
+                                    </React.Fragment>
+                                ))
+                            }
+                        </td>
                         <td><Button variant="outline-info"
                                     onClick={() => {
                                         setEditingCourse({
@@ -136,10 +145,11 @@ const CourseListPage = () => {
                             <Form.Label>Opis Kursu</Form.Label>
                             <Form.Control
                                 as="textarea"
+                                rows={2}
                                 placeholder="Podaj opis kursu"
                                 value={newCourse.description}
                                 onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
-                                maxLength={255}
+                                maxLength={3500}
                             />
                         </Form.Group>
                     </Form>
@@ -170,10 +180,11 @@ const CourseListPage = () => {
                             <Form.Label>Opis Kursu</Form.Label>
                             <Form.Control
                                 as="textarea"
+                                rows={2}
                                 placeholder="Podaj opis kursu"
                                 value={editingCourse.description}
                                 onChange={(e) => setEditingCourse({ ...editingCourse, description: e.target.value })}
-                                maxLength={255}
+                                maxLength={3500}
                             />
                         </Form.Group>
                     </Form>

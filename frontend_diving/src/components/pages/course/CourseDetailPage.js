@@ -254,7 +254,18 @@ const CourseDetailPage = () => {
                 <>
                     <h3 className="text-white">Kurs:</h3>
                     <h1 className="text-white">{course.name}</h1>
-                    <h5 className="text-white">{course.description}</h5>
+                    <h5 className="text-white">
+
+                        {
+                            course.description.split("\n").map((line, index) => (
+                                <React.Fragment key={index}>
+                                    {line}
+                                    <br />
+                                </React.Fragment>
+                            ))
+                        }
+
+                    </h5>
 
                     {SecurityService.isUserInRole(["ROLE_EMPLOYEE", "ROLE_ADMIN"]) && (
                     <Button variant="outline-info"
@@ -574,10 +585,11 @@ const CourseDetailPage = () => {
                             <Form.Label>Opis Kursu</Form.Label>
                             <Form.Control
                                 as="textarea"
+                                rows={2}
                                 placeholder="Podaj opis kursu"
                                 value={editingCourse.description}
                                 onChange={(e) => setEditingCourse({ ...editingCourse, description: e.target.value })}
-                                maxLength={255}
+                                maxLength={3500}
                             />
                         </Form.Group>
                     </Form>

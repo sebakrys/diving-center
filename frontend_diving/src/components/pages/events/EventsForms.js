@@ -13,7 +13,17 @@ export const DisplayBasicEventInformations = ({ event }) => {
             <Row className="justify-content-md-center">
                 <Col md="6">
                     <h2 className="mt-1 text-white">{event.title}</h2>
-                    <p className='fs-4 text-white'>{event.description}</p>
+                    <p className='fs-4 text-white'>
+                        {
+                        event.description.split("\n").map((line, index) => (
+                        <React.Fragment key={index}>
+                            {line}
+                        <br />
+                        </React.Fragment>
+                        ))
+
+                    }
+                    </p>
                     <p className='text-white'>
                         Start: {moment(event.start).format('LLL')} <br />
                         Koniec: {moment(event.end).format('LLL')}
@@ -65,6 +75,7 @@ export const CreateEventForm = ({ onAddEvent, onCancel }) => {
                                 type="text"
                                 placeholder="Wprowadź tytuł"
                                 value={title}
+                                maxLength={255}
                                 onChange={e => setTitle(e.target.value)}
                                 required
                             />
@@ -73,7 +84,9 @@ export const CreateEventForm = ({ onAddEvent, onCancel }) => {
                         <Form.Group controlId="formDescription" className="mt-3">
                             <Form.Label className='text-white'>Opis</Form.Label>
                             <Form.Control
-                                type="text"
+                                as="textarea"
+                                rows={2}
+                                maxLength={3500}
                                 placeholder="Wprowadź opis"
                                 value={description}
                                 onChange={e => setDescription(e.target.value)}
@@ -178,6 +191,7 @@ export const EditEventForm = ({ onEditEvent, onDeleteEvent, onCancel, selectedEv
                 <Form.Label>Tytuł</Form.Label>
                 <Form.Control
                     type="text"
+                    maxLength={255}
                     placeholder="Wprowadź tytuł"
                     value={title}
                     onChange={e => setTitle(e.target.value)}
@@ -188,7 +202,9 @@ export const EditEventForm = ({ onEditEvent, onDeleteEvent, onCancel, selectedEv
                         <Form.Group controlId="formDescription" className="mt-3">
                             <Form.Label className='text-white'>Opis</Form.Label>
                             <Form.Control
-                                type="text"
+                                as="textarea"
+                                rows={2}
+                                maxLength={3500}
                                 placeholder="Wprowadź opis"
                                 value={description}
                                 onChange={e => setDescription(e.target.value)}
@@ -302,7 +318,17 @@ export const RegisterForm = ({ event, onCancel }) => {
             <Row className="justify-content-md-center">
                 <Col md="6">
                     <h2 className="mt-5 text-white">Rejestracja na wydarzenie: {event.title}</h2>
-                    <p className='fs-4 text-white'>{event.description}</p>
+                    <p className='fs-4 text-white'>
+                        {
+                            event.description.split("\n").map((line, index) => (
+                                <React.Fragment key={index}>
+                                    {line}
+                                    <br />
+                                </React.Fragment>
+                            ))
+
+                        }
+                    </p>
                     <p className='text-white'>
                         Start: {moment(event.start).format('LLL')} <br />
                         Koniec: {moment(event.end).format('LLL')}

@@ -86,7 +86,7 @@ function Register() {
                         </Button>
                     </Form>
                     <div className="mt-3 mb-5">
-                        <p className="text-white d-inline">Masz juz konto? </p><a href={"/#/register"}>Zaloguj się</a>
+                        <p className="text-white d-inline">Masz juz konto? </p><a href={"/#/login"}>Zaloguj się</a>
                     </div>
                 </Col>
             </Row>
