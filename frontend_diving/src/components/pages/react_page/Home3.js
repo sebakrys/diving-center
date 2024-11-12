@@ -100,8 +100,8 @@ const cellPlugins = [
 ];
 
 // Główna funkcja komponentu
-//TODO dodać zapisywanie
-function Home3() {//TODO dodać przesyłanie obrazów
+
+function Home3() {
     const [value, setValue] = useState({});
 
     return (

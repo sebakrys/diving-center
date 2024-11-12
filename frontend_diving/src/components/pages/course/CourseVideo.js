@@ -158,12 +158,18 @@ function CourseVideo() {// TODO przy dużym ekranie nuie ma ani znaku wodnego an
     useEffect( () => {
 
 
-        const fetchUserNames = async () => {//TODO zmienić z nazwy usera na uuid i timestamp
+        const fetchUserNames = async () => {
             try {
-                const result = await SecurityService.getCurrentUserNamesByToken();
+                const result = await SecurityService.getCurrentUserUUIdByToken();
                 if (result.success) {
+                    var currentdate = new Date().toLocaleString()
+                        .replaceAll(',','')
+                        .replaceAll(" ", "_")
+                        .replaceAll(":", "")
+                        .replaceAll(".", "");
+
                     setSessionId(
-                        result.userNames.firstName + " " + result.userNames.lastName+" "+result.userNames.email
+                        result.userId +"_"+ currentdate
                     );
                 } else {
                     // Możesz tutaj dodać obsługę błędu, jeśli `result.success` jest false

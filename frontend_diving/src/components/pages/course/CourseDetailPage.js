@@ -404,9 +404,9 @@ const CourseDetailPage = () => {
                                 >
                                     <option>Wybierz typ materiału</option>
                                     <option value="TEXT">TEXT</option>
-                                    <option value="VIDEO">VIDEO</option>//TODO sprawdzać czy wybrane sa pliki sa .m3u8 i .ts
-                                    <option value="PDF">PDF</option>//TODO sprawdzić czy przesyłamy na pewno pdf
-                                    <option value="IMAGE">IMAGE</option>//TODO sprawdzić czy przesłane pliki to na pewno obrazy i w dobrym formacie //TODO przetestować rożne formaty obrazów
+                                    <option value="VIDEO">VIDEO</option>
+                                    <option value="PDF">PDF</option>
+                                    <option value="IMAGE">IMAGE</option>
                                     <option value="FILE">FILE</option>
                                     <option value="LINK">LINK</option>
                                 </Form.Select>
@@ -438,7 +438,10 @@ const CourseDetailPage = () => {
                                     </Form.Label>
                                     <Form.Control
                                         type="file"
-                                        accept="*"
+                                        accept={newMaterial.type === "PDF" ? ".pdf"
+                                            : newMaterial.type === "IMAGE" ? ".jpg,.jpeg,.png,.gif,.webp,.jfif"
+                                                : newMaterial.type === "VIDEO" ? ".m3u8,.ts"
+                                                    : "*"}
                                         multiple
                                         onChange={(event) => handleFileUpload(event, newMaterial.type)}
                                         disabled={isUploading} // Zablokuj, gdy obrazy są przesyłane
