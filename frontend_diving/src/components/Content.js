@@ -24,11 +24,13 @@ class Content extends React.Component {
             <HashRouter>
                 <div>
                     {/* Obrazek nad NavBar */}
+                    {/*
                     <img
                         src="/74f3ec6c-4574-4bc5-9517-3fdcd5e6fe56.png"
                         alt="Opis obrazka"
                         style={{ width: "100%", height: "auto" , opacity: "80%"}}
                     />
+                    */}
 
                     {/* NavBar z pozycją sticky */}
                     <div style={{ position: "sticky", top: 0, zIndex: 1000 }}>

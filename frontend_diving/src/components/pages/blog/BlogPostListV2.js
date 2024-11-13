@@ -21,6 +21,8 @@ import "@react-page/plugins-divider/lib/index.css";
 import "@react-page/editor/lib/index.css";
 import CONFIG from "../../../config";
 
+import "./blogPostListV2Styless.css"
+
 const BLOG_REST_URL = CONFIG.REST_URL;
 
 export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
@@ -237,18 +239,6 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
                                 value={editingData.editedEditorValue}
                                 style={{ color: "black" }}
                             />
-                            <div className="mt-2">
-                                <Button variant="primary" onClick={() => handleSavePost(post.id)}>
-                                    Zapisz zmiany
-                                </Button>
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => handleCancelEdit(post.id)}
-                                    className="ms-2"
-                                >
-                                    Anuluj
-                                </Button>
-                            </div>
                         </div>
                     );
                 } else {
@@ -267,15 +257,13 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
                     <Card
                         key={post.id}
                         className="mt-5 mb-4 bg-dark text-white"
+                        border="dark"
                         style={{
-                            opacity: "90%",
-                            borderRadius: "15px",
-                            overflow: "hidden",
-                            position: "relative",
+                                opacity: "90%",
                         }}
                     >
-                        <Card.Body>
-                            <div className="d-flex justify-content-between align-items-center mb-3">
+                        <Card.Header>
+                            <div className="d-flex justify-content-between align-items-center mb-1 mt-1">
                                 <div>
                                     <Card.Subtitle className="text-secondary">
                                         {new Date(post.publishDate).toLocaleDateString("pl-PL", {
@@ -285,39 +273,38 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
                                         })}
                                     </Card.Subtitle>
                                 </div>
-                                <div style={{ flex: 1, textAlign: "center" }}>
-                                    {isEditing ? (
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Wprowadź tytuł"
-                                            value={editingData.editedTitle}
-                                            onChange={(e) => handleTitleChange(post.id, e.target.value)}
-                                            maxLength={255}
-                                            required
-                                            className="h4 text-center"
-                                        />
-                                    ) : (
-                                        <Card.Title style={{ fontSize: "1.8rem", marginBottom: 0 }}>
-                                            {post.title}
-                                        </Card.Title>
-                                    )}
-                                </div>
                                 <div>
                                     <Card.Subtitle className="text-secondary">
                                         {post.author.firstName} {post.author.lastName}
                                     </Card.Subtitle>
                                 </div>
                             </div>
-                            {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE", "ROLE_POSTLIST"]) && (
+
+                            {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
                                 <div className="d-flex justify-content-between mt-3">
-                                    {!isEditing && (
+                                    {!isEditing ? (
                                         <Button
                                             variant="outline-light"
                                             onClick={() => handleEditPost(post)}
                                         >
                                             Edytuj
                                         </Button>
-                                    )}
+                                    )
+                                    :
+                                        (
+                                            <div className="mt-2">
+                                                <Button variant="primary" onClick={() => handleSavePost(post.id)}>
+                                                    Zapisz zmiany
+                                                </Button>
+                                                <Button
+                                                    variant="secondary"
+                                                    onClick={() => handleCancelEdit(post.id)}
+                                                    className="ms-2"
+                                                >
+                                                    Anuluj
+                                                </Button>
+                                            </div>
+                                        )}
                                     <Button
                                         variant="danger"
                                         onClick={() => handleDeletePost(post.id)}
@@ -326,18 +313,10 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
                                     </Button>
                                 </div>
                             )}
+                        </Card.Header>
+
+                        <Card.Body>
                             <Card.Text className="mt-3">{content}</Card.Text>
-                            <div
-                                style={{
-                                    position: "absolute",
-                                    top: 0,
-                                    left: 0,
-                                    width: "100%",
-                                    height: "100%",
-                                    pointerEvents: "none",
-                                    boxShadow: "inset 0 0 25px rgba(0, 0, 0, 1)",
-                                }}
-                            ></div>
                         </Card.Body>
                     </Card>
                 );

@@ -4,7 +4,16 @@ import StudioEditor from '@grapesjs/studio-sdk/react';
 function GrapesJs_Demo() {
     useEffect(() => {
         // Import stylów tylko dla tego komponentu
-        import('@grapesjs/studio-sdk/style');
+        // Import stylów tylko dla tego komponentu
+        import('@grapesjs/studio-sdk/style')
+            .then(() => {
+                console.log('Styles loaded successfully.');
+            })
+            .catch((error) => {
+                console.error('Error loading styles:', error);
+            });
+
+        console.log(process.env.REACT_APP_GRAPESJS_LICENSE_KEY)
 
         return () => {
             // Opcjonalne: Usuń style po odmontowaniu komponentu
