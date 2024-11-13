@@ -10,6 +10,8 @@ class SecurityService {
 
     constructor() {
         this.cachedRoles = null;
+        this.lastReloadRolesTime = 0;
+        this.reloadRoles();
     }
 
     initialize() {
@@ -188,6 +190,7 @@ class SecurityService {
 
 
     async reloadRoles() {
+        this.lastReloadRolesTime = Date.now();
         console.log("reloadRoles()")
         const token = localStorage.getItem('token');
         if (token) {
@@ -244,13 +247,19 @@ class SecurityService {
         let userRoles = this.getCachedRoles()
         console.log("isUserInRole?"+rolesToCheck)
 
-        this.reloadRoles().then(() => {
 
-            userRoles = this.getCachedRoles()
-        }).catch((error) => {
-            console.error('Wystąpił błąd podczas sprawdzania ról użytkownika:', error);
-            userRoles = this.getCachedRoles()
-        });
+        if((Date.now()-this.lastReloadRolesTime)>2000){// realoadRoles only when last time was 2 s ago
+            console.log("RELOAD  ROLES")
+            this.reloadRoles().then(() => {
+
+                userRoles = this.getCachedRoles()
+            }).catch((error) => {
+                console.error('Wystąpił błąd podczas sprawdzania ról użytkownika:', error);
+                userRoles = this.getCachedRoles()
+            });
+        }else{
+            console.log("time shorter than 2s")
+        }
 
 
 
