@@ -23,6 +23,11 @@ import CONFIG from "../../../config";
 
 const BLOG_REST_URL = CONFIG.REST_URL;
 
+const cellSpacingConfig = {
+    x: 20, // Odstęp poziomy między blokami
+    y: 20, // Odstęp pionowy między blokami
+};
+
 const imageUpload = (setUploadedImagesUrls) => (file, reportProgress) => {
 
     return new Promise(async (resolve, reject) => {
@@ -172,6 +177,7 @@ export const CreateBlogPostFormV2 = ({ fetchPosts }) => {
                             cellPlugins={cellPlugins}
                             onChange={setEditorValue}
                             value={editorValue}
+                            cellSpacing={cellSpacingConfig}
                             style={{ color: "white" }}
                         />
                     </div>

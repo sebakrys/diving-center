@@ -21,9 +21,13 @@ import "@react-page/plugins-divider/lib/index.css";
 import "@react-page/editor/lib/index.css";
 import CONFIG from "../../../config";
 
-import "./blogPostListV2Styless.css"
 
 const BLOG_REST_URL = CONFIG.REST_URL;
+
+const cellSpacingConfig = {
+    x: 20, // Odstęp poziomy między blokami
+    y: 20, // Odstęp pionowy między blokami
+};
 
 export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
     const [editingPosts, setEditingPosts] = useState({});
@@ -238,6 +242,7 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
                                 onChange={(value) => handleEditorChange(post.id, value)}
                                 value={editingData.editedEditorValue}
                                 style={{ color: "black" }}
+                                cellSpacing={cellSpacingConfig}
                             />
                         </div>
                     );
