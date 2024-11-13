@@ -20,6 +20,11 @@ import '@react-page/editor/lib/index.css';
 
 import './home3Styless.css';
 
+const cellSpacingConfig = {
+    x: 20, // Odstęp poziomy między blokami
+    y: 20, // Odstęp pionowy między blokami
+};
+
 // Tworzenie niestandardowej wtyczki do koloru tekstu
 const ColorPlugin = pluginFactories.createComponentPlugin({
     addHoverButton: true,
@@ -111,6 +116,7 @@ function Home3() {
                 onChange={setValue}
                 value={value}
                 style={{ color: 'white' }}
+                cellSpacing={cellSpacingConfig}
             />
         </div>
     );

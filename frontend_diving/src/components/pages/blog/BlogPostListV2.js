@@ -252,6 +252,7 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
                             cellPlugins={postCellPlugins}
                             value={JSON.parse(post.content)}
                             readOnly
+                            cellSpacing={cellSpacingConfig}
                         />
                     ) : (
                         <Card.Text>{post.content}</Card.Text>
