@@ -13,7 +13,7 @@ public class EmailController {
     @Autowired private EmailService emailService;
 
     // Sending a simple Email
-    @PostMapping("/sendMail")
+    //@PostMapping("/sendMail")
     public String
     sendMail(@RequestBody EmailDetails details)
     {
@@ -24,7 +24,7 @@ public class EmailController {
     }
 
     // Sending email with attachment
-    @PostMapping("/sendMailWithAttachment")
+    //@PostMapping("/sendMailWithAttachment")
     public String sendMailWithAttachment(
             @RequestBody EmailDetails details)
     {
