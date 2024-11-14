@@ -6,6 +6,47 @@ const USERS_REST_URL = CONFIG.REST_URL;
 
 class UsersService {
 
+
+    // Wysyła link resetowania hasła na e-mail
+    async requestPasswordReset(email) {
+        try {
+            const response = await axios.post(`${USERS_REST_URL}/users/password-reset/request`, null, {
+                params: { email }
+            });
+            return { success: true, message: response.data };
+        } catch (error) {
+            console.error("Błąd podczas żądania resetu hasła:", error);
+            return { success: false, error: error.response?.data || "Nieznany błąd" };
+        }
+    }
+
+    // Zmienia hasło na podstawie tokena
+    async resetPassword(token, newPassword) {
+        try {
+            const response = await axios.post(`${USERS_REST_URL}/users/password-reset`, null, {
+                params: { token, newPassword }
+            });
+            return { success: true, message: response.data };
+        } catch (error) {
+            console.error("Błąd podczas resetowania hasła:", error);
+            return { success: false, error: error.response?.data || "Nieznany błąd" };
+        }
+    }
+
+    // Aktywuje użytkownika na podstawie tokena
+    async activateUser(token) {
+        try {
+            const response = await axios.put(`${USERS_REST_URL}/users/activate`, null, {
+                params: { token }
+            });
+            return { success: true, data: response.data };
+        } catch (error) {
+            console.error("Błąd podczas aktywacji użytkownika:", error);
+            return { success: false, error: error.response?.data || "Nieznany błąd" };
+        }
+    }
+
+
     async getAllUsers() {
         try {
             const response = await axios.get(`${USERS_REST_URL}/users/roles`);

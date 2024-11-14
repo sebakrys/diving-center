@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/authenticate", "/refresh-token", "/users/", "/event/{month}/{year}").permitAll()
+                        .requestMatchers("/users/activate", "/users/password-reset/request", "/users/password-reset").permitAll()
                         .requestMatchers(BLOG_IMAGES_ACCES_DIRECTORY+"*").permitAll()
                         .requestMatchers(IMAGES_ACCES_DIRECTORY+"**").permitAll()
                         .requestMatchers(PAGES_ACCES_DIRECTORY+"**").permitAll()
@@ -58,7 +59,7 @@ public class SecurityConfig {
                         .requestMatchers("/courses/**", "/materials/**").permitAll()
                         .requestMatchers("/course_materials/**").permitAll()
                         .requestMatchers("/blog/post").permitAll()
-                        .requestMatchers("/sendMail").permitAll()
+                        //.requestMatchers("/sendMail").permitAll()//TODO usunać, tylko do testu
                         .requestMatchers("/roles/").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                 )
