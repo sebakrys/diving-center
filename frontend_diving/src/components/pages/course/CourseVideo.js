@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from "react";
-import shaka from "shaka-player";
+import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
+import shaka from 'shaka-player/dist/shaka-player.ui.js';
 import 'shaka-player/dist/controls.css';
 import "./courseVideoStyles.css"
 import SecurityService from "../../../service/SecurityService";
@@ -12,7 +12,7 @@ import CONFIG from "../../../config";
 const COURSE_REST_URL = CONFIG.REST_URL;
 //const COURSE_REST_URL = 'http://localhost:8080';
 
-function CourseVideo() {// TODO przy dużym ekranie nuie ma ani znaku wodnego ani nic działającego(chyba), jedna z opcji to zablokowanie dużego ekranu
+function CourseVideo() {
     const { materialId } = useParams();  // Hook do pobierania parametru 'id' z URL
     const [sessionId, setSessionId] =  useState("ABC123"); // Przykładowy unikalny identyfikator sesji
     const [videoUrl, setVideoUrl] =  useState(null);
@@ -26,6 +26,7 @@ function CourseVideo() {// TODO przy dużym ekranie nuie ma ani znaku wodnego an
     const [showBlackScreen, setShowBlackScreen] = useState(false);
 
     const navigate = useNavigate(); // Hook do nawigacji
+    const containerRef = useRef(null);
 
     // Funkcja do losowego ustawienia pozycji watermarka
     const moveWatermark = () => {
@@ -182,6 +183,43 @@ function CourseVideo() {// TODO przy dużym ekranie nuie ma ani znaku wodnego an
 
         fetchUserNames();
 
+        // Sprawdź, czy przeglądarka obsługuje Shaka Playera
+        if (shaka.Player.isBrowserSupported()) {
+            // Inicjalizuj Shaka Playera
+            const player = new shaka.Player(videoRef.current);
+            playerRef.current = player;
+
+            // Inicjalizuj interfejs użytkownika Shaka Playera
+            const ui = new shaka.ui.Overlay(player, containerRef.current, videoRef.current);
+            ui.configure({
+                controlPanelElements: [
+                    'play_pause','time_and_duration',     // Element po lewej stronie
+                    'spacer',          // Odstęp
+                    'mute', 'volume', 'fast_forward','playback_rate' // Elementy po prawej stronie //TODO jesli doddamy 'fullscreen' to dodać obsłuję bo aktulanie jest czarny ekran z watermarkiem,
+                ],
+                playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
+                fastForwardRates: [2, 4, 8, 1],
+                addSeekBar: true
+            });
+
+            // Dodaj filtr żądań sieciowych
+            player.getNetworkingEngine().registerRequestFilter((type, request) => {
+                if (type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
+                    type === shaka.net.NetworkingEngine.RequestType.SEGMENT) {
+                    const token = localStorage.getItem('token');
+                    if (token) {
+                        request.headers['Authorization'] = 'Bearer ' + token;
+                    }
+                }
+            });
+
+            // Obsługa błędów
+            player.addEventListener('error', onErrorEvent);
+        } else {
+            console.error('Shaka Player nie jest obsługiwany w tej przeglądarce.');
+        }
+
+
 
         // Zablokowanie menu kontekstowego (prawy przycisk myszy)
         document.addEventListener('contextmenu', handleContextMenu);
@@ -193,27 +231,6 @@ function CourseVideo() {// TODO przy dużym ekranie nuie ma ani znaku wodnego an
         window.addEventListener('focus', handleFocus);
         window.addEventListener('blur', handleBlur);
 
-
-        // Inicjalizacja Shaka Player
-        playerRef.current = new shaka.Player(videoRef.current);
-
-        // Dodanie filtru żądań sieciowych
-        playerRef.current.getNetworkingEngine().registerRequestFilter((type, request) => {
-            // Sprawdź, czy żądanie dotyczy segmentów wideo lub manifestu
-            if (type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
-                type === shaka.net.NetworkingEngine.RequestType.SEGMENT) {
-
-                // Pobierz token JWT
-                const token = localStorage.getItem('token');
-                if (token) {
-                    // Dodaj nagłówek Authorization
-                    request.headers['Authorization'] = 'Bearer ' + token;
-                }
-            }
-        });
-
-        // Obsługa błędów
-        playerRef.current.addEventListener('error', onErrorEvent);
 
         // Konfiguracja DRM (opcjonalnie)
         /*
@@ -270,6 +287,9 @@ function CourseVideo() {// TODO przy dużym ekranie nuie ma ani znaku wodnego an
 
 
 
+
+
+
     return (
         <>
             {course && (
@@ -277,28 +297,30 @@ function CourseVideo() {// TODO przy dużym ekranie nuie ma ani znaku wodnego an
                     <Icon.ArrowLeft /> {course.name}
                 </Button>
             )}
-        <div className="video-container">
-            {/* Znak wodny */}
-            <div
-                className="watermark"
-                style={{ top: watermarkPosition.top, left: watermarkPosition.left }}
-            >
-                {sessionId}
+            <div ref={containerRef} className="video-container shaka-video-container">
+                {/* Znak wodny */}
+                <div
+                    className="watermark"
+                    style={{ top: watermarkPosition.top, left: watermarkPosition.left }}
+                >
+                    {sessionId}
+                </div>
+
+                {/* Czarny ekran po zatrzymaniu wideo */}
+                {showBlackScreen && <div className="black-screen"></div>}
+
+                <video
+                    ref={videoRef}
+                    width="640"
+                    height="480"
+                    autoPlay
+                ></video>
             </div>
-
-            {/* Czarny ekran po zatrzymaniu wideo */}
-            {showBlackScreen && <div className="black-screen"></div>}
-
-            <video
-                ref={videoRef}
-                width="640"
-                height="480"
-                controls
-                autoPlay
-            ></video>
-        </div>
         </>
     );
+
+
+
 }
 
 export default CourseVideo;

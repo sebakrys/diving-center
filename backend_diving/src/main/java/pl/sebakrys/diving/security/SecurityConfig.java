@@ -59,7 +59,7 @@ public class SecurityConfig {
                         .requestMatchers("/courses/**", "/materials/**").permitAll()
                         .requestMatchers("/course_materials/**").permitAll()
                         .requestMatchers("/blog/post").permitAll()
-                        //.requestMatchers("/sendMail").permitAll()//TODO usunać, tylko do testu
+                        //.requestMatchers("/sendMail").permitAll()// usunać, tylko do testu
                         .requestMatchers("/roles/").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                 )
