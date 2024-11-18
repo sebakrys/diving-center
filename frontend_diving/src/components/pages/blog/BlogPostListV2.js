@@ -146,11 +146,13 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
         };
 
         await BlogService.editPost(postId, updatedPost);
+        handleCancelEdit(postId);
         setEditingPosts((prevState) => {
             const newState = { ...prevState };
             delete newState[postId];
             return newState;
         });
+        handleCancelEdit(postId);
         fetchPosts(); // Refresh posts
     };
 
@@ -218,99 +220,53 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
         <Container className="mt-1">
             {posts.map((post) => {
                 const isEditing = editingPosts.hasOwnProperty(post.id);
-                const editingData = editingPosts[post.id];
-
+                const editingData = editingPosts[post.id] || {};
                 const postCellPlugins = cellPluginsMap[post.id] || baseCellPlugins;
-
-                let content;
-                if (isEditing) {
-                    content = (
-                        <div>
-                            <Form.Group controlId={`editPostTitle-${post.id}`} className="mb-3">
-                                <Form.Label>Tytuł posta</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Wprowadź tytuł"
-                                    value={editingData.editedTitle}
-                                    onChange={(e) => handleTitleChange(post.id, e.target.value)}
-                                    maxLength={255}
-                                    required
-                                />
-                            </Form.Group>
-                            <Editor
-                                cellPlugins={postCellPlugins}
-                                onChange={(value) => handleEditorChange(post.id, value)}
-                                value={editingData.editedEditorValue}
-                                style={{ color: "black" }}
-                                cellSpacing={cellSpacingConfig}
-                            />
-                        </div>
-                    );
-                } else {
-                    content = isJsonString(post.content) ? (
-                        <Editor
-                            cellPlugins={postCellPlugins}
-                            value={JSON.parse(post.content)}
-                            readOnly
-                            cellSpacing={cellSpacingConfig}
-                        />
-                    ) : (
-                        <Card.Text>{post.content}</Card.Text>
-                    );
-                }
 
                 return (
                     <Card
                         key={post.id}
                         className="mt-5 mb-4 bg-dark text-white"
                         border="dark"
-                        style={{
-                                opacity: "90%",
-                        }}
+                        style={{ opacity: "90%" }}
                     >
                         <Card.Header>
                             <div className="d-flex justify-content-between align-items-center mb-1 mt-1">
-                                <div>
-                                    <Card.Subtitle className="text-secondary">
-                                        {new Date(post.publishDate).toLocaleDateString("pl-PL", {
-                                            year: "numeric",
-                                            month: "long",
-                                            day: "numeric",
-                                        })}
-                                    </Card.Subtitle>
-                                </div>
-                                <div>
-                                    <Card.Subtitle className="text-secondary">
-                                        {post.author.firstName} {post.author.lastName}
-                                    </Card.Subtitle>
-                                </div>
+                                <Card.Subtitle className="text-secondary">
+                                    {new Date(post.publishDate).toLocaleDateString("pl-PL", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                    })}
+                                </Card.Subtitle>
+                                <Card.Subtitle className="text-secondary">
+                                    {post.author.firstName} {post.author.lastName}
+                                </Card.Subtitle>
                             </div>
 
                             {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
                                 <div className="d-flex justify-content-between mt-3">
-                                    {!isEditing ? (
+                                    {isEditing ? (
+                                        <div className="mt-2">
+                                            <Button variant="primary" onClick={() => handleSavePost(post.id)}>
+                                                Zapisz zmiany
+                                            </Button>
+                                            <Button
+                                                variant="secondary"
+                                                onClick={() => handleCancelEdit(post.id)}
+                                                className="ms-2"
+                                            >
+                                                Anuluj
+                                            </Button>
+                                        </div>
+                                    ) : (
                                         <Button
                                             variant="outline-light"
                                             onClick={() => handleEditPost(post)}
                                         >
                                             Edytuj
                                         </Button>
-                                    )
-                                    :
-                                        (
-                                            <div className="mt-2">
-                                                <Button variant="primary" onClick={() => handleSavePost(post.id)}>
-                                                    Zapisz zmiany
-                                                </Button>
-                                                <Button
-                                                    variant="secondary"
-                                                    onClick={() => handleCancelEdit(post.id)}
-                                                    className="ms-2"
-                                                >
-                                                    Anuluj
-                                                </Button>
-                                            </div>
-                                        )}
+                                    )}
                                     <Button
                                         variant="danger"
                                         onClick={() => handleDeletePost(post.id)}
@@ -322,7 +278,26 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
                         </Card.Header>
 
                         <Card.Body>
-                            <Card.Text className="mt-3">{content}</Card.Text>
+                            {isEditing && (
+                                <Form.Group controlId={`editPostTitle-${post.id}`} className="mb-3">
+                                    <Form.Label>Tytuł posta</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Wprowadź tytuł"
+                                        value={editingData.editedTitle || ""}
+                                        onChange={(e) => handleTitleChange(post.id, e.target.value)}
+                                        maxLength={255}
+                                        required
+                                    />
+                                </Form.Group>
+                            )}
+                            <Editor
+                                cellPlugins={postCellPlugins}
+                                value={isEditing ? editingData.editedEditorValue : JSON.parse(post.content || "{}")}
+                                onChange={(value) => handleEditorChange(post.id, value)}
+                                readOnly={!isEditing}
+                                cellSpacing={cellSpacingConfig}
+                            />
                         </Card.Body>
                     </Card>
                 );
