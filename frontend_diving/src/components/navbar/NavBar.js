@@ -33,7 +33,7 @@ function NavBar() {
             <Container style={{opacity: "100%"}}>
                 <Navbar.Brand href="#home">
                     <img src="/assets/img/logo.png" alt="Logo"/>
-                    True Divers
+                    Real Divers
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
