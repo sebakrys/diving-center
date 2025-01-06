@@ -2,8 +2,6 @@
 
 **Real Divers** is a platform designed for managing diving courses, events, blog posts, and user accounts. The project comprises a **React.js** frontend (using React Router, Bootstrap, i18n, among others) and a **Spring Boot** (Java 17+) backend.
 
-> **Note**: All configurations and examples assume **Maven** for backend builds and Node.js (version 18+) for the frontend.
-
 ---
 
 ## Table of Contents
@@ -18,19 +16,19 @@
 ## 1. Key Features <a name="key-features"></a>
 - User registration, login, and management (roles: `ADMIN`, `EMPLOYEE`, `CLIENT`).
 - Admin panel:
-    - Manage users (activation, blocking, resetting passwords).
-    - Manage courses, add materials (videos, PDFs, images).
-    - Manage events (registration, approval).
-    - Manage files (upload HTML pages, images).
+  - Manage users (activation, blocking, resetting passwords).
+  - Manage courses, add materials (videos, PDFs, images).
+  - Manage events (registration, approval).
+  - Manage files (upload HTML pages, images).
 - Public section:
-    - Blog with posts and images.
-    - Event calendar.
-    - Users can sign up for events.
-    - Browse course offerings.
+  - Blog with posts and images.
+  - Event calendar.
+  - Users can sign up for events.
+  - Browse course offerings.
 - Role-based security:
-    - **Admin** – full access, system management.
-    - **Employee** – adding/editing events, courses, blog posts.
-    - **Client** – enroll in courses, events, and access personal data.
+  - **Admin** – full access, system management.
+  - **Employee** – adding/editing events, courses, blog posts.
+  - **Client** – enroll in courses, events, and access personal data.
 - **JWT-based security** – token-based authentication and authorization.
 - **REST API** – for frontend communication and external clients.
 - Password reset and account activation via email links.
@@ -49,9 +47,9 @@
 - **Node.js** (v18+), **npm** or **yarn** (package management)
 
 ### Backend
-- **Java 17+**
+- **Java 17+**  
 - **Spring Boot 3+** (Spring Data JPA, Spring Security, etc.)
-- **Maven** (dependency management)
+- **Maven** (dependency management)  
 - **PostgreSQL** (database)
 - **JWT** (authentication and authorization)
 - **Hibernate** (ORM)
@@ -99,7 +97,7 @@
    The app will run at port `3000` by default.
 
 **After running**:
-- Frontend: [http://localhost:3000](http://localhost:3000)
+- Frontend: [http://localhost:3000](http://localhost:3000)  
 - Backend: [http://localhost:8080](http://localhost:8080)
 
 ---
@@ -124,9 +122,9 @@ To run the **entire stack** (Postgres, backend, frontend) at once:
    docker-compose build
    docker-compose up
    ```
-    - **Backend** will be available at `localhost:8080`.
-    - **Frontend** will be available at `localhost:3000`.
-    - **Postgres** will run at `localhost:5432`.
+   - **Backend** will be available at `localhost:8080`.
+   - **Frontend** will be available at `localhost:3000`.
+   - **Postgres** will run at `localhost:5432`.
 
 ---
 
@@ -147,6 +145,10 @@ To run the **entire stack** (Postgres, backend, frontend) at once:
 - **`src/service`** – API calls and business logic (e.g., `SecurityService`, `UserService`).
 - **React Router** – Route definitions.
 - **`Dockerfile`** – Multi-stage build (build + serving with Nginx).
+
+---
+
+
 
 
 ---
