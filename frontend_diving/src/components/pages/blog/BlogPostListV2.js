@@ -152,7 +152,7 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
             delete newState[postId];
             return newState;
         });
-        handleCancelEdit(postId);
+        handleCancelEdit(postId);// z jakiegoś powodu musi być to 2 razy tak jak jest
         fetchPosts(); // Refresh posts
     };
 
