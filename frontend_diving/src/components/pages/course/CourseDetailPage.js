@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {useNavigate, useParams} from 'react-router-dom';
-import {Button, Col, Container, Form, Modal, Row, Spinner, Table} from 'react-bootstrap';
+import {Accordion, Button, Col, Container, Form, Modal, Row, Spinner, Table} from 'react-bootstrap';
 import BlogService from "../../../service/BlogService";
 import CourseService from "../../../service/CourseService";
 import SecurityService from "../../../service/SecurityService";
@@ -436,6 +436,87 @@ const CourseDetailPage = () => {
                                     <Form.Label className="mt-3 text-white h4">
                                         Dodaj {newMaterial.type}
                                     </Form.Label>
+                                    {
+                                        newMaterial.type === "VIDEO" && (
+
+                                            <Accordion className="mt-5 mb-5">
+                                                <Accordion.Item eventKey="0" className="text-white">
+                                                    <Accordion.Header>Instrukcja dodawania wideo w formacie HLS</Accordion.Header>
+                                                    <Accordion.Body>
+                                                        <h5 className="card-title">Dodawanie wideo w formacie HLS</h5>
+                                                        <p>
+                                                            Aby dodać wideo, musisz przekonwertować je na format HLS, co wymaga posiadania plików
+                                                            <code>.m3u8</code> i <code>.ts</code>.
+                                                        </p>
+                                                        <p>
+                                                            Do konwersji pliku MP4 na HLS wymagane jest zainstalowanie i skonfigurowanie FFmpeg.
+                                                        </p>
+                                                        <p>Instrukcje instalacji znajdziesz pod poniższym linkiem:</p>
+                                                        <a
+                                                            href="https://phoenixnap.com/kb/ffmpeg-windows"
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="btn btn-primary"
+                                                        >
+                                                            Jak zainstalować FFmpeg
+                                                        </a>
+                                                        <p className="mt-3">
+                                                            Gdy FFmpeg jest już skonfigurowany, użyj następującej komendy, aby dokonać konwersji:
+                                                        </p>
+                                                        <pre className="bg-dark text-warning p-3">
+                                                            <code>
+                                                                ffmpeg -i [plik_wejsciowy.mp4] -c:v libx264 -g 30 -c:a copy -start_number 0 -hls_time 1 -hls_list_size 0 -f hls [plik_wyjsciowy.m3u8]
+                                                            </code>
+                                                        </pre>
+                                                        <div className="mt-4">
+                                                            <h5>Parametry:</h5>
+                                                            <table className="table table-dark table-striped mt-2">
+                                                                <tbody>
+                                                                <tr>
+                                                                    <td><strong>-i [plik_wejsciowy.mp4]</strong></td>
+                                                                    <td>Określa plik wejściowy, np. <code>video.mp4</code>.</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>-c:v libx264</strong></td>
+                                                                    <td>Używa kodeka H.264 do kodowania wideo.</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>-g 30</strong></td>
+                                                                    <td>Ustawia długość grupy klatek (GOP) na 30.</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>-c:a copy</strong></td>
+                                                                    <td>Kopiuje ścieżkę audio bez ponownego kodowania.</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>-start_number 0</strong></td>
+                                                                    <td>Ustawia numer początkowy segmentów wideo na 0.</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>-hls_time 1</strong></td>
+                                                                    <td>Ustawia długość segmentów HLS na 1 sekundę.</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>-hls_list_size 0</strong></td>
+                                                                    <td>Lista odtwarzania <code>.m3u8</code> zawiera wszystkie segmenty.</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>-f hls</strong></td>
+                                                                    <td>Określa format wyjściowy jako HLS.</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>[plik_wyjsciowy.m3u8]</strong></td>
+                                                                    <td>Nazwa pliku listy odtwarzania HLS.</td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </Accordion.Body>
+                                                </Accordion.Item>
+                                            </Accordion>
+                                        )
+                                    }
+
                                     <Form.Control
                                         type="file"
                                         accept={newMaterial.type === "PDF" ? ".pdf"

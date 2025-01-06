@@ -76,10 +76,10 @@ function App() {
                     mode: "push",
                   },
                   onHover: {
-                    enable: true,
+                    enable: false,
                     mode: "attract",
                   },
-                  resize: true,
+                  resize: false,
                 },
                 modes: {
                   bounce: {
@@ -123,7 +123,7 @@ function App() {
                   density: {
                     enable: true,
                   },
-                  value: 50,
+                  value: 5,
                 },
                 opacity: {
                   value: 0.5,

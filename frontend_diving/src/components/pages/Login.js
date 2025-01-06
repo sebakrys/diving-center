@@ -64,6 +64,7 @@ function Login() {
                         </Button>
                     </Form>
                     <div className="mt-3 mb-5">
+                        <p className="mt-5 text-white d-inline">Nie pamiętasz hasła? </p><a href={"/#/password-reset"}>Zresetuj hasło</a><br/>
                         <p className="mt-5 text-white d-inline">Nie masz konta? </p><a href={"/#/register"}>Zarejestruj się</a>
                     </div>
                 </Col>

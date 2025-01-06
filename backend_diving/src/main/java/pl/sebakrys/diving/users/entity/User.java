@@ -27,6 +27,8 @@ public class User {
     @EqualsAndHashCode.Include
     private UUID uuid = UUID.randomUUID();
 
+
+
     private String firstName;
     private String lastName;
 
@@ -39,6 +41,12 @@ public class User {
     private boolean active;
 
     private boolean nonBlocked;
+
+    @JsonIgnore
+    private String activationToken;
+    @JsonIgnore
+    private String resetPasswordToken;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnore

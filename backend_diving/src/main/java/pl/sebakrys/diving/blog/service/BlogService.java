@@ -79,7 +79,7 @@ public class BlogService {
                 // Tworzenie miniaturki za pomocą Thumbnailator
                 Thumbnails.of(image.getInputStream())
                         .size(150, 150)  // Ustal rozmiar miniaturki
-                        .toFile(thumbnailPath.toFile());//TODO sprawdzić dla jakich formatów zdjęć nie działa (może w dokumentacji) i dostosowac frontend
+                        .toFile(thumbnailPath.toFile());
 
                 // Zapisz oryginalny plik i miniaturkę w bazie danych
                 BlogPostImage blogPostImage = new BlogPostImage();

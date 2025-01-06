@@ -21,6 +21,10 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
     Optional<User> findByUuid(UUID uuid);
 
+    Optional<User> findByActivationToken(String activationToken);
+
+    Optional<User> findByResetPasswordToken(String resetPasswordToken);
+
 
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :role AND " +
             "(upper(u.firstName) LIKE upper(%:query%) OR upper(u.lastName) LIKE upper(%:query%) OR upper(u.email) LIKE upper(%:query%))")

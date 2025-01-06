@@ -17,6 +17,9 @@ import Home3 from "./pages/react_page/Home3";
 import GrapesJs_Demo from "./pages/grapesjs_demo/GrapesJs_Demo";
 import FilesPage from "./pages/admin/FilesPage";
 import PrivateRoute from "../service/PrivateRoute";
+import ForgotPasswordPage from "./pages/account/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/account/ResetPasswordPage";
+import ActivateAccountPage from "./pages/account/ActivateAccountPage";
 
 class Content extends React.Component {
     render() {
@@ -24,11 +27,13 @@ class Content extends React.Component {
             <HashRouter>
                 <div>
                     {/* Obrazek nad NavBar */}
+                    {/*
                     <img
                         src="/74f3ec6c-4574-4bc5-9517-3fdcd5e6fe56.png"
                         alt="Opis obrazka"
                         style={{ width: "100%", height: "auto" , opacity: "80%"}}
                     />
+                    */}
 
                     {/* NavBar z pozycją sticky */}
                     <div style={{ position: "sticky", top: 0, zIndex: 1000 }}>
@@ -53,6 +58,9 @@ class Content extends React.Component {
                                 <Route path="/admin-files" element={<PrivateRoute><FilesPage /></PrivateRoute>} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/login" element={<Login />} />
+                            <Route path="/password-reset" element={<ForgotPasswordPage />} />
+                            <Route path="/password-reset/:token" element={<ResetPasswordPage />} />
+                            <Route path="/activate/:token" element={<ActivateAccountPage />} />
                                 <Route path="/video" element={<PrivateRoute><Video /></PrivateRoute>} />
                         </Routes>
                     </div>

@@ -21,7 +21,13 @@ import "@react-page/plugins-divider/lib/index.css";
 import "@react-page/editor/lib/index.css";
 import CONFIG from "../../../config";
 
+
 const BLOG_REST_URL = CONFIG.REST_URL;
+
+const cellSpacingConfig = {
+    x: 20, // Odstęp poziomy między blokami
+    y: 20, // Odstęp pionowy między blokami
+};
 
 export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
     const [editingPosts, setEditingPosts] = useState({});
@@ -140,11 +146,13 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
         };
 
         await BlogService.editPost(postId, updatedPost);
+        handleCancelEdit(postId);
         setEditingPosts((prevState) => {
             const newState = { ...prevState };
             delete newState[postId];
             return newState;
         });
+        handleCancelEdit(postId);// z jakiegoś powodu musi być to 2 razy tak jak jest
         fetchPosts(); // Refresh posts
     };
 
@@ -212,105 +220,46 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
         <Container className="mt-1">
             {posts.map((post) => {
                 const isEditing = editingPosts.hasOwnProperty(post.id);
-                const editingData = editingPosts[post.id];
-
+                const editingData = editingPosts[post.id] || {};
                 const postCellPlugins = cellPluginsMap[post.id] || baseCellPlugins;
-
-                let content;
-                if (isEditing) {
-                    content = (
-                        <div>
-                            <Form.Group controlId={`editPostTitle-${post.id}`} className="mb-3">
-                                <Form.Label>Tytuł posta</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Wprowadź tytuł"
-                                    value={editingData.editedTitle}
-                                    onChange={(e) => handleTitleChange(post.id, e.target.value)}
-                                    maxLength={255}
-                                    required
-                                />
-                            </Form.Group>
-                            <Editor
-                                cellPlugins={postCellPlugins}
-                                onChange={(value) => handleEditorChange(post.id, value)}
-                                value={editingData.editedEditorValue}
-                                style={{ color: "black" }}
-                            />
-                            <div className="mt-2">
-                                <Button variant="primary" onClick={() => handleSavePost(post.id)}>
-                                    Zapisz zmiany
-                                </Button>
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => handleCancelEdit(post.id)}
-                                    className="ms-2"
-                                >
-                                    Anuluj
-                                </Button>
-                            </div>
-                        </div>
-                    );
-                } else {
-                    content = isJsonString(post.content) ? (
-                        <Editor
-                            cellPlugins={postCellPlugins}
-                            value={JSON.parse(post.content)}
-                            readOnly
-                        />
-                    ) : (
-                        <Card.Text>{post.content}</Card.Text>
-                    );
-                }
 
                 return (
                     <Card
                         key={post.id}
                         className="mt-5 mb-4 bg-dark text-white"
-                        style={{
-                            opacity: "90%",
-                            borderRadius: "15px",
-                            overflow: "hidden",
-                            position: "relative",
-                        }}
+                        border="dark"
+                        style={{ opacity: "90%" }}
                     >
-                        <Card.Body>
-                            <div className="d-flex justify-content-between align-items-center mb-3">
-                                <div>
-                                    <Card.Subtitle className="text-secondary">
-                                        {new Date(post.publishDate).toLocaleDateString("pl-PL", {
-                                            year: "numeric",
-                                            month: "long",
-                                            day: "numeric",
-                                        })}
-                                    </Card.Subtitle>
-                                </div>
-                                <div style={{ flex: 1, textAlign: "center" }}>
-                                    {isEditing ? (
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Wprowadź tytuł"
-                                            value={editingData.editedTitle}
-                                            onChange={(e) => handleTitleChange(post.id, e.target.value)}
-                                            maxLength={255}
-                                            required
-                                            className="h4 text-center"
-                                        />
-                                    ) : (
-                                        <Card.Title style={{ fontSize: "1.8rem", marginBottom: 0 }}>
-                                            {post.title}
-                                        </Card.Title>
-                                    )}
-                                </div>
-                                <div>
-                                    <Card.Subtitle className="text-secondary">
-                                        {post.author.firstName} {post.author.lastName}
-                                    </Card.Subtitle>
-                                </div>
+                        <Card.Header>
+                            <div className="d-flex justify-content-between align-items-center mb-1 mt-1">
+                                <Card.Subtitle className="text-secondary">
+                                    {new Date(post.publishDate).toLocaleDateString("pl-PL", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                    })}
+                                </Card.Subtitle>
+                                <Card.Subtitle className="text-secondary">
+                                    {post.author.firstName} {post.author.lastName}
+                                </Card.Subtitle>
                             </div>
-                            {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE", "ROLE_POSTLIST"]) && (
+
+                            {SecurityService.isUserInRole(["ROLE_ADMIN", "ROLE_EMPLOYEE"]) && (
                                 <div className="d-flex justify-content-between mt-3">
-                                    {!isEditing && (
+                                    {isEditing ? (
+                                        <div className="mt-2">
+                                            <Button variant="primary" onClick={() => handleSavePost(post.id)}>
+                                                Zapisz zmiany
+                                            </Button>
+                                            <Button
+                                                variant="secondary"
+                                                onClick={() => handleCancelEdit(post.id)}
+                                                className="ms-2"
+                                            >
+                                                Anuluj
+                                            </Button>
+                                        </div>
+                                    ) : (
                                         <Button
                                             variant="outline-light"
                                             onClick={() => handleEditPost(post)}
@@ -326,18 +275,29 @@ export const BlogPostsListV2 = ({ posts, fetchPosts }) => {
                                     </Button>
                                 </div>
                             )}
-                            <Card.Text className="mt-3">{content}</Card.Text>
-                            <div
-                                style={{
-                                    position: "absolute",
-                                    top: 0,
-                                    left: 0,
-                                    width: "100%",
-                                    height: "100%",
-                                    pointerEvents: "none",
-                                    boxShadow: "inset 0 0 25px rgba(0, 0, 0, 1)",
-                                }}
-                            ></div>
+                        </Card.Header>
+
+                        <Card.Body>
+                            {isEditing && (
+                                <Form.Group controlId={`editPostTitle-${post.id}`} className="mb-3">
+                                    <Form.Label>Tytuł posta</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Wprowadź tytuł"
+                                        value={editingData.editedTitle || ""}
+                                        onChange={(e) => handleTitleChange(post.id, e.target.value)}
+                                        maxLength={255}
+                                        required
+                                    />
+                                </Form.Group>
+                            )}
+                            <Editor
+                                cellPlugins={postCellPlugins}
+                                value={isEditing ? editingData.editedEditorValue : JSON.parse(post.content || "{}")}
+                                onChange={(value) => handleEditorChange(post.id, value)}
+                                readOnly={!isEditing}
+                                cellSpacing={cellSpacingConfig}
+                            />
                         </Card.Body>
                     </Card>
                 );

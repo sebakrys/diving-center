@@ -9,10 +9,10 @@
     position: absolute;
     font-size: 16px;
     font-weight: bold;
-    color: rgba(255, 255, 255, 0.33); /* Półprzezroczysty biały */
-    pointer-events: none; /* Użytkownik nie może kliknąć na znak wodny */
-    z-index: 10; /* Zapewnia, że znak wodny jest nad wideo */
-    transition: top 0.5s ease, left 0.5s ease; /* Płynne przesuwanie watermarka */
+    color: rgba(255, 255, 255, 0.33);
+    pointer-events: none;
+    z-index: 9999;
+    transition: top 0.5s ease, left 0.5s ease;
 }
 
 .black-screen {
@@ -20,13 +20,15 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 87.5%;
+    height: 100%;
     background-color: black;
-    z-index: 9; /* Umieść przed wideo, ale za watermarkiem */
-    opacity: 1; /* Półprzezroczystość czarnego ekranu */
+    z-index: 9998;
+    opacity: 1;
 }
 
 video {
     width: 100%;
     height: 100%;
+    position: relative;
+    z-index: 1;
 }

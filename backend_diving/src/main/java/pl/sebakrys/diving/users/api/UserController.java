@@ -43,6 +43,28 @@ public class UserController {
         }
     }
 
+    @PutMapping("/activate")
+    public ResponseEntity<User> activateUser(@RequestParam String token) {
+
+        return userService.activateUserByToken(token)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/password-reset/request")
+    public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
+        return userService.sendPasswordResetToken(email)
+                .map(user -> ResponseEntity.ok("Link do resetowania hasła został wysłany na adres: " + user.getEmail()))
+                .orElseGet(() -> ResponseEntity.status(404).body("Użytkownik z podanym adresem e-mail nie istnieje."));
+    }
+
+    @PostMapping("/password-reset")
+    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+        return userService.resetPassword(token, newPassword)
+                .map(user -> ResponseEntity.ok("Hasło zostało zmienione"))
+                .orElseGet(() -> ResponseEntity.status(404).body("Użytkownik nie istnieje."));
+    }
+
     // Endpoint do dodawania roli do użytkownika
     @PutMapping("/{userUUId}/roles/{roleName}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")

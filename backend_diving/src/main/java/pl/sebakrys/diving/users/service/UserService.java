@@ -9,6 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pl.sebakrys.diving.email.EmailDetails;
+import pl.sebakrys.diving.email.EmailService;
 import pl.sebakrys.diving.security.JwtUtil;
 import pl.sebakrys.diving.security.UserSecurityService;
 import pl.sebakrys.diving.users.dto.UserNamesDto;
@@ -17,6 +20,8 @@ import pl.sebakrys.diving.users.entity.User;
 import pl.sebakrys.diving.users.repo.RoleRepo;
 import pl.sebakrys.diving.users.repo.UserRepo;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -26,13 +31,21 @@ public class UserService {
     private final RoleRepo roleRepo;
     private final PasswordEncoder passwordEncoder;
 
+    private final EmailService emailService;
+
 
 
     @Autowired
-    public UserService(UserRepo userRepo, RoleRepo roleRepo, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepo userRepo, RoleRepo roleRepo, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
+    }
+
+    public String generateActivationToken() {
+        return UUID.randomUUID().toString()
+                + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss-SSS"));
     }
 
 
@@ -56,8 +69,11 @@ public class UserService {
         }
 
         user.setRoles(roles);
-        user.setActive(true);
+        user.setActive(false);
         user.setNonBlocked(true);
+        user.setActivationToken(generateActivationToken());
+
+        sendUserActivateToken(user.getEmail(), user.getActivationToken());
 
         return userRepo.save(user);
     }
@@ -136,6 +152,73 @@ public class UserService {
 
         return Optional.empty();
     }
+
+    @Transactional
+    public Optional<User> activateUserByToken(String activationToken) {
+        Optional<User> userOptional = userRepo.findByActivationToken(activationToken);
+
+        if(userOptional.isPresent()){
+            User user = userOptional.get();
+            user.setActive(true);
+            user.setActivationToken(null);  // Token można usunąć po aktywacji
+            userRepo.save(user);
+            return Optional.of(user);
+        }
+        return Optional.empty();
+    }
+
+    public void sendUserActivateToken(String email, String activationToken) {
+
+        String resetLink = "https://frontend-diving1-66787313904.europe-west4.run.app/#/activate/" + activationToken;
+        emailService.sendSimpleMail(
+                new EmailDetails(
+                        email,
+                        "Kliknij w poniższy link, aby aktywowac swoje konto: " + resetLink,
+                        "Aktywowanie konta"
+                )
+        );
+    }
+
+    public Optional<User> resetPassword(String token, String newPassword) {
+        // Pobieranie użytkownika na podstawie tokenu
+        Optional<User> userOptional = userRepo.findByResetPasswordToken(token);
+
+        // Zwracanie null, jeśli użytkownik z danym tokenem nie istnieje
+        if (userOptional.isEmpty()) {
+            return Optional.empty();
+        }
+
+        User user = userOptional.get();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetPasswordToken(null); // Usunięcie tokenu po udanym resetowaniu
+        return Optional.of(userRepo.save(user));
+    }
+
+    public Optional<User> sendPasswordResetToken(String email) {
+        Optional<User> userOptional = userRepo.findByEmail(email);
+
+        if(userOptional.isEmpty()) return Optional.empty();
+
+        User user = userOptional.get();
+
+        String token = UUID.randomUUID().toString();
+        user.setResetPasswordToken(token);
+        userRepo.save(user);
+
+
+        String resetLink = "https://frontend-diving1-66787313904.europe-west4.run.app/#/password-reset/" + token;
+        emailService.sendSimpleMail(
+                new EmailDetails(
+                        user.getEmail(),
+                        "Kliknij w poniższy link, aby zresetować swoje hasło: " + resetLink,
+                        "Resetowanie hasła"
+                )
+        );
+        return Optional.of(user);
+    }
+
+
+
     public Optional<User> setActiveUser(UUID userUUId, boolean active) {
         Optional<User> userOptional = userRepo.findByUuid(userUUId);
 
