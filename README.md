@@ -12,8 +12,6 @@
 3. [Running the Application Locally](#running-the-application-locally)
 4. [Running via Docker Compose](#running-via-docker-compose)
 5. [Architecture - Key Modules](#architecture---key-modules)
-6. [Screenshots (Optional)](#screenshots-optional)
-7. [Author / Contact](#author--contact)
 
 ---
 
